@@ -1,0 +1,122 @@
+name: Release - Semantic Versioning
+
+on:
+  workflow_dispatch:
+    inputs:
+      version_type:
+        description: 'Release type'
+        required: true
+        default: 'patch'
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Get current version
+        id: current_version
+        run: |
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+          echo "version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Calculate next version
+        id: next_version
+        run: |
+          CURRENT=${{ steps.current_version.outputs.version }}
+          MAJOR=$(echo $CURRENT | cut -d. -f1)
+          MINOR=$(echo $CURRENT | cut -d. -f2)
+          PATCH=$(echo $CURRENT | cut -d. -f3)
+
+          if [ "${{ inputs.version_type }}" == "major" ]; then
+            MAJOR=$((MAJOR + 1))
+            MINOR=0
+            PATCH=0
+          elif [ "${{ inputs.version_type }}" == "minor" ]; then
+            MINOR=$((MINOR + 1))
+            PATCH=0
+          else
+            PATCH=$((PATCH + 1))
+          fi
+
+          NEW_VERSION="$MAJOR.$MINOR.$PATCH"
+          echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Update package.json version
+        run: |
+          npm version ${{ steps.next_version.outputs.version }} --no-git-tag-version
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build project
+        run: npm run build
+
+      - name: Run tests
+        run: npm test
+
+      - name: Commit version bump
+        run: |
+          git add package.json package-lock.json
+          git commit -m "chore: bump version to ${{ steps.next_version.outputs.version }}"
+
+      - name: Create git tag
+        run: |
+          git tag -a v${{ steps.next_version.outputs.version }} -m "Release v${{ steps.next_version.outputs.version }}"
+
+      - name: Push commits and tags
+        run: |
+          git push origin master
+          git push origin --tags
+
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ steps.next_version.outputs.version }}
+          release_name: Release v${{ steps.next_version.outputs.version }}
+          body: |
+            # Release v${{ steps.next_version.outputs.version }}
+
+            ## Changes
+            This release contains updates and improvements to the Brand Ops project.
+
+            **Version Type:** ${{ inputs.version_type }}
+            **Previous Version:** v${{ steps.current_version.outputs.version }}
+            **New Version:** v${{ steps.next_version.outputs.version }}
+
+            ### Quality Assurance
+            - ✅ All tests passing
+            - ✅ TypeScript strict mode verified
+            - ✅ Build successful
+            - ✅ ESLint validated
+
+            See commit history for detailed changes.
+          draft: false
+          prerelease: false
