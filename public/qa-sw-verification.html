@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Service Worker Verification</title>
+    <style>
+      body {
+        background: #f8fafc;
+        color: #0f172a;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 2rem;
+      }
+
+      main {
+        background: #fff;
+        border: 1px solid #cbd5e1;
+        border-radius: 0.75rem;
+        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+        margin: 0 auto;
+        max-width: 56rem;
+        padding: 2rem;
+      }
+
+      h1 {
+        margin-top: 0;
+      }
+
+      .controls {
+        display: flex;
+        gap: 0.75rem;
+        margin: 1rem 0 1.5rem;
+      }
+
+      button {
+        background: #0f766e;
+        border: 0;
+        border-radius: 0.5rem;
+        color: #fff;
+        cursor: pointer;
+        font-size: 0.95rem;
+        padding: 0.75rem 1rem;
+      }
+
+      pre {
+        background: #0f172a;
+        border-radius: 0.75rem;
+        color: #e2e8f0;
+        overflow-x: auto;
+        padding: 1rem;
+        white-space: pre-wrap;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Story 0.3 Service Worker Verification</h1>
+      <p>
+        This page validates registration and persistence of <code>/sw.js</code>
+        across reloads using the same browser APIs referenced by the app.
+      </p>
+      <div class="controls">
+        <button id="verify" type="button">Verify Registration</button>
+        <button id="reload" type="button">Reload Page</button>
+      </div>
+      <pre id="results">Waiting for verification...</pre>
+    </main>
+
+    <script>
+      const results = document.getElementById('results');
+      const runCount = Number(localStorage.getItem('qa-sw-run-count') || '0') + 1;
+      localStorage.setItem('qa-sw-run-count', String(runCount));
+
+      async function collect(stage) {
+        if (!('serviceWorker' in navigator)) {
+          results.textContent = JSON.stringify(
+            { stage, supported: false, message: 'Service Worker API unavailable' },
+            null,
+            2
+          );
+          return;
+        }
+
+        const existingRegistration = await navigator.serviceWorker.getRegistration('/sw.js');
+        const registration =
+          existingRegistration || (await navigator.serviceWorker.register('/sw.js'));
+
+        await navigator.serviceWorker.ready;
+
+        const refreshedRegistration = await navigator.serviceWorker.getRegistration('/sw.js');
+        const registrations = await navigator.serviceWorker.getRegistrations();
+
+        results.textContent = JSON.stringify(
+          {
+            stage,
+            runCount,
+            supported: true,
+            scope: refreshedRegistration ? refreshedRegistration.scope : registration.scope,
+            active: Boolean(refreshedRegistration && refreshedRegistration.active),
+            waiting: Boolean(refreshedRegistration && refreshedRegistration.waiting),
+            installing: Boolean(refreshedRegistration && refreshedRegistration.installing),
+            controller: Boolean(navigator.serviceWorker.controller),
+            totalRegistrations: registrations.length,
+            url: window.location.href,
+          },
+          null,
+          2
+        );
+      }
+
+      document.getElementById('verify').addEventListener('click', () => {
+        void collect('manual-check');
+      });
+
+      document.getElementById('reload').addEventListener('click', () => {
+        window.location.reload();
+      });
+
+      void collect('page-load');
+    </script>
+  </body>
+</html>
