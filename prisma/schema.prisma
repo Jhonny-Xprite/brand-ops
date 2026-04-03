@@ -1,0 +1,77 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Creative assets (PSD, images, videos, etc)
+model Creative {
+  id        String   @id @default(cuid())
+  name      String
+  type      String   // psd, png, jpg, mp4, etc
+  path      String   // File system path
+  fileSize  Int      // Size in bytes
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  metadata   Metadata?
+  versions   Version[]
+  syncMetadata SyncMetadata?
+
+  @@index([createdAt])
+}
+
+// Asset metadata (descriptions, tags, properties)
+model Metadata {
+  id          String   @id @default(cuid())
+  description String?
+  tags        String?  // Comma-separated or JSON
+  properties  String?  // JSON for extensibility
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  creativeId String  @unique
+  creative   Creative @relation(fields: [creativeId], references: [id], onDelete: Cascade)
+
+  @@index([creativeId])
+}
+
+// Version history for assets
+model Version {
+  id        String   @id @default(cuid())
+  versionNumber Int
+  changes   String?  // Change description
+  createdAt DateTime @default(now())
+
+  // Relations
+  creativeId String
+  creative   Creative @relation(fields: [creativeId], references: [id], onDelete: Cascade)
+
+  @@index([creativeId, versionNumber])
+}
+
+// Sync metadata for tracking asset synchronization
+model SyncMetadata {
+  id              String   @id @default(cuid())
+  lastSyncTime    DateTime?
+  syncStatus      String   @default("pending") // pending, syncing, synced, failed
+  syncError       String?
+  externalId      String?  // ID in external system
+  externalSource  String?  // Source system (e.g., "dropbox", "google-drive")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  creativeId String  @unique
+  creative   Creative @relation(fields: [creativeId], references: [id], onDelete: Cascade)
+
+  @@index([creativeId, syncStatus])
+}
