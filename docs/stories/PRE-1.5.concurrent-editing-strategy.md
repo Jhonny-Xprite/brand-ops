@@ -2,7 +2,7 @@
 template:
   id: story-template-v2
   version: 2.0
-  
+
 metadata:
   epic: 1
   story_num: "PRE-1.5"
@@ -10,180 +10,198 @@ metadata:
   priority: P0
   effort_minutes: 240
   blocker: true
-  blocks: ["1.2", "1.3", "1.5"]
-  
+  blocks: ["1.3", "1.4", "1.5"]
 ---
 
 # Story PRE-1.5: Concurrent Editing Strategy & Lock Mechanism
 
 ## Status
-Draft
+Done
 
 ## Executor Assignment
 
 ```yaml
 executor: "@architect"
-quality_gate: "@dev"
+quality_gate: "@pm"
 quality_gate_tools:
   - Documentation review
-  - Implementation feasibility analysis
+  - Dependency traceability review
+  - Implementation risk review
 ```
 
 ## Story
 
 **As an** architect,  
-**I want** to design a concurrent editing strategy that prevents data corruption,  
-**so that** @dev can handle simultaneous file edits + auto-commits without conflicts
+**I want** a clear concurrent-editing and lock strategy for creative versioning flows,  
+**so that** metadata saves, version creation, history reads, and rollback operations do not corrupt state or produce ambiguous user behavior
 
 ---
 
 ## Acceptance Criteria
 
-- [ ] Concurrent editing problem documented (race conditions, data corruption scenarios)
-- [ ] Solution strategy chosen: File locking vs optimistic locking vs event-based
-- [ ] Lock mechanism detailed: How locks acquired, held, released
-- [ ] Timeout strategy documented: Wait time, retry logic, user feedback
-- [ ] Conflict resolution strategy defined: What happens if edits overlap
-- [ ] UI feedback designed: "Saving..." spinner, "File locked, wait..." message
-- [ ] Error scenarios handled: Lock acquisition timeout, lock release failure
-- [ ] Testing strategy sketched: How to test concurrent editing scenarios
-- [ ] Documentation: `docs/concurrent-editing-strategy.md` created
-- [ ] Implementation pseudocode drafted: Lock manager module
+1. The document identifies the key concurrent-operation scenarios relevant to Epic 1 versioning flows.
+2. The chosen coordination strategy is explicit about when to use application-level locks, queueing, optimistic checks, or git-native lock awareness.
+3. Lock acquisition, hold, release, timeout, and cleanup behavior are defined clearly.
+4. Conflict handling is defined for overlapping metadata saves, file updates, rollback actions, and queued versioning work.
+5. User-facing feedback is specified for waiting, retry, and failure states.
+6. The strategy is consistent with the git flow defined in `PRE-1.4`.
+7. The strategy is consistent with the error catalog from `PRE-1.3`.
+8. QA test scenarios are defined for the main concurrency risks and recovery paths.
+9. The output is written in a dedicated concurrent-editing strategy document referenced by this story.
+10. The design avoids destructive assumptions such as force-releasing locks without first defining safe ownership and timeout rules.
 
 ---
 
-## 🤖 CodeRabbit Integration
+## CodeRabbit Integration
 
 ### Story Type Analysis
-**Primary Type:** Architecture (Concurrency Design)  
-**Secondary Types:** Error Handling, Performance  
-**Complexity:** High (complex concurrency patterns, edge cases)
+
+**Primary Type:** Architecture  
+**Secondary Type(s):** Concurrency, operational safety  
+**Complexity:** High
 
 ### Specialized Agent Assignment
+
 **Primary Agents:**
-- @architect (concurrency design, lock mechanism)
-- @dev (implementation feasibility validation)
+- @architect
+- @dev
 
 **Supporting Agents:**
-- @qa (testing strategy for concurrent scenarios)
+- @qa
+- @po
 
 ### Quality Gate Tasks
-- [ ] Design review: Lock mechanism is sound, deadlock-proof
-- [ ] Feasibility check: @dev confirms implementation is possible
-- [ ] Testing strategy: @qa can write concurrent tests based on design
+
+- [x] Pre-Commit (@dev): Review implementation feasibility of the lock strategy and queue semantics.
+- [ ] Pre-PR (@github-devops): Not applicable for this documentation-first blocker.
+- [ ] Pre-Deployment (@github-devops): Not applicable for this blocker story.
+
+### Self-Healing Configuration
+
+**Expected Self-Healing:**
+- Primary Agent: @architect (document_only mode)
+- Max Iterations: 1
+- Timeout: 15 minutes
+- Severity Filter: CRITICAL
+
+**Predicted Behavior:**
+- CRITICAL issues: document_only
+- HIGH issues: document_only
 
 ### CodeRabbit Focus Areas
+
 **Primary Focus:**
-- Concurrency correctness (deadlock-free, race condition prevention)
-- Timeout strategy (prevents indefinite waiting)
-- Error handling (lock timeout, release failures)
+- Concurrency safety and lock lifecycle clarity
+- Conflict-resolution completeness
+
+**Secondary Focus:**
+- Consistency with `PRE-1.4`
+- QA testability of the resulting strategy
 
 ---
 
 ## Tasks / Subtasks
 
-- [ ] Analyze Concurrency Problems
-  - [ ] Document race conditions (metadata edit + git commit, simultaneous uploads)
-  - [ ] Identify critical sections (git operations, SQLite writes)
-  - [ ] Prioritize: Which scenarios are most likely?
-  - [ ] Impact assessment: What data could be corrupted?
+- [x] Analyze Epic 1 concurrency scenarios (AC: 1, 4)
+  - [x] Document overlap between metadata edits and version creation.
+  - [x] Document overlap between file replacement, history reads, and rollback.
+  - [x] Identify the highest-risk corruption or ambiguity cases.
 
-- [ ] Choose Lock Mechanism
-  - [ ] Evaluate Option 1: File-based locks (.git/index.lock detection)
-  - [ ] Evaluate Option 2: In-memory locks (per file, in Redux store)
-  - [ ] Evaluate Option 3: Optimistic locking (version numbers, retry on conflict)
-  - [ ] Recommend: File-based + in-memory hybrid
-  - [ ] Rationale: Simple, reliable, leverages git's existing lock
+- [x] Define the lock and coordination model (AC: 2, 3, 10)
+  - [x] Specify which operations need app-managed coordination.
+  - [x] Clarify interaction with git-native lock files.
+  - [x] Define timeout and cleanup rules without assuming unsafe force-release behavior.
 
-- [ ] Design Lock Manager
-  - [ ] Lock states: UNLOCKED, ACQUIRING, LOCKED, RELEASING
-  - [ ] Lock data: { fileId, acquiredAt, owner, timeout }
-  - [ ] Functions: `acquireLock()`, `releaseLock()`, `waitForLock()`, `checkTimeout()`
-  - [ ] Timeout: 5 seconds (git ops should complete in <500ms, 5s is buffer)
-  - [ ] Retry logic: If lock held >5s, release forcefully (assume deadlock)
+- [x] Define user and recovery behavior (AC: 5, 7)
+  - [x] Specify visible states such as saving, waiting, queued, retrying, and failed.
+  - [x] Align failure behavior with the `PRE-1.3` error catalog.
 
-- [ ] Design UI Feedback
-  - [ ] During commit: Show "Saving version..." spinner (non-blocking)
-  - [ ] If user edits during commit: Show "File is updating. Wait or try again."
-  - [ ] Buttons disabled during commit: Prevent conflicting edits
-  - [ ] Timeout feedback: "Update taking longer than expected. Check disk/permissions."
-  - [ ] Accessibility: Status messages announced to screen readers
-
-- [ ] Define Conflict Resolution
-  - [ ] Metadata edit + git commit overlap → Metadata change queued, committed after git finishes
-  - [ ] Dual file uploads → Queue second upload, process sequentially
-  - [ ] Philosophy: FIFO (first-in-first-out) with clear ordering
-  - [ ] User visibility: Show queue status ("2 uploads pending")
-
-- [ ] Design Test Scenarios
-  - [ ] Unit tests: Lock acquire/release, timeout handling
-  - [ ] Integration tests: Concurrent metadata edits, concurrent uploads
-  - [ ] Stress test: 10 simultaneous uploads (should queue correctly)
-  - [ ] Stress test: 100 rapid metadata changes (should batch correctly)
-  - [ ] Chaos test: Forcefully kill git process → lock not released → timeout should recover
-
-- [ ] Document Implementation
-  - [ ] Lock manager pseudocode (class structure, methods)
-  - [ ] Usage examples: How to acquire lock before critical operation
-  - [ ] Error handling: What to do if lock acquisition fails
-  - [ ] Logging: Log all lock events for debugging
+- [x] Publish the implementation-facing strategy (AC: 6, 8, 9)
+  - [x] Write the concurrent-editing strategy document.
+  - [x] Include test scenarios for QA.
+  - [x] Cross-check dependency alignment with `PRE-1.4`.
 
 ---
 
-## Lock Manager Pseudocode (Reference)
+## Dev Notes
 
-```typescript
-class LockManager {
-  private locks: Map<string, Lock> = new Map();
-  private readonly LOCK_TIMEOUT = 5000; // 5 seconds
+### Relevant Context
 
-  async acquireLock(fileId: string, owner: string): Promise<Lock> {
-    const timeout = Date.now() + this.LOCK_TIMEOUT;
-    
-    while (true) {
-      if (!this.locks.has(fileId)) {
-        const lock = { fileId, owner, acquiredAt: Date.now() };
-        this.locks.set(fileId, lock);
-        return lock;
-      }
-      
-      if (Date.now() > timeout) {
-        this.locks.delete(fileId); // Force release on timeout
-        return this.acquireLock(fileId, owner);
-      }
-      
-      await sleep(50);
-    }
-  }
+[Source: `docs/prd/epic-1-creative-production.md`]
+- Epic 1 already describes lock awareness, queueing, retries, and visible user feedback during versioning-related operations.
+- Rollback and version creation are especially sensitive to overlapping writes.
 
-  releaseLock(fileId: string): void {
-    this.locks.delete(fileId);
-  }
+[Source: `docs/fullstack-architecture.md`]
+- The architecture references lock files and async, non-blocking operations as part of the local-first workflow.
 
-  isLocked(fileId: string): boolean {
-    return this.locks.has(fileId);
-  }
-}
-```
+[Source: `docs/stories/0.4.git-sync-setup.md`]
+- External `.sync-locks/` artifacts exist for sync-state coordination, but this story must focus on application/versioning concurrency rather than incorrectly treating external lock folders as repository-managed app state.
+
+[Source: `docs/concurrent-editing-strategy.md`]
+- The dedicated strategy defines per-file app-managed coordination, ownership tokens, lock lease rules, timeout/cleanup behavior, and QA scenario coverage.
+- The document extends `PRE-1.4` rather than redefining the git flow, and maps directly onto the error codes established in `PRE-1.3`.
+
+### Sequencing Notes
+
+- Execute this after `PRE-1.4`.
+- This story refines concurrent operation behavior for the versioning/history/rollback feature set, so it should not start until the main git flow is already defined.
+
+### Testing
+
+- The resulting strategy must give QA concrete scenarios for contention, timeout, retry, and recovery testing.
+- Reviewers should pay special attention to deadlock risk, stale-lock cleanup, and user-visible ambiguity during retries.
 
 ---
 
-## Success Criteria
+## Change Log
 
-✅ @dev has clear strategy to prevent data corruption  
-✅ Concurrent operations handled safely  
-✅ Users understand what's happening (UI feedback)  
-✅ Test scenarios defined for QA
-
----
-
-## Blockers
-
-This story **blocks** Epic 1 features: 1.2, 1.3, 1.5
+| Date | Version | Description | Author |
+|------|---------|-------------|--------|
+| 2026-04-03 | 2.1 | PM gate passed and the story was formally closed during the pre-Epic 1 backlog wave | @po (Pax) |
+| 2026-04-03 | 1.0 | Story created (PRE-1.5) | @sm (River) |
+| 2026-04-03 | 1.2 | Reworked sequencing and normalized story structure to template v2 expectations | @sm (River) |
+| 2026-04-03 | 2.0 | Authored the dedicated concurrent editing strategy and prepared the story for PM quality gate review | @architect (Aria) |
 
 ---
 
-**Created:** 2026-04-03  
-**Modified:** 2026-04-03 (Formal template v2.0)  
-**Depends On:** PRE-1.4 complete  
-**Blocks:** Stories 1.2-1.3-1.5
+## Dev Agent Record
+
+### Agent Model Used
+
+GPT-5 Codex
+
+### Debug Log References
+
+- `Get-Content -Raw docs/stories/PRE-1.5.concurrent-editing-strategy.md`
+- `Get-Content -Raw docs/git-integration-flow.md`
+- `Get-Content -Raw docs/error-handling-spec.md`
+- `rg -n "lock|concurrent|queue|retry|timeout|rollback|history|replace|save" docs/prd/epic-1-creative-production.md docs/fullstack-architecture.md docs/storage-sync-strategy.md docs/stories/0.4.git-sync-setup.md -S`
+- `npm run lint`
+- `npm run typecheck`
+- `npm test -- --runInBand`
+
+### Completion Notes List
+
+- Created `docs/concurrent-editing-strategy.md` as the dedicated Epic 1 concurrency architecture artifact required by AC9.
+- Defined the main same-file contention scenarios across metadata save, file replacement, history reads, queued versioning work, and rollback.
+- Specified a per-file app-managed lock model with owner tokens, lease state, timeout, cleanup, and explicit prohibition on unsafe force-release behavior.
+- Kept the design consistent with `PRE-1.4` by treating git-native locks as observed constraints rather than app-owned resources.
+- Mapped the strategy directly to `PRE-1.3` error codes and added QA scenario coverage for contention, timeout, retry, and stale-state recovery.
+- Revalidated repository quality gates after the documentation work and prepared the PM gate artifacts.
+
+### File List
+
+- `docs/concurrent-editing-strategy.md`
+- `docs/stories/PRE-1.5.concurrent-editing-strategy.md`
+- `docs/stories/PRE-1.5/READY_FOR_QUALITY_GATE.md`
+- `.aiox/handoffs/orion-to-pm-pre-1.5-quality-gate.yaml`
+
+---
+
+## QA Results
+
+Primary quality gate for this story was the assigned PM review, not a separate QA pass.
+
+- Gate artifact: `docs/stories/PRE-1.5/PM_QUALITY_GATE.md`
+- Outcome: PASS
+- Closeout note: The concurrency strategy is approved and no blocking findings remain for this story.
