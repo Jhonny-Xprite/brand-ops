@@ -21,22 +21,37 @@ build/
 .next/
 out/
 
-# IDE
+# IDE & Editor
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
-.DS_Store
+.c9/
+.project
+.classpath
+*.launch
+.settings/
+*.sublime-workspace
 
 # Logs
 logs/
 *.log
 npm-debug.log*
+yarn-debug.log*
+lerna-debug.log*
 
 # Testing
 coverage/
 .nyc_output/
+
+# Cache & Performance
+.aiox/
+.ai/
+qa/
+reports/
+.eslintcache
+.turbo/
 
 # AIOX Runtime (gitignored)
 .aiox/logs/
@@ -47,7 +62,9 @@ coverage/
 tmp/
 temp/
 *.tmp
+*.bak
 
 # OS
 Thumbs.db
+ehthumbs.db
 .DS_Store
