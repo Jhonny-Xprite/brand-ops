@@ -11,7 +11,12 @@
     "lint": "eslint src --ext .ts,.js",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
-    "prisma:studio": "prisma studio"
+    "prisma:studio": "prisma studio",
+    "sync:ide": "node .aiox-core/infrastructure/scripts/ide-sync/index.js",
+    "sync:ide:check": "node .aiox-core/infrastructure/scripts/ide-sync/index.js --check",
+    "sync:skills:codex": "node .aiox-core/infrastructure/scripts/codex-skills-sync/index.js",
+    "validate:structure": "node .aiox-core/infrastructure/scripts/aiox-validator.js",
+    "validate:agents": "node .aiox-core/infrastructure/scripts/validate-agents.js"
   },
   "keywords": [
     "ai",
@@ -30,11 +35,14 @@
     "react-redux": "^9.2.0"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
     "@types/jest": "^29.5.11",
     "@types/node": "^20.19.39",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "jest": "^29.7.0",
+    "jest-environment-jsdom": "^30.3.0",
     "prisma": "^5.9.1",
     "ts-jest": "^29.1.1",
     "typescript": "^5.3.3"
