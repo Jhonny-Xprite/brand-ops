@@ -4,12 +4,20 @@
  */
 
 export type {
-  Creative,
-  Metadata,
-  Version,
+  CreativeFile,
+  FileMetadata,
+  PersistedFileMetadata,
+  FileVersion,
   SyncMetadata,
   ApiResponse,
   PaginationParams,
   PaginatedResponse,
   FilterOptions,
+} from './models'
+
+export {
+  parseFileMetadataTags,
+  serializeFileMetadataTags,
+  toAppFileMetadata,
+  toPersistedFileMetadata,
 } from './models'

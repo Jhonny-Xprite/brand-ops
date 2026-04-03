@@ -10,68 +10,70 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Creative assets (PSD, images, videos, etc)
-model Creative {
+// Creative file records used by Epic 1 creative production flows
+model CreativeFile {
   id        String   @id @default(cuid())
-  name      String
-  type      String   // psd, png, jpg, mp4, etc
-  path      String   // File system path
-  fileSize  Int      // Size in bytes
+  path      String   @unique
+  filename  String
+  type      String
+  size      BigInt
+  mimeType  String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  // Relations
-  metadata   Metadata?
-  versions   Version[]
+  metadata     FileMetadata?
+  versions     FileVersion[]
   syncMetadata SyncMetadata?
 
-  @@index([createdAt])
+  @@index([filename])
+  @@index([type])
 }
 
-// Asset metadata (descriptions, tags, properties)
-model Metadata {
-  id          String   @id @default(cuid())
-  description String?
-  tags        String?  // Comma-separated or JSON
-  properties  String?  // JSON for extensibility
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  // Relations
-  creativeId String  @unique
-  creative   Creative @relation(fields: [creativeId], references: [id], onDelete: Cascade)
-
-  @@index([creativeId])
-}
-
-// Version history for assets
-model Version {
+// User-editable metadata for a creative file
+model FileMetadata {
   id        String   @id @default(cuid())
-  versionNumber Int
-  changes   String?  // Change description
-  createdAt DateTime @default(now())
+  fileId    String   @unique
+  type      String
+  status    String
+  tags      String   @default("[]") // JSON-encoded array for SQLite persistence
+  notes     String?
+  updatedAt DateTime @updatedAt
 
-  // Relations
-  creativeId String
-  creative   Creative @relation(fields: [creativeId], references: [id], onDelete: Cascade)
+  file CreativeFile @relation(fields: [fileId], references: [id], onDelete: Cascade)
 
-  @@index([creativeId, versionNumber])
+  @@index([fileId])
+  @@index([type])
+  @@index([status])
 }
 
-// Sync metadata for tracking asset synchronization
+// Immutable version history for file and metadata changes
+model FileVersion {
+  id         String   @id @default(cuid())
+  fileId     String
+  versionNum Int
+  commitHash String
+  message    String
+  createdAt  DateTime @default(now())
+
+  file CreativeFile @relation(fields: [fileId], references: [id], onDelete: Cascade)
+
+  @@unique([fileId, versionNum])
+  @@index([fileId])
+}
+
+// Existing sync-oriented metadata preserved for later sync/versioning epics
 model SyncMetadata {
-  id              String   @id @default(cuid())
-  lastSyncTime    DateTime?
-  syncStatus      String   @default("pending") // pending, syncing, synced, failed
-  syncError       String?
-  externalId      String?  // ID in external system
-  externalSource  String?  // Source system (e.g., "dropbox", "google-drive")
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id             String   @id @default(cuid())
+  lastSyncTime   DateTime?
+  syncStatus     String   @default("pending")
+  syncError      String?
+  externalId     String?
+  externalSource String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  fileId         String   @unique
 
-  // Relations
-  creativeId String  @unique
-  creative   Creative @relation(fields: [creativeId], references: [id], onDelete: Cascade)
+  file CreativeFile @relation(fields: [fileId], references: [id], onDelete: Cascade)
 
-  @@index([creativeId, syncStatus])
+  @@index([fileId, syncStatus])
 }
