@@ -1,0 +1,59 @@
+{
+  "language": "portuguese",
+  "boundary": {
+    "frameworkProtection": true,
+    "description": "Protege L1-L2 (framework core e templates) contra modificações não-autorizadas"
+  },
+  "agent-authority": {
+    "exclusive-operations": {
+      "git-push": "@devops",
+      "gh-pr-create": "@devops",
+      "gh-pr-merge": "@devops",
+      "story-creation": ["@sm", "@po"],
+      "architecture-decisions": "@architect",
+      "quality-verdicts": "@qa"
+    }
+  },
+  "memory": {
+    "enabled": true,
+    "location": ".claude/projects/d--MINI-PROJETOS-AIOX-brand-ops/memory",
+    "auto-save": true
+  },
+  "codes-review": {
+    "enabled": true,
+    "tool": "coderabbit",
+    "mode": "light",
+    "max-iterations": 2
+  },
+  "mcp-servers": [
+    {
+      "name": "playwright",
+      "enabled": true,
+      "purpose": "Browser automation, screenshots"
+    },
+    {
+      "name": "desktop-commander",
+      "enabled": true,
+      "purpose": "Docker container operations"
+    }
+  ],
+  "ids-system": {
+    "enabled": true,
+    "decision-hierarchy": ["REUSE", "ADAPT", "CREATE"],
+    "registry-path": ".aiox-core/core/registry/",
+    "pre-create-check": true,
+    "pre-modify-check": true
+  },
+  "permissions": {
+    "mode": "ask",
+    "auto-approve-local": true
+  },
+  "hooks": {
+    "pre-commit": {
+      "enabled": false
+    },
+    "post-merge": {
+      "enabled": false
+    }
+  }
+}

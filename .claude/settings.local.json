@@ -1,0 +1,50 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node \"d:/MINI-PROJETOS-AIOX/brand-ops/bin/aiox.js\" doctor)",
+      "Bash(node \"d:/MINI-PROJETOS-AIOX/brand-ops/bin/aiox.js\" validate)",
+      "Bash(ping -c 1 github.com)",
+      "Bash(git --version)",
+      "Bash(gh --version)",
+      "Bash(npm --version)",
+      "Bash(gh auth:*)",
+      "Bash(gh repo:*)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"D:\\\\MINI-PROJETOS-AIOX\\\\brand-ops\\\\.claude\\\\hooks\\\\code-intel-pretool.cjs\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"D:\\\\MINI-PROJETOS-AIOX\\\\brand-ops\\\\.claude\\\\hooks\\\\precompact-session-digest.cjs\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"D:\\\\MINI-PROJETOS-AIOX\\\\brand-ops\\\\.claude\\\\hooks\\\\synapse-engine.cjs\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}
