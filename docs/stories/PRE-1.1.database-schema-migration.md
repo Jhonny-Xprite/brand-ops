@@ -16,7 +16,7 @@ metadata:
 # Story PRE-1.1: Database Schema Migration - Creative Files
 
 ## Status
-Review
+Done
 
 ## Executor Assignment
 
@@ -175,6 +175,7 @@ quality_gate_tools:
 
 | Date | Version | Description | Author |
 |------|---------|-------------|--------|
+| 2026-04-03 | 2.2 | Story formally closed after QA re-review PASS and pre-Epic 1 backlog normalization | @po (Pax) |
 | 2026-04-03 | 1.0 | Story created (PRE-1.1) | @sm (River) |
 | 2026-04-03 | 1.2 | Reworked sequencing and normalized story structure to template v2 expectations | @sm (River) |
 | 2026-04-03 | 1.3 | PO validation: clarified tags persistence, SyncMetadata handling, and local reset policy | @po (Pax) |

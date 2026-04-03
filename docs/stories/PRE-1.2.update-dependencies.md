@@ -16,7 +16,7 @@ metadata:
 # Story PRE-1.2: Update Dependencies for Epic 1
 
 ## Status
-Ready for Review
+Done
 
 ## Executor Assignment
 
@@ -156,6 +156,7 @@ quality_gate_tools:
 
 | Date | Version | Description | Author |
 |------|---------|-------------|--------|
+| 2026-04-03 | 2.1 | Architect gate passed and the story was formally closed during the pre-Epic 1 backlog wave | @po (Pax) |
 | 2026-04-03 | 1.0 | Story created (PRE-1.2) | @sm (River) |
 | 2026-04-03 | 1.2 | Reworked sequencing and normalized story structure to template v2 expectations | @sm (River) |
 | 2026-04-03 | 2.0 | Installed missing Epic 1 dependencies, preserved existing test baseline, and validated dependency health | @dev (Dex) |
@@ -194,4 +195,8 @@ GPT-5 Codex
 
 ## QA Results
 
-To be completed by QA agent.
+Primary quality gate for this story was the assigned architecture review, not a separate QA pass.
+
+- Gate artifact: `docs/stories/PRE-1.2/ARCHITECT_QUALITY_GATE.md`
+- Outcome: PASS
+- Closeout note: No blocking findings remain for this story and the dependency baseline is approved for Epic 1.
