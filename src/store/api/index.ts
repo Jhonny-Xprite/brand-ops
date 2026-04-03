@@ -27,7 +27,7 @@ const baseQuery = fetchBaseQuery({
 export const apiSlice = createApi({
   reducerPath: 'api',
   baseQuery,
-  tagTypes: ['Creative', 'Metadata', 'Version', 'SyncMetadata'],
+  tagTypes: ['CreativeFile', 'FileMetadata', 'FileVersion', 'SyncMetadata'],
   endpoints: () => ({
     // Placeholder endpoints - will be implemented in future stories
   }),

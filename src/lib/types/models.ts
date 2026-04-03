@@ -1,69 +1,121 @@
+import type {
+  CreativeFile as PrismaCreativeFile,
+  FileMetadata as PrismaFileMetadata,
+  FileVersion as PrismaFileVersion,
+  SyncMetadata as PrismaSyncMetadata,
+} from '@prisma/client'
+
 /**
  * Data Models - TypeScript Interfaces
- * Mirrors Prisma schema from Story 0.1
+ * These interfaces intentionally mirror the persisted Prisma schema.
  */
 
 /**
- * Creative Asset
- * Represents creative files (PSD, PNG, JPG, MP4, etc)
+ * Creative file record.
  */
-export interface Creative {
-  id: string
-  name: string
-  type: string // 'psd', 'png', 'jpg', 'mp4', etc
-  path: string // File system path
-  fileSize: number // Size in bytes
-  mimeType?: string // MIME type (optional)
-  status?: 'active' | 'archived' | 'draft' // Asset status
-  tags?: string[] // Search tags
-  notes?: string // Additional notes
-  createdAt: Date
-  updatedAt: Date
+export interface CreativeFile {
+  id: PrismaCreativeFile['id']
+  path: PrismaCreativeFile['path']
+  filename: PrismaCreativeFile['filename']
+  type: PrismaCreativeFile['type']
+  size: PrismaCreativeFile['size']
+  mimeType: PrismaCreativeFile['mimeType']
+  createdAt: PrismaCreativeFile['createdAt']
+  updatedAt: PrismaCreativeFile['updatedAt']
 }
 
 /**
- * Metadata
- * Stores additional information about creative assets
+ * File metadata persisted for a creative file.
+ * `tags` is exposed to the app as `string[]`.
  */
-export interface Metadata {
-  id: string
-  creativeId: string // Foreign key to Creative
-  designer?: string // Designer name
-  campaign?: string // Campaign/project name
-  targetAudience?: string // Target audience description
-  format?: string // Format specifications (dimensions, duration, etc)
-  customFields?: Record<string, unknown> // Extensible custom fields
-  createdAt: Date
-  updatedAt: Date
+export interface FileMetadata {
+  id: PrismaFileMetadata['id']
+  fileId: PrismaFileMetadata['fileId']
+  type: PrismaFileMetadata['type']
+  status: PrismaFileMetadata['status']
+  tags: string[]
+  notes: PrismaFileMetadata['notes']
+  updatedAt: PrismaFileMetadata['updatedAt']
 }
 
 /**
- * Version
- * Tracks version history of creative assets
+ * Persisted Prisma/SQLite representation for file metadata.
+ * `tags` remains a JSON-encoded string in storage.
  */
-export interface Version {
-  id: string
-  creativeId: string // Foreign key to Creative
-  versionNumber: number // Version number (1, 2, 3, etc)
-  commitHash?: string // Git commit hash (if applicable)
-  message?: string // Commit/version message
-  createdAt: Date
+export interface PersistedFileMetadata {
+  id: PrismaFileMetadata['id']
+  fileId: PrismaFileMetadata['fileId']
+  type: PrismaFileMetadata['type']
+  status: PrismaFileMetadata['status']
+  tags: PrismaFileMetadata['tags']
+  notes: PrismaFileMetadata['notes']
+  updatedAt: PrismaFileMetadata['updatedAt']
 }
 
 /**
- * SyncMetadata
- * Tracks synchronization status with external services
+ * Convert JSON-encoded tag storage into the app-level array contract.
+ */
+export function parseFileMetadataTags(tags: PersistedFileMetadata['tags']): FileMetadata['tags'] {
+  try {
+    const parsed: unknown = JSON.parse(tags)
+    return Array.isArray(parsed) && parsed.every((tag) => typeof tag === 'string') ? parsed : []
+  } catch {
+    return []
+  }
+}
+
+/**
+ * Convert app-level tag arrays into the persisted SQLite representation.
+ */
+export function serializeFileMetadataTags(tags: FileMetadata['tags']): PersistedFileMetadata['tags'] {
+  return JSON.stringify(tags)
+}
+
+/**
+ * Bridge the persisted Prisma shape to the app-facing contract.
+ */
+export function toAppFileMetadata(metadata: PersistedFileMetadata): FileMetadata {
+  return {
+    ...metadata,
+    tags: parseFileMetadataTags(metadata.tags),
+  }
+}
+
+/**
+ * Bridge the app-facing contract back to the persisted Prisma/SQLite shape.
+ */
+export function toPersistedFileMetadata(metadata: FileMetadata): PersistedFileMetadata {
+  return {
+    ...metadata,
+    tags: serializeFileMetadataTags(metadata.tags),
+  }
+}
+
+/**
+ * Immutable version history entry.
+ */
+export interface FileVersion {
+  id: PrismaFileVersion['id']
+  fileId: PrismaFileVersion['fileId']
+  versionNum: PrismaFileVersion['versionNum']
+  commitHash: PrismaFileVersion['commitHash']
+  message: PrismaFileVersion['message']
+  createdAt: PrismaFileVersion['createdAt']
+}
+
+/**
+ * Sync state persisted for later sync/versioning flows.
  */
 export interface SyncMetadata {
-  id: string
-  entityId: string // ID of synced entity (creative or other)
-  lastSyncAt?: Date // Last synchronization timestamp
-  syncHash?: string // Hash of last sync state
-  isSynced: boolean // Current sync status
-  externalId?: string // ID in external system
-  externalSource?: string // External source (dropbox, google-drive, etc)
-  createdAt: Date
-  updatedAt: Date
+  id: PrismaSyncMetadata['id']
+  lastSyncTime: PrismaSyncMetadata['lastSyncTime']
+  syncStatus: PrismaSyncMetadata['syncStatus']
+  syncError: PrismaSyncMetadata['syncError']
+  externalId: PrismaSyncMetadata['externalId']
+  externalSource: PrismaSyncMetadata['externalSource']
+  createdAt: PrismaSyncMetadata['createdAt']
+  updatedAt: PrismaSyncMetadata['updatedAt']
+  fileId: PrismaSyncMetadata['fileId']
 }
 
 /**
