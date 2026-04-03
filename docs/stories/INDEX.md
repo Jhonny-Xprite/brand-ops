@@ -1,46 +1,83 @@
 # Development Stories
 
 **Documentation Index for User Stories**  
-**Status:** ⏳ To be Created in PHASE 3  
+**Status:** Foundations and PRE blockers closed; Epic 1 implementation batch validated and ready  
 **Owner:** @sm (River — Scrum Master)  
 
 ---
 
-## 📁 Stories Structure (Future)
+## 📁 Stories Structure
 
 ```
 stories/
-├── INDEX.md                         # (this file)
+├── INDEX.md
 ├── epic-1/
-│   ├── 1.1.story.md               # Story 1 of Epic 1
-│   ├── 1.2.story.md               # Story 2 of Epic 1
-│   └── ...
-├── epic-2/
-│   ├── 2.1.story.md
-│   └── ...
-├── epic-3/
-│   └── ...
-├── epic-4/
-│   └── ...
-├── epic-5/
-│   └── ...
-├── epic-6/
-│   └── ...
-└── epic-7/
-    └── ...
+│   ├── 1.1a.file-browser-ui.md
+│   ├── 1.1b.metadata-editor.md
+│   ├── 1.1c.creative-library-integration.md
+│   ├── 1.2.auto-versioning-git.md
+│   ├── 1.3.version-history-viewer.md
+│   └── 1.4.instant-rollback.md
+├── 0.x foundation stories
+└── PRE-1.x blocker stories
 ```
 
 ---
 
+## Closed Story Waves
+
+### Foundations Closed
+
+| Story | Title | Status |
+|---|---|---|
+| `0.1` | Prisma Setup & Database Foundation | Done |
+| `0.2` | Project Structure & TypeScript Types | Done |
+| `0.3` | Service Worker & Offline Detection | Done |
+| `0.4` | Git Repository & Sync Configuration | Done |
+
+### PRE Blockers Closed
+
+| Story | Title | Status |
+|---|---|---|
+| `PRE-1.1` | Database Schema Migration | Done |
+| `PRE-1.2` | Update Dependencies | Done |
+| `PRE-1.3` | Error Handling Specs | Done |
+| `PRE-1.4` | Git Integration Flow | Done |
+| `PRE-1.5` | Concurrent Editing Strategy | Done |
+
+---
+
+## Current Epic 1 Story Set
+
+### Created On 2026-04-03
+
+| Order | Story | Status | Depends On |
+|---|---|---|---|
+| 1 | `1.1a` File Browser UI | Ready | Foundations + PRE blockers complete |
+| 2 | `1.1b` Metadata Editor | Ready | `1.1a` |
+| 3 | `1.1c` Creative Library Integration Hardening | Ready | `1.1a`, `1.1b` |
+| 4 | `1.2` Auto-Versioning Git Integration | Ready | `1.1c`, `PRE-1.4`, `PRE-1.5` |
+| 5 | `1.3` Version History Viewer | Ready | `1.2` |
+| 6 | `1.4` Instant Rollback | Ready | `1.3` |
+
+### Story Files
+
+- [1.1a.file-browser-ui.md](./epic-1/1.1a.file-browser-ui.md)
+- [1.1b.metadata-editor.md](./epic-1/1.1b.metadata-editor.md)
+- [1.1c.creative-library-integration.md](./epic-1/1.1c.creative-library-integration.md)
+- [1.2.auto-versioning-git.md](./epic-1/1.2.auto-versioning-git.md)
+- [1.3.version-history-viewer.md](./epic-1/1.3.version-history-viewer.md)
+- [1.4.instant-rollback.md](./epic-1/1.4.instant-rollback.md)
+
 ## ⏳ When This Index Updates
 
-**PHASE 3 (Development Cycle) — When @sm creates stories:**
+**PHASE 3 (Development Cycle):**
 
-1. **@sm reads sharded epics** from `docs/prd/epic-*.md`
-2. **@sm creates 30-40 stories** (4-6 per epic)
+1. **@sm creates story batches** from the validated epic docs
+2. **@po validates each batch** before execution starts
 3. **Stories stored** in `docs/stories/epic-{N}/`
-4. **Each story links** to parent epic
-5. **This INDEX updated** with story references
+4. **Each story links** to parent epic and active prerequisites
+5. **This INDEX updates** as new epic batches are added
 
 ---
 
@@ -48,7 +85,7 @@ stories/
 
 | Epic | Stories Expected | Total Hours | Story Size |
 |------|-----------------|-------------|-----------|
-| 1 - Creative Production | 5-6 | 120h | 20-25h each |
+| 1 - Creative Production | 6 created | 120h | 10-30h each |
 | 2 - Search & Filtering | 4-5 | 80h | 15-20h each |
 | 3 - Timeline & Analytics | 3-4 | 60h | 15-20h each |
 | 4 - Sync & Versioning | 4-5 | 90h | 18-22h each |
@@ -135,11 +172,10 @@ Each story will follow AIOX-CORE template:
 
 ## 📊 Estimated Timeline (PHASE 3)
 
-### Week 1-2: Stories Created
-- @sm creates all 30-40 stories
-- Stories reviewed + estimated
-- Development assignments made
-- Preparation begins
+### Current Progress
+- Epic 1 implementation stories created after PRE blockers completion
+- Next authority: `@po` validation of the new Epic 1 batch
+- Other epics still pending story creation
 
 ### Week 3-6: Active Development (Waves)
 - **Wave 1:** Epic 6 (Database) + Epic 1 (Creative Production)
@@ -200,16 +236,14 @@ Each story is "Done" when:
 
 ## 🚀 Next Steps
 
-### When PHASE 3 Starts (2026-04-05 est.)
-1. @sm reads all 7 epics from `docs/prd/epic-*.md`
-2. @sm creates stories in `docs/stories/epic-{N}/`
-3. Update this INDEX with story list
-4. @po validates stories (10-point checklist)
-5. Development begins
+### Immediate Next Step
+1. `@master` sequences the first Epic 1 implementation wave
+2. `@dev` begins with `1.1a`
+3. `@qa` prepares the story-level execution gate once implementation starts
 
 ### This INDEX Updates When
-- [x] PHASE 3 starts (activate @sm)
-- [ ] Stories created (update story list)
+- [x] PHASE 3 starts for Epic 1
+- [x] Epic 1 stories created (update story list)
 - [ ] First wave completes (celebrate!)
 - [ ] Each epic's stories complete (mark done)
 
@@ -217,5 +251,5 @@ Each story is "Done" when:
 
 **Index Owner:** @sm (River — Scrum Master)  
 **Framework:** AIOX-CORE  
-**Status:** ⏳ Placeholder (Ready for PHASE 3)  
-**Next Action:** Create stories when development cycle starts
+**Status:** Pre-Epic 1 closeout complete; Epic 1 batch ready for execution sequencing  
+**Next Action:** Start Story `1.1a` as the first Epic 1 implementation story
