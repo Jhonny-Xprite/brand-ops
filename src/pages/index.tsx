@@ -1,117 +1,207 @@
+import { useEffect, useState } from 'react'
 import Head from 'next/head'
-import Link from 'next/link'
-import { useTranslation } from '@/lib/i18n/TranslationContext'
-import { 
-  Library, 
-  Terminal, 
-  Layers, 
-  ChevronRight,
-  ShieldCheck
-} from 'lucide-react'
-import { FadeIn, BrandHealth, BrandLogo } from '@/components/atoms'
-import { SkipToContent } from '@/components/atoms/SkipToContent'
+import { useProjects } from '@/hooks/useProjects'
+import { ProjectCard } from '@/components/Projects/ProjectCard'
+import { ProjectListRow } from '@/components/Projects/ProjectListRow'
+import { ViewToggle } from '@/components/Projects/ViewToggle'
+import { ProjectSearch } from '@/components/Projects/ProjectSearch'
+import { CreateProjectModal } from '@/components/Projects/CreateProjectModal'
+import { SyncStatusFooter } from '@/components/Projects/SyncStatusFooter'
+import { Plus } from 'lucide-react'
+
+interface Project {
+  id: string
+  name: string
+  logoUrl?: string
+  assetCount: number
+  createdAt: string
+}
 
 /**
- * Home Page (Strategic Command Center)
- * The entry point for the elite Brand-Ops platform.
- * Features a minimalist command UI, BHI gamification, and orchestrated entry.
+ * Home Page - Project Selection Screen (Story 0.2)
+ * Displays all user projects in grid or list view with search and creation capabilities
  */
 export default function Home() {
-  const { t } = useTranslation()
-  
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [filteredProjects, setFilteredProjects] = useState<Project[]>([])
+  const [mounted, setMounted] = useState(false)
+
+  const {
+    projects,
+    loading,
+    error,
+    syncStatus,
+    syncError,
+    fetchProjects,
+    retry,
+  } = useProjects()
+
+  // Restore view preference from localStorage on mount
+  useEffect(() => {
+    const savedViewMode = localStorage.getItem('projectsViewMode') as 'grid' | 'list' | null
+    if (savedViewMode) {
+      setViewMode(savedViewMode)
+    }
+    setMounted(true)
+  }, [])
+
+  // Fetch projects on mount
+  useEffect(() => {
+    fetchProjects()
+  }, [fetchProjects])
+
+  // Persist view mode to localStorage
+  const handleViewModeChange = (newMode: 'grid' | 'list') => {
+    setViewMode(newMode)
+    localStorage.setItem('projectsViewMode', newMode)
+  }
+
+
+  // Handle project selection
+  const handleSelectProject = (projectId: string) => {
+    // TODO: Navigate to project context/details page
+    console.log('Selected project:', projectId)
+  }
+
+  if (!mounted) return null
+
   return (
-    <div className="min-h-screen bg-surface-canvas selection:bg-action-primary/10 overflow-x-hidden">
-      <SkipToContent contentId="main-content">Skip to Command</SkipToContent>
+    <div className="min-h-screen bg-gray-50 flex flex-col">
       <Head>
-        <title>Brand-Ops | Command Center</title>
-        <meta name="description" content="Strategic Brand Operations Engine" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Projetos - Brand-Ops</title>
+        <meta name="description" content="Selecione um projeto para começar" />
       </Head>
 
-      <main id="main-content" className="relative container mx-auto px-6 py-24 md:py-32">
-        {/* Deep Field Gradient (Alma da Marca) */}
-        <div className="absolute top-0 left-1/2 -z-10 h-[800px] w-full -translate-x-1/2 opacity-30 blur-[120px] bg-gradient-to-b from-action-primary/10 to-transparent pointer-events-none" />
-
-        <div className="max-w-5xl mx-auto">
-          {/* Header Section: Strategic Identity */}
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-24">
-            <FadeIn direction="down" className="flex-1">
-              <div className="flex items-center gap-4 mb-8">
-                <BrandLogo size={48} variant="solid" className="shadow-xl" />
-                <div className="h-10 w-px bg-border/20 mx-2" />
-                <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-action-primary/60">
-                  Mission Protocol 1.1a
-                </span>
+      {/* Main Content */}
+      <main className="flex-1">
+        {/* Header */}
+        <div className="bg-white border-b border-gray-200">
+          <div className="max-w-7xl mx-auto px-6 py-8">
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900">Meus Projetos</h1>
+                <p className="text-gray-600 mt-2">
+                  {projects.length} {projects.length === 1 ? 'projeto' : 'projetos'} disponível{projects.length !== 1 ? 's' : ''}
+                </p>
               </div>
-              <h1 className="text-6xl md:text-8xl font-display font-bold tracking-tight text-text leading-[0.9]">
-                Comande seus <br />
-                <span className="text-action-primary italic">Ativos Vivos.</span>
-              </h1>
-              <p className="mt-8 text-xl text-text-muted max-w-xl font-medium leading-relaxed">
-                Transforme intenção estratégica em realidade visual instantânea. 
-                Zero ruído. Clareza radical.
+
+              {/* New Project Button */}
+              <button
+                onClick={() => setIsModalOpen(true)}
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
+              >
+                <Plus size={20} />
+                Novo Projeto
+              </button>
+            </div>
+
+            {/* Controls */}
+            <div className="flex items-center justify-between gap-6">
+              <ProjectSearch projects={projects} onFilterChange={setFilteredProjects} />
+              <ViewToggle viewMode={viewMode} onChange={handleViewModeChange} />
+            </div>
+          </div>
+        </div>
+
+        {/* Projects Content */}
+        <div className="max-w-7xl mx-auto px-6 py-12 flex-1">
+          {error && !loading && (
+            <div className="mb-8 p-4 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-red-800">
+                Erro ao carregar projetos: {error}
               </p>
-            </FadeIn>
+            </div>
+          )}
 
-            {/* Gamification: Brand Health Index (BHI) Indicator */}
-            <FadeIn delay={0.2} direction="left" className="flex flex-col items-center md:items-end gap-4 translate-y-4">
-              <BrandHealth score={42} size="lg" label="BHI Status" />
-              <div className="px-5 py-2 rounded-full glass-l2 flex items-center gap-2">
-                <ShieldCheck className="h-4 w-4 text-status-warning" />
-                <span className="text-[10px] font-bold uppercase tracking-widest text-text-muted">
-                  Estratégia: Necessita Decisão
-                </span>
+          {loading && !projects.length ? (
+            <div className="flex items-center justify-center py-24">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4" />
+                <p className="text-gray-600">Carregando projetos...</p>
               </div>
-            </FadeIn>
-          </div>
-
-          {/* Navigation Grid (The Command Board) */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-32">
-            <Link href="/creative-library" className="group">
-              <FadeIn delay={0.3} direction="up" className="panel-shell p-10 h-full transition-all hover:border-action-primary/50 hover:bg-surface/80 group-active:scale-[0.97] glass-l2 border-white/10">
-                <div className="flex items-start justify-between mb-16">
-                  <div className="h-16 w-16 rounded-3xl bg-action-primary/5 flex items-center justify-center text-action-primary group-hover:bg-action-primary group-hover:text-white transition-all duration-500 shadow-sm group-hover:shadow-xl group-hover:shadow-action-primary/20">
-                    <Library className="h-8 w-8" />
-                  </div>
-                  <ChevronRight className="h-6 w-6 text-border/40 group-hover:text-action-primary group-hover:translate-x-1 transition-all" />
-                </div>
-                <h3 className="text-3xl font-display font-bold text-text mb-4">{t('creative_library.title')}</h3>
-                <p className="text-lg text-text-muted font-medium leading-relaxed">
-                  {t('creative_library.description')}
-                </p>
-              </FadeIn>
-            </Link>
-
-            <Link href="/design-system" className="group">
-              <FadeIn delay={0.4} direction="up" className="panel-shell p-10 h-full transition-all hover:border-action-primary/50 hover:bg-surface/80 group-active:scale-[0.97] glass-l1 border-dashed">
-                <div className="flex items-start justify-between mb-16">
-                  <div className="h-16 w-16 rounded-3xl bg-surface-muted flex items-center justify-center text-text-muted group-hover:bg-text group-hover:text-text-inverse transition-all duration-500">
-                    <Layers className="h-8 w-8" />
-                  </div>
-                  <ChevronRight className="h-6 w-6 text-border/40 group-hover:text-action-primary group-hover:translate-x-1 transition-all" />
-                </div>
-                <h3 className="text-3xl font-display font-bold text-text mb-4">Pattern Lab</h3>
-                <p className="text-lg text-text-muted font-medium leading-relaxed">
-                  Single Source of Truth. Visualize átomos, física rígia e a lógica espacial.
-                </p>
-              </FadeIn>
-            </Link>
-          </div>
-
-          {/* Global Terminal Info Footer */}
-          <FadeIn delay={0.6} direction="up" className="border-t border-border/20 pt-16 flex flex-col md:flex-row justify-between items-center gap-8">
-            <div className="flex items-center gap-3 text-[11px] font-bold uppercase tracking-[0.4em] text-text-muted/40">
-              <Terminal className="h-4 w-4" />
-              <span>AIOX Brand-Ops Framework v1.0.0</span>
             </div>
-            <div className="flex gap-10">
-              <Link href="/design-system" className="text-[11px] font-bold uppercase tracking-widest text-text-muted/60 hover:text-action-primary transition-colors">Design Ops</Link>
-              <a href="#" className="text-[11px] font-bold uppercase tracking-widest text-text-muted/60 hover:text-action-primary transition-colors">Audit Protocol</a>
-              <a href="#" className="text-[11px] font-bold uppercase tracking-widest text-text-muted/60 hover:text-action-primary transition-colors">Onliness Docs</a>
+          ) : filteredProjects.length === 0 ? (
+            <div className="text-center py-24">
+              <div className="text-gray-400 mb-4">📁</div>
+              <h2 className="text-xl font-semibold text-gray-900 mb-2">
+                Nenhum projeto encontrado
+              </h2>
+              <p className="text-gray-600 mb-6">
+                {projects.length === 0
+                  ? 'Crie seu primeiro projeto para começar'
+                  : 'Nenhum projeto corresponde à sua busca'}
+              </p>
+              {projects.length === 0 && (
+                <button
+                  onClick={() => setIsModalOpen(true)}
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
+                >
+                  <Plus size={20} />
+                  Criar Primeiro Projeto
+                </button>
+              )}
             </div>
-          </FadeIn>
+          ) : viewMode === 'grid' ? (
+            /* Grid View */
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredProjects.map((project) => (
+                <ProjectCard
+                  key={project.id}
+                  {...project}
+                  onSelect={handleSelectProject}
+                />
+              ))}
+            </div>
+          ) : (
+            /* List View */
+            <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+              <table className="w-full">
+                <thead className="bg-gray-50 border-b border-gray-200">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">
+                      Logo
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">
+                      Nome
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">
+                      Assets
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">
+                      Criado em
+                    </th>
+                    <th className="px-6 py-3" />
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredProjects.map((project) => (
+                    <ProjectListRow
+                      key={project.id}
+                      {...project}
+                      onSelect={handleSelectProject}
+                    />
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       </main>
+
+      {/* Create Project Modal */}
+      <CreateProjectModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSuccess={() => fetchProjects()}
+      />
+
+      {/* Sync Status Footer */}
+      <SyncStatusFooter
+        syncStatus={syncStatus}
+        error={syncError}
+        onRetry={retry}
+      />
     </div>
   )
 }

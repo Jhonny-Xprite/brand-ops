@@ -5,6 +5,7 @@ import { apiSlice } from './api'
 import filesReducer from './creativeLibrary/files.slice'
 import metadataReducer from './creativeLibrary/metadata.slice'
 import versioningReducer from './creativeLibrary/versioning.slice'
+import projectsReducer from './projects/projects.slice'
 
 const isReduxSerializable = (value: unknown): boolean => {
   if (value == null) {
@@ -42,6 +43,7 @@ export const createAppStore = () =>
       files: filesReducer,
       metadata: metadataReducer,
       versioning: versioningReducer,
+      projects: projectsReducer,
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware({

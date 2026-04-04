@@ -24,6 +24,7 @@ model CreativeFile {
   metadata     FileMetadata?
   versions     FileVersion[]
   syncMetadata SyncMetadata?
+  projects     Project[] // Projects using this file as logo
 
   @@index([filename])
   @@index([type])
@@ -76,4 +77,18 @@ model SyncMetadata {
   file CreativeFile @relation(fields: [fileId], references: [id], onDelete: Cascade)
 
   @@index([fileId, syncStatus])
+}
+
+// Project model for brand/client project organization (Story 0.2)
+model Project {
+  id        String   @id @default(cuid())
+  name      String
+  logoFileId String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  logoFile CreativeFile? @relation(fields: [logoFileId], references: [id], onDelete: SetNull)
+
+  @@index([name])
+  @@index([createdAt])
 }

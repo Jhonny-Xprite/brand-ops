@@ -23,7 +23,8 @@
       "Bash(npm run:*)",
       "Bash(npm test:*)",
       "Bash(wsl bash:*)",
-      "Bash(wc -l docs/stories/*.md)"
+      "Bash(wc -l docs/stories/*.md)",
+      "Bash(grep -E \"\\\\.\\(ts|js\\)$\")"
     ]
   },
   "hooks": {

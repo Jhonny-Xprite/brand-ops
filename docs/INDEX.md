@@ -36,7 +36,7 @@ docs/
 
 ### 👨‍💻 For Developers
 - **Getting Started:** [guides/getting-started.md](guides/getting-started.md) — Setup instructions
-- **Coding Standards:** [architecture/coding-standards.md](architecture/coding-standards.md) — Development guidelines
+- **Coding Standards:** [framework/coding-standards.md](framework/coding-standards.md) — Development guidelines
 - **Source Tree:** [architecture/source-tree.md](architecture/source-tree.md) — File organization
 - **Epic Specs:** [prd/epic-*.md](prd/) — Feature specifications (1-7)
 
@@ -46,7 +46,7 @@ docs/
 
 ### 🧪 For QA & Testing
 - **Tech Stack:** [architecture/tech-stack.md](architecture/tech-stack.md) — Test frameworks
-- **Coding Standards:** [architecture/coding-standards.md](architecture/coding-standards.md#🧪-testing-standards) — Test coverage requirements
+- **Coding Standards:** [framework/coding-standards.md](framework/coding-standards.md#🧪-testing-standards) — Test coverage requirements
 
 ### 📊 For DevOps & Infrastructure
 - **Storage Strategy:** [architecture/storage-sync-strategy.md](architecture/storage-sync-strategy.md) — Local + rclone + Google Drive
@@ -81,7 +81,7 @@ System design, tech stack, and development standards.
 | [fullstack-architecture.md](architecture/fullstack-architecture.md) | Complete system design | 350+ | ✅ Complete |
 | [tech-stack.md](architecture/tech-stack.md) | Dependencies + versions | 400+ | ✅ Complete |
 | [source-tree.md](architecture/source-tree.md) | File organization map | 400+ | ✅ Complete |
-| [coding-standards.md](architecture/coding-standards.md) | Development guidelines | 400+ | ✅ Complete |
+| [coding-standards.md](framework/coding-standards.md) | Development guidelines | 400+ | ✅ Complete |
 | [storage-sync-strategy.md](architecture/storage-sync-strategy.md) | Storage + sync design | 500+ | ✅ Complete |
 | [front-end-spec.md](architecture/front-end-spec.md) | UI/UX + 15 patterns | 1200+ | ✅ Complete |
 
@@ -137,7 +137,7 @@ prd/brand-ops-mvp.md (Master PRD)
   ├─ architecture/fullstack-architecture.md (System design)
   │   ├─ architecture/tech-stack.md (Dependencies)
   │   ├─ architecture/source-tree.md (File organization)
-  │   ├─ architecture/coding-standards.md (Dev guidelines)
+  │   ├─ framework/coding-standards.md (Dev guidelines)
   │   └─ architecture/storage-sync-strategy.md (Storage design)
   ├─ architecture/front-end-spec.md (UI/UX design)
   │   └─ research/market-research-award-winners.md (15 UX patterns)
@@ -153,7 +153,7 @@ prd/brand-ops-mvp.md (Master PRD)
 
 **Before Development?**
 1. [prd/epic-N.md](prd/) — Understand your epic
-2. [architecture/coding-standards.md](architecture/coding-standards.md) — Learn code style
+2. [framework/coding-standards.md](framework/coding-standards.md) — Learn code style
 3. [architecture/source-tree.md](architecture/source-tree.md) — Navigate codebase
 
 **For Architecture Review?**
@@ -186,7 +186,7 @@ Quick search by topic:
 | **7 Epics** | [prd/](prd/) | epic-1 through epic-7 |
 | **Architecture** | [architecture/fullstack-architecture.md](architecture/fullstack-architecture.md) | System Overview |
 | **Tech Stack** | [architecture/tech-stack.md](architecture/tech-stack.md) | Frontend/Backend/Sync |
-| **Coding** | [architecture/coding-standards.md](architecture/coding-standards.md) | TypeScript/React/Testing |
+| **Coding** | [framework/coding-standards.md](framework/coding-standards.md) | TypeScript/React/Testing |
 | **Design** | [architecture/front-end-spec.md](architecture/front-end-spec.md) | Violet+Gold, 15 Patterns |
 | **Storage** | [architecture/storage-sync-strategy.md](architecture/storage-sync-strategy.md) | Local + Google Drive |
 | **UX Patterns** | [research/market-research-award-winners.md](research/market-research-award-winners.md) | 15 Products |

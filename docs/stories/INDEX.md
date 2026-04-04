@@ -42,11 +42,11 @@
 
 | ID | Story Title | Status |
 |----|-------------|--------|
-| [PRE-1.1](./PRE-1.1.database-schema-migration.md) | Database Schema Migration | Done |
-| [PRE-1.2](./PRE-1.2.update-dependencies.md) | Update Dependencies | Done |
-| [PRE-1.3](./PRE-1.3.error-handling-specs.md) | Error Handling Specs | Done |
-| [PRE-1.4](./PRE-1.4.git-integration-flow.md) | Git Integration Flow | Done |
-| [PRE-1.5](./PRE-1.5.concurrent-editing-strategy.md) | Concurrent Editing Strategy | Done |
+| [PRE-1.1](./pre-blockers/PRE-1.1.database-schema-migration.md) | Database Schema Migration | Done |
+| [PRE-1.2](./pre-blockers/PRE-1.2.update-dependencies.md) | Update Dependencies | Done |
+| [PRE-1.3](./pre-blockers/PRE-1.3.error-handling-specs.md) | Error Handling Specs | Done |
+| [PRE-1.4](./pre-blockers/PRE-1.4.git-integration-flow.md) | Git Integration Flow | Done |
+| [PRE-1.5](./pre-blockers/PRE-1.5.concurrent-editing-strategy.md) | Concurrent Editing Strategy | Done |
 
 ---
 
