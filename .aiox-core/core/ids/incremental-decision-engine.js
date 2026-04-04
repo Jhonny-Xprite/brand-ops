@@ -18,16 +18,17 @@ const STOP_WORDS = new Set([
   'as', 'at', 'by', 'from', 'has', 'have', 'had', 'was', 'were',
   'will', 'would', 'can', 'could', 'should', 'do', 'does', 'did',
   'i', 'we', 'you', 'my', 'our', 'your', 'its', 'their',
+  'create', 'new', 'add', 'make', 'build', 'generate', 'produce',
 ]);
 
 const MIN_KEYWORD_LENGTH = 3;
 const MAX_KEYWORDS_PER_ENTITY = 15;
-const KEYWORD_OVERLAP_WEIGHT = 0.6;
-const PURPOSE_SIMILARITY_WEIGHT = 0.4;
-const THRESHOLD_MINIMUM = 0.4;
+const KEYWORD_OVERLAP_WEIGHT = 0.5;
+const PURPOSE_SIMILARITY_WEIGHT = 0.5;
+const THRESHOLD_MINIMUM = 0.35;
 const MAX_RESULTS = 20;
 const CACHE_TTL_MS = 300_000; // 300 seconds
-const ADAPT_IMPACT_THRESHOLD = 0.30; // Calibrate after 90 days (ADR-IDS-001 Roundtable #2)
+const ADAPT_IMPACT_THRESHOLD = 0.40; // Calibrate after 90 days (ADR-IDS-001 Roundtable #2)
 
 class IncrementalDecisionEngine {
   /**
@@ -327,20 +328,20 @@ class IncrementalDecisionEngine {
   _applyDecisionMatrix(evaluation) {
     const { relevanceScore, canAdapt, adaptationImpact } = evaluation;
 
-    if (relevanceScore >= 0.9) {
+    if (relevanceScore >= 0.85) {
       return { action: 'REUSE', confidence: 'high' };
     }
 
     if (
-      relevanceScore >= 0.6 &&
-      canAdapt.score >= 0.6 &&
+      relevanceScore >= 0.5 &&
+      canAdapt.score >= 0.5 &&
       adaptationImpact.percentage < ADAPT_IMPACT_THRESHOLD
     ) {
-      const confidence = relevanceScore >= 0.8 ? 'high' : 'medium';
+      const confidence = relevanceScore >= 0.75 ? 'high' : 'medium';
       return { action: 'ADAPT', confidence };
     }
 
-    const confidence = relevanceScore >= 0.6 ? 'medium' : 'low';
+    const confidence = relevanceScore >= 0.5 ? 'medium' : 'low';
     return { action: 'CREATE', confidence };
   }
 

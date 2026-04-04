@@ -1,5 +1,6 @@
 ---
-description: Ativa o agente Squad-creator
+name: squad-creator
+description: Ativa o agente Squad Creator
 ---
 
 # Ativação do Agente Squad-creator

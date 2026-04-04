@@ -1,7 +1,7 @@
 # Decision Heuristics Framework
 
 > **Version:** 1.0.0
-> **Source:** AIOX Quality Standards
+> **Source:** AIOS Quality Standards
 
 Framework for creating decision heuristics that validate choices at workflow checkpoints.
 
@@ -13,40 +13,40 @@ Every decision heuristic must have this structure:
 
 ```yaml
 heuristic:
-  id: '{PREFIX}_{AREA}_{NUMBER}' # e.g., "QA_STR_001"
-  name: 'Human-readable name'
-  type: 'Decision Heuristic'
-  phase: 1-N # Which workflow phase
-  agent: '@squad:agent-name' # Which agent applies it
+  id: "{PREFIX}_{AREA}_{NUMBER}"  # e.g., "QA_STR_001"
+  name: "Human-readable name"
+  type: "Decision Heuristic"
+  phase: 1-N                      # Which workflow phase
+  agent: "@squad:agent-name"      # Which agent applies it
 
   # Weighted criteria
   weights:
-    criterion_1: 0.9 # 0.0 to 1.0
+    criterion_1: 0.9              # 0.0 to 1.0
     criterion_2: 0.8
     criterion_3: 0.7
 
   # Minimum thresholds for pass
   thresholds:
-    criterion_1: 0.8 # Must score >= this
+    criterion_1: 0.8              # Must score >= this
     criterion_2: 0.7
-    criterion_3: null # Context-dependent
+    criterion_3: null             # Context-dependent
 
   # Conditions that BLOCK progress
   veto_conditions:
-    - condition: 'criterion_1 < 0.7'
-      action: 'VETO - Return to previous phase'
-    - condition: 'critical_check = false'
-      action: 'VETO - Cannot proceed'
+    - condition: "criterion_1 < 0.7"
+      action: "VETO - Return to previous phase"
+    - condition: "critical_check = false"
+      action: "VETO - Cannot proceed"
 
   # What to do when veto triggers
   feedback_on_failure:
-    - 'Specific remediation step 1'
-    - 'Specific remediation step 2'
+    - "Specific remediation step 1"
+    - "Specific remediation step 2"
 
   # Output decision
   output:
-    type: 'decision'
-    values: ['APPROVE', 'REVIEW', 'VETO']
+    type: "decision"
+    values: ["APPROVE", "REVIEW", "VETO"]
 ```
 
 ---
@@ -55,7 +55,7 @@ heuristic:
 
 Every heuristic needs a decision tree:
 
-```text
+```
 PRIMARY BRANCH (highest priority):
   IF (critical_condition_violated)
     THEN VETO → immediate action
@@ -82,9 +82,9 @@ FALLBACK: What to do in edge cases
 
 ```yaml
 strategic_alignment:
-  id: '{PREFIX}_STR_001'
-  name: 'Strategic Alignment Check'
-  phase: 'early (architecture/planning)'
+  id: "{PREFIX}_STR_001"
+  name: "Strategic Alignment Check"
+  phase: "early (architecture/planning)"
 
   weights:
     vision_clarity: 0.9
@@ -97,8 +97,8 @@ strategic_alignment:
     resource_efficiency: 0.5
 
   veto_conditions:
-    - condition: 'vision_clarity < 0.7'
-      action: 'VETO - Vision unclear, return to Discovery'
+    - condition: "vision_clarity < 0.7"
+      action: "VETO - Vision unclear, return to Discovery"
 
   decision_tree: |
     IF (action directly enables vision)
@@ -116,25 +116,25 @@ strategic_alignment:
 
 ```yaml
 coherence_scan:
-  id: '{PREFIX}_COH_001'
-  name: 'Coherence Validation'
-  phase: 'mid (executor assignment)'
+  id: "{PREFIX}_COH_001"
+  name: "Coherence Validation"
+  phase: "mid (executor assignment)"
 
   weights:
-    consistency: 1.0 # VETO power
+    consistency: 1.0           # VETO power
     system_fit: 0.8
     capability: 0.3
 
   thresholds:
-    consistency: 0.7 # Must be coherent
+    consistency: 0.7           # Must be coherent
     system_fit: 0.7
-    capability: null # Context-dependent
+    capability: null           # Context-dependent
 
   veto_conditions:
-    - condition: 'consistency < 0.7'
-      action: 'VETO - Reassign executor'
-    - condition: 'detected_incoherence = true'
-      action: 'VETO - Trust violation'
+    - condition: "consistency < 0.7"
+      action: "VETO - Reassign executor"
+    - condition: "detected_incoherence = true"
+      action: "VETO - Trust violation"
 
   decision_tree: |
     PRIMARY:
@@ -154,25 +154,25 @@ coherence_scan:
 
 ```yaml
 automation_decision:
-  id: '{PREFIX}_AUT_001'
-  name: 'Automation Tipping Point'
-  phase: 'mid (workflow design)'
+  id: "{PREFIX}_AUT_001"
+  name: "Automation Tipping Point"
+  phase: "mid (workflow design)"
 
   weights:
     frequency: 0.7
     impact: 0.9
     automatability: 0.8
-    guardrails_present: 1.0 # VETO power
+    guardrails_present: 1.0    # VETO power
 
   thresholds:
-    frequency: '2x per month'
+    frequency: "2x per month"
     impact: 0.6
     automatability: 0.5
     standardization: 0.7
 
   veto_conditions:
-    - condition: 'guardrails_missing = true'
-      action: 'VETO - Define safety guardrails first'
+    - condition: "guardrails_missing = true"
+      action: "VETO - Define safety guardrails first"
 
   decision_tree: |
     IF (automatability > 0.5 AND guardrails_present)
@@ -184,12 +184,12 @@ automation_decision:
     CONSTRAINT: NEVER automate without guardrails
 
   automation_rules:
-    - trigger: 'Task repeated 2+ times'
-      action: 'Document and automate'
-    - trigger: 'Task repeated 3+ times without automation'
-      assessment: 'Design failure - immediate remediation'
-    - trigger: 'Any automation'
-      requirement: 'Must have guardrails, logs, manual escape'
+    - trigger: "Task repeated 2+ times"
+      action: "Document and automate"
+    - trigger: "Task repeated 3+ times without automation"
+      assessment: "Design failure - immediate remediation"
+    - trigger: "Any automation"
+      requirement: "Must have guardrails, logs, manual escape"
 ```
 
 ---
@@ -198,11 +198,11 @@ automation_decision:
 
 Standard format for documenting criteria:
 
-| Criterion   | Weight | Threshold | VETO Power | Description      |
-| ----------- | ------ | --------- | ---------- | ---------------- |
-| criterion_1 | 0.9    | ≥0.8      | YES        | What it measures |
-| criterion_2 | 0.8    | ≥0.7      | NO         | What it measures |
-| criterion_3 | 0.7    | Context   | NO         | What it measures |
+| Criterion | Weight | Threshold | VETO Power | Description |
+|-----------|--------|-----------|------------|-------------|
+| criterion_1 | 0.9 | ≥0.8 | YES | What it measures |
+| criterion_2 | 0.8 | ≥0.7 | NO | What it measures |
+| criterion_3 | 0.7 | Context | NO | What it measures |
 
 ---
 
@@ -212,19 +212,19 @@ Every heuristic should document failure modes:
 
 ```yaml
 failure_modes:
-  - name: 'False Positive'
-    trigger: 'What causes false approval'
-    manifestation: 'What happens when it fails'
-    detection: 'How to detect the failure'
-    recovery: 'How to fix it'
-    prevention: 'How to prevent it'
+  - name: "False Positive"
+    trigger: "What causes false approval"
+    manifestation: "What happens when it fails"
+    detection: "How to detect the failure"
+    recovery: "How to fix it"
+    prevention: "How to prevent it"
 
-  - name: 'False Negative'
-    trigger: 'What causes false rejection'
-    manifestation: 'What happens'
-    detection: 'How to detect'
-    recovery: 'How to fix'
-    prevention: 'How to prevent'
+  - name: "False Negative"
+    trigger: "What causes false rejection"
+    manifestation: "What happens"
+    detection: "How to detect"
+    recovery: "How to fix"
+    prevention: "How to prevent"
 ```
 
 ---
@@ -235,28 +235,28 @@ Heuristics integrate with workflow checkpoints:
 
 ```yaml
 checkpoint:
-  id: 'checkpoint-name'
-  heuristic: '{PREFIX}_{AREA}_{NUMBER}'
+  id: "checkpoint-name"
+  heuristic: "{PREFIX}_{AREA}_{NUMBER}"
   phase: N
 
   criteria:
-    - metric: 'metric_name'
+    - metric: "metric_name"
       threshold: 0.8
-      operator: '>='
-    - metric: 'another_metric'
+      operator: ">="
+    - metric: "another_metric"
       threshold: 0.7
-      operator: '>='
+      operator: ">="
 
   veto_conditions:
-    - condition: 'condition_expression'
-      action: 'HALT - Reason'
+    - condition: "condition_expression"
+      action: "HALT - Reason"
 
   validation_questions:
-    - 'Question to verify criterion 1?'
-    - 'Question to verify criterion 2?'
+    - "Question to verify criterion 1?"
+    - "Question to verify criterion 2?"
 
-  pass_action: 'Proceed to Phase N+1'
-  fail_action: 'Return to Phase N-1 with feedback'
+  pass_action: "Proceed to Phase N+1"
+  fail_action: "Return to Phase N-1 with feedback"
 ```
 
 ---
@@ -267,11 +267,11 @@ Track heuristic performance:
 
 ```yaml
 performance:
-  decision_speed: 'Time to make decision'
-  accuracy_rate: 'Percentage of correct decisions'
-  confidence_level: 'Confidence in decisions'
-  resource_efficiency: '0-10 scale'
-  context_sensitivity: '0-10 scale'
+  decision_speed: "Time to make decision"
+  accuracy_rate: "Percentage of correct decisions"
+  confidence_level: "Confidence in decisions"
+  resource_efficiency: "0-10 scale"
+  context_sensitivity: "0-10 scale"
 ```
 
 ---
@@ -318,7 +318,7 @@ performance:
 
 Heuristics work within quality gates:
 
-```text
+```
 ┌─────────────────────────────────────────┐
 │  QUALITY GATE                           │
 ├─────────────────────────────────────────┤
@@ -345,7 +345,6 @@ Heuristics work within quality gates:
 ### 10.1 The Problem
 
 Large-scope squads created "on the fly" result in:
-
 - Incomplete coverage (workflows missed)
 - Poor prioritization (no roadmap)
 - Technical debt (rushing to create many agents)
@@ -355,15 +354,15 @@ Large-scope squads created "on the fly" result in:
 
 ```yaml
 scope_complexity_heuristic:
-  id: 'SC_SCP_001'
-  name: 'Scope Complexity Gate'
-  phase: 'phase_0 (Discovery)'
+  id: "SC_SCP_001"
+  name: "Scope Complexity Gate"
+  phase: "phase_0 (Discovery)"
   blocking: true
 
   thresholds:
-    workflows_mapped: 10 # >= 10 workflows = PRD required
-    agents_needed: 8 # >= 8 agents = PRD required
-    domain_precedent: false # No similar squad exists = higher risk
+    workflows_mapped: 10       # >= 10 workflows = PRD required
+    agents_needed: 8           # >= 8 agents = PRD required
+    domain_precedent: false    # No similar squad exists = higher risk
 
   decision_tree: |
     PRIMARY CHECK - Workflow Count:
@@ -388,8 +387,8 @@ scope_complexity_heuristic:
       ELSE → PROCEED with direct squad creation
 
   veto_conditions:
-    - condition: 'workflows_mapped >= 10'
-      action: 'VETO - PRD obrigatório'
+    - condition: "workflows_mapped >= 10"
+      action: "VETO - PRD obrigatório"
       message: |
         ❌ ESCOPO GRANDE DEMAIS
 
@@ -403,9 +402,9 @@ scope_complexity_heuristic:
 
         Quer que eu crie o PRD agora?
 
-    - condition: 'agents_needed >= 8'
-      action: 'VETO - Roadmap obrigatório'
-      message: 'Precisa de roadmap de implementação para {n} agents'
+    - condition: "agents_needed >= 8"
+      action: "VETO - Roadmap obrigatório"
+      message: "Precisa de roadmap de implementação para {n} agents"
 
   rationale: |
     PRD para squads grandes garante:
@@ -420,22 +419,22 @@ scope_complexity_heuristic:
 
 ```yaml
 prd_structure:
-  location: 'docs/projects/{domain}/prd.md'
+  location: "docs/projects/{domain}/prd.md"
 
   required_sections:
-    - overview: 'O que o squad faz, para quem'
-    - workflows_mapped: 'Lista completa de workflows (tabela)'
-    - agents_architecture: 'Tier distribution, handoffs'
-    - epics: 'Agrupamento lógico de trabalho'
-    - success_criteria: 'Como medir se está pronto'
+    - overview: "O que o squad faz, para quem"
+    - workflows_mapped: "Lista completa de workflows (tabela)"
+    - agents_architecture: "Tier distribution, handoffs"
+    - epics: "Agrupamento lógico de trabalho"
+    - success_criteria: "Como medir se está pronto"
 
   epic_structure:
-    - epic_1: 'Infraestrutura e Orquestrador'
-    - epic_2: 'Tier 0 - Diagnóstico/Onboarding'
-    - epic_3: 'Tier 1 - Execução Core'
-    - epic_4: 'Tier 2 - Comunicação/Consultoria'
-    - epic_5: 'Tier 3 - Especialistas'
-    - epic_6: 'Integração e Automação'
+    - epic_1: "Infraestrutura e Orquestrador"
+    - epic_2: "Tier 0 - Diagnóstico/Onboarding"
+    - epic_3: "Tier 1 - Execução Core"
+    - epic_4: "Tier 2 - Comunicação/Consultoria"
+    - epic_5: "Tier 3 - Especialistas"
+    - epic_6: "Integração e Automação"
 
   story_format: |
     ## Story: {título}
@@ -459,30 +458,30 @@ prd_structure:
 ```yaml
 examples:
   triggers_prd:
-    - scenario: 'Squad Contabilidade MEI/Simples'
+    - scenario: "Squad Contabilidade MEI/Simples"
       workflows: 54
       agents: 14
-      decision: 'VETO - PRD obrigatório'
-      reason: '54 workflows >> 10 threshold'
+      decision: "VETO - PRD obrigatório"
+      reason: "54 workflows >> 10 threshold"
 
-    - scenario: 'Squad Legal Completo'
+    - scenario: "Squad Legal Completo"
       workflows: 25
       agents: 12
-      decision: 'VETO - PRD obrigatório'
-      reason: '25 workflows + 12 agents'
+      decision: "VETO - PRD obrigatório"
+      reason: "25 workflows + 12 agents"
 
   direct_creation:
-    - scenario: 'Squad de Email Marketing'
+    - scenario: "Squad de Email Marketing"
       workflows: 6
       agents: 4
-      decision: 'PROCEED - Criação direta'
-      reason: '6 workflows < 10 threshold'
+      decision: "PROCEED - Criação direta"
+      reason: "6 workflows < 10 threshold"
 
-    - scenario: 'Squad de Headlines'
+    - scenario: "Squad de Headlines"
       workflows: 3
       agents: 2
-      decision: 'PROCEED - Criação direta'
-      reason: 'Escopo pequeno e focado'
+      decision: "PROCEED - Criação direta"
+      reason: "Escopo pequeno e focado"
 ```
 
 ---
@@ -493,11 +492,11 @@ examples:
 
 ### 10.1 Available Specialists
 
-| Specialist         | Domain                                        | Activation                      |
-| ------------------ | --------------------------------------------- | ------------------------------- |
-| `@oalanicolas`     | Mind cloning, DNA extraction, source curation | `/squad-creator @oalanicolas`   |
-| `@pedro-valerio`   | Processes, tasks, checklists, automation      | `/squad-creator @pedro-valerio` |
-| `@squad-architect` | General squad creation, orchestration         | `/squad-creator` (default)      |
+| Specialist | Domain | Activation |
+|------------|--------|------------|
+| `@oalanicolas` | Mind cloning, DNA extraction, source curation | `/squad-creator @oalanicolas` |
+| `@pedro-valerio` | Processes, tasks, checklists, automation | `/squad-creator @pedro-valerio` |
+| `@squad-chief` | General squad creation, orchestration | `/squad-creator` (default) |
 
 ### 10.2 Decision Matrix
 
@@ -528,12 +527,12 @@ specialist_selection:
 
     TERTIARY - General Tasks:
       IF (task is general squad creation)
-        THEN use @squad-architect
+        THEN use @squad-chief
       IF (unclear which specialist)
-        THEN use @squad-architect (will delegate)
+        THEN use @squad-chief (will delegate)
 
     FALLBACK:
-      When in doubt → @squad-architect orchestrates
+      When in doubt → @squad-chief orchestrates
 
   keywords:
     oalanicolas:
@@ -556,7 +555,7 @@ specialist_selection:
 ```yaml
 handoff_rules:
   squad_architect_to_oalanicolas:
-    trigger: 'Mind cloning phase reached'
+    trigger: "Mind cloning phase reached"
     context_passed:
       - mind_name
       - domain
@@ -567,7 +566,7 @@ handoff_rules:
       - source_quality_report
 
   squad_architect_to_pedro_valerio:
-    trigger: 'Process/workflow design phase reached'
+    trigger: "Process/workflow design phase reached"
     context_passed:
       - workflow_files
       - task_files
@@ -578,7 +577,7 @@ handoff_rules:
       - automation_recommendations
 
   oalanicolas_to_pedro_valerio:
-    trigger: 'DNA extracted, need process validation'
+    trigger: "DNA extracted, need process validation"
     context_passed:
       - extracted_dna
       - agent_file
@@ -587,7 +586,7 @@ handoff_rules:
       - quality_gates
 
   pedro_valerio_to_oalanicolas:
-    trigger: 'Process ready, need mind integration'
+    trigger: "Process ready, need mind integration"
     context_passed:
       - validated_process
       - integration_points
@@ -599,23 +598,23 @@ handoff_rules:
 
 ```yaml
 anti_patterns:
-  - name: 'Wrong Specialist'
-    trigger: 'Using @pedro-valerio for voice extraction'
-    why_bad: 'Process expert, not mind cloning expert'
-    correction: 'Use @oalanicolas for DNA extraction'
+  - name: "Wrong Specialist"
+    trigger: "Using @pedro-valerio for voice extraction"
+    why_bad: "Process expert, not mind cloning expert"
+    correction: "Use @oalanicolas for DNA extraction"
 
-  - name: 'Skipping Specialists'
-    trigger: 'Trying to do everything with @squad-architect'
-    why_bad: 'Loses depth of specialized expertise'
-    correction: 'Delegate to specialists for their domains'
+  - name: "Skipping Specialists"
+    trigger: "Trying to do everything with @squad-chief"
+    why_bad: "Loses depth of specialized expertise"
+    correction: "Delegate to specialists for their domains"
 
-  - name: 'No Handoff Context'
-    trigger: 'Switching specialists without context'
-    why_bad: 'Loses continuity, duplicates work'
-    correction: 'Always pass context per handoff_rules'
+  - name: "No Handoff Context"
+    trigger: "Switching specialists without context"
+    why_bad: "Loses continuity, duplicates work"
+    correction: "Always pass context per handoff_rules"
 ```
 
 ---
 
-_AIOX Decision Heuristics Framework v1.1_
-_Updated: Specialist Selection Heuristic added_
+*AIOS Decision Heuristics Framework v1.1*
+*Updated: Specialist Selection Heuristic added*

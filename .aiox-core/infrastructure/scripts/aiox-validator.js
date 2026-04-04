@@ -9,7 +9,7 @@
  * Refactored to use execa for cross-platform compatibility
  */
 
-const { execaSync } = require('execa');
+const execa = require('execa');
 const fs = require('fs');
 const path = require('path');
 const yaml = require('js-yaml');
@@ -104,7 +104,7 @@ async function runESLint(files = []) {
     const filePattern = files.length > 0 ? files.join(' ') : '.';
     // ESLint 9.x: removed compact formatter from core, using default (stylish)
 
-    execaSync('npx', ['eslint', filePattern, '--cache', '--cache-location', '.eslintcache'], {
+    execa.sync('npx', ['eslint', filePattern, '--cache', '--cache-location', '.eslintcache'], {
       stdio: 'pipe',
       encoding: 'utf8',
     });
@@ -137,7 +137,7 @@ async function runTypeScript() {
   const errors = [];
 
   try {
-    execaSync('npx', ['tsc', '--noEmit'], {
+    execa.sync('npx', ['tsc', '--noEmit'], {
       stdio: 'pipe',
       encoding: 'utf8',
     });

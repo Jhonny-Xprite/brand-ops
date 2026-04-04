@@ -1,7 +1,7 @@
 # Quality Dimensions Framework
 
 > **Version:** 1.0.0
-> **Source:** AIOX Quality Standards
+> **Source:** AIOS Quality Standards
 
 Framework for evaluating squad outputs using multi-dimensional quality scoring.
 
@@ -10,7 +10,6 @@ Framework for evaluating squad outputs using multi-dimensional quality scoring.
 ## 1. Overview
 
 A comprehensive quality assessment uses 10 standardized dimensions. Each dimension has:
-
 - **Weight:** Relative importance (0.0-1.0)
 - **Threshold:** Minimum acceptable score
 - **Veto Power:** Whether low score blocks progress
@@ -23,84 +22,84 @@ A comprehensive quality assessment uses 10 standardized dimensions. Each dimensi
 
 ```yaml
 quality_dimensions:
-  pattern_reference: 'squad-creator/data/quality-dimensions-framework.md'
+  pattern_reference: "squad-creator/data/quality-dimensions-framework.md"
   total_dimensions: 10
 
   scoring:
     overall_threshold: 7.0
     minimum_per_dimension: 6.0
-    veto_on_failure: false # Default to REVIEW, not VETO
+    veto_on_failure: false  # Default to REVIEW, not VETO
 
   dimensions:
     1_accuracy:
-      name: 'Accuracy'
+      name: "Accuracy"
       weight: 1.0
       threshold: 7.0
       veto_power: true
-      description: 'Correctness verified by data/evidence'
+      description: "Correctness verified by data/evidence"
 
     2_coherence:
-      name: 'Coherence'
+      name: "Coherence"
       weight: 0.9
       threshold: 6.0
       veto_power: false
-      description: 'Internal consistency and alignment'
+      description: "Internal consistency and alignment"
 
     3_strategic_alignment:
-      name: 'Strategic Alignment'
+      name: "Strategic Alignment"
       weight: 0.9
       threshold: 6.0
       veto_power: false
-      description: 'Connection to goals and vision'
+      description: "Connection to goals and vision"
 
     4_operational_excellence:
-      name: 'Operational Excellence'
+      name: "Operational Excellence"
       weight: 0.8
       threshold: 6.0
       veto_power: false
-      description: 'Process quality and efficiency'
+      description: "Process quality and efficiency"
 
     5_innovation_capacity:
-      name: 'Innovation Capacity'
+      name: "Innovation Capacity"
       weight: 0.7
       threshold: 5.0
       veto_power: false
-      description: 'Ability to create novel solutions'
+      description: "Ability to create novel solutions"
 
     6_risk_management:
-      name: 'Risk Management'
+      name: "Risk Management"
       weight: 0.8
       threshold: 6.0
       veto_power: false
-      description: 'Identification and mitigation of risks'
+      description: "Identification and mitigation of risks"
 
     7_resource_optimization:
-      name: 'Resource Optimization'
+      name: "Resource Optimization"
       weight: 0.8
       threshold: 6.0
       veto_power: false
-      description: 'Efficient use of time, money, people'
+      description: "Efficient use of time, money, people"
 
     8_stakeholder_value:
-      name: 'Stakeholder Value'
+      name: "Stakeholder Value"
       weight: 0.7
       threshold: 6.0
       veto_power: false
-      description: 'Value delivered to all parties'
+      description: "Value delivered to all parties"
 
     9_sustainability:
-      name: 'Sustainability'
+      name: "Sustainability"
       weight: 0.7
       threshold: 6.0
       veto_power: false
-      description: 'Long-term viability'
+      description: "Long-term viability"
 
     10_adaptability:
-      name: 'Adaptability'
+      name: "Adaptability"
       weight: 0.6
       threshold: 5.0
       veto_power: false
-      description: 'Ability to respond to change'
+      description: "Ability to respond to change"
 ```
 
 ---
@@ -112,7 +111,6 @@ quality_dimensions:
 **Definition:** Correctness verified by data/evidence.
 
 **Scoring Criteria:**
-
 - 9-10: All claims verified, zero errors
 - 7-8: Minor inaccuracies, easily corrected
 - 5-6: Some unverified claims, needs review
@@ -120,7 +118,6 @@ quality_dimensions:
 - 1-2: Fundamentally incorrect
 
 **Red Flags:**
-
 - Claims without supporting evidence
 - Contradictions within the output
 - Outdated or incorrect data
@@ -130,7 +127,6 @@ quality_dimensions:
 **Definition:** Internal consistency and alignment.
 
 **Scoring Criteria:**
-
 - 9-10: Perfect internal consistency
 - 7-8: Minor inconsistencies, easily reconciled
 - 5-6: Some logical gaps
@@ -138,7 +134,6 @@ quality_dimensions:
 - 1-2: Incoherent
 
 **Red Flags:**
-
 - Statements contradict each other
 - Logic gaps in reasoning
 - Disconnected sections
@@ -148,7 +143,6 @@ quality_dimensions:
 **Definition:** Connection to goals and vision.
 
 **Scoring Criteria:**
-
 - 9-10: Directly enables strategic goals
 - 7-8: Clearly supports strategy
 - 5-6: Neutral, neither helps nor hinders
@@ -156,7 +150,6 @@ quality_dimensions:
 - 1-2: Contradicts strategic direction
 
 **Red Flags:**
-
 - No clear connection to objectives
 - Works against stated goals
 - Short-term focus at expense of long-term
@@ -166,7 +159,6 @@ quality_dimensions:
 **Definition:** Process quality and efficiency.
 
 **Scoring Criteria:**
-
 - 9-10: Optimal process, best practices
 - 7-8: Well-designed, minor improvements possible
 - 5-6: Functional but inefficient
@@ -174,7 +166,6 @@ quality_dimensions:
 - 1-2: Broken or missing processes
 
 **Red Flags:**
-
 - Manual work that should be automated
 - Missing documentation
 - Inconsistent execution
@@ -184,7 +175,6 @@ quality_dimensions:
 **Definition:** Ability to create novel solutions.
 
 **Scoring Criteria:**
-
 - 9-10: Breakthrough innovation
 - 7-8: Creative improvements
 - 5-6: Standard solutions
@@ -192,7 +182,6 @@ quality_dimensions:
 - 1-2: No innovation
 
 **Red Flags:**
-
 - Copy-paste solutions without adaptation
 - Ignoring new tools/methods
 - Resistance to improvement
@@ -202,7 +191,6 @@ quality_dimensions:
 **Definition:** Identification and mitigation of risks.
 
 **Scoring Criteria:**
-
 - 9-10: All risks identified and mitigated
 - 7-8: Major risks addressed
 - 5-6: Some risks identified, partial mitigation
@@ -210,7 +198,6 @@ quality_dimensions:
 - 1-2: No risk consideration
 
 **Red Flags:**
-
 - No contingency plans
 - Ignoring known risks
 - Single points of failure
@@ -220,7 +207,6 @@ quality_dimensions:
 **Definition:** Efficient use of time, money, people.
 
 **Scoring Criteria:**
-
 - 9-10: Optimal resource allocation
 - 7-8: Efficient with minor waste
 - 5-6: Acceptable efficiency
@@ -228,7 +214,6 @@ quality_dimensions:
 - 1-2: Grossly inefficient
 
 **Red Flags:**
-
 - Redundant work
 - Over-engineering
 - Under-utilization of available resources
@@ -238,7 +223,6 @@ quality_dimensions:
 **Definition:** Value delivered to all parties.
 
 **Scoring Criteria:**
-
 - 9-10: Exceptional value for all stakeholders
 - 7-8: Good value, meets expectations
 - 5-6: Minimal viable value
@@ -246,7 +230,6 @@ quality_dimensions:
 - 1-2: No clear value
 
 **Red Flags:**
-
 - Ignoring key stakeholder needs
 - Unbalanced value distribution
 - No clear benefit articulation
@@ -256,7 +239,6 @@ quality_dimensions:
 **Definition:** Long-term viability.
 
 **Scoring Criteria:**
-
 - 9-10: Built for perpetuity
 - 7-8: Sustainable with maintenance
 - 5-6: Medium-term viability
@@ -264,7 +246,6 @@ quality_dimensions:
 - 1-2: Not sustainable
 
 **Red Flags:**
-
 - Technical debt accumulation
 - Dependency on unsustainable resources
 - No maintenance plan
@@ -274,7 +255,6 @@ quality_dimensions:
 **Definition:** Ability to respond to change.
 
 **Scoring Criteria:**
-
 - 9-10: Highly flexible, easy to modify
 - 7-8: Adaptable with reasonable effort
 - 5-6: Some flexibility
@@ -282,7 +262,6 @@ quality_dimensions:
 - 1-2: Inflexible, locked in
 
 **Red Flags:**
-
 - Hardcoded assumptions
 - No extension points
 - Tightly coupled components
@@ -293,32 +272,32 @@ quality_dimensions:
 
 ```yaml
 quality_assessment:
-  subject: 'What is being assessed'
-  assessment_date: 'YYYY-MM-DD'
-  assessor: 'Who/what performed assessment'
+  subject: "What is being assessed"
+  assessment_date: "YYYY-MM-DD"
+  assessor: "Who/what performed assessment"
 
   dimensions:
-    - name: 'Accuracy'
+    - name: "Accuracy"
       score: 0-10
-      evidence: 'Supporting observations'
-      recommendations: ['Improvements']
+      evidence: "Supporting observations"
+      recommendations: ["Improvements"]
 
-    - name: 'Coherence'
+    - name: "Coherence"
       score: 0-10
-      evidence: 'Observations'
+      evidence: "Observations"
       recommendations: []
 
     # ... repeat for all 10 dimensions
 
-  overall_score: number # Weighted average
+  overall_score: number  # Weighted average
   pass_threshold: 7.0
-  status: 'PASS | FAIL | REVIEW'
+  status: "PASS | FAIL | REVIEW"
 
   summary:
     strengths: ["What's working well"]
-    weaknesses: ['What needs improvement']
-    critical_issues: ['Blocking issues']
-    recommendations: ['Prioritized actions']
+    weaknesses: ["What needs improvement"]
+    critical_issues: ["Blocking issues"]
+    recommendations: ["Prioritized actions"]
 ```
 
 ---
@@ -327,13 +306,13 @@ quality_assessment:
 
 ### Weighted Average Formula
 
-```text
+```
 overall_score = Σ(dimension_score × weight) / Σ(weights)
 ```
 
 ### Pass/Fail Logic
 
-```text
+```
 IF (overall_score >= 7.0 AND no_dimension < 6.0)
   THEN status = PASS
 ELSE IF (any_veto_dimension < threshold)
@@ -352,7 +331,7 @@ Adjust weights based on domain:
 
 ```yaml
 weights_override:
-  accuracy: 1.0 # Code must work
+  accuracy: 1.0        # Code must work
   operational_excellence: 0.9
   risk_management: 0.9
   sustainability: 0.8
@@ -362,7 +341,7 @@ weights_override:
 
 ```yaml
 weights_override:
-  stakeholder_value: 1.0 # Must resonate with audience
+  stakeholder_value: 1.0  # Must resonate with audience
   innovation_capacity: 0.9
   coherence: 0.9
 ```
@@ -384,22 +363,22 @@ Add quality assessment as a checkpoint:
 
 ```yaml
 checkpoint:
-  id: 'quality-gate'
-  type: 'quality_dimensions'
-  phase: 'final'
+  id: "quality-gate"
+  type: "quality_dimensions"
+  phase: "final"
 
-  dimensions_to_evaluate: 'all' # or specific list
+  dimensions_to_evaluate: "all"  # or specific list
 
   thresholds:
     overall: 7.0
     per_dimension: 6.0
 
   veto_dimensions:
-    - 'accuracy'
+    - "accuracy"
 
-  pass_action: 'Approve and publish'
-  fail_action: 'Return for revision'
-  review_action: 'Escalate to human'
+  pass_action: "Approve and publish"
+  fail_action: "Return for revision"
+  review_action: "Escalate to human"
 ```
 
 ---
@@ -410,17 +389,17 @@ Track scores over time:
 
 ```yaml
 tracking:
-  aggregate_by: ['month', 'quarter']
+  aggregate_by: ["month", "quarter"]
   metrics:
     - average_overall_score
     - dimension_averages
     - fail_rate
     - veto_rate
   alerts:
-    - condition: 'average_score < 7.0'
-      action: 'Review process quality'
+    - condition: "average_score < 7.0"
+      action: "Review process quality"
 ```
 
 ---
 
-_AIOX Quality Dimensions Framework v1.0_
+*AIOS Quality Dimensions Framework v1.0*

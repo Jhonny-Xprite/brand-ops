@@ -1,37 +1,42 @@
 /**
  * OfflineIndicator Component
- * Displays the current online/offline status with visual indicator
- *
- * Shows:
- * - 🟢 ONLINE (green) when connected
- * - 🔴 OFFLINE (red) when disconnected
+ * Displays the current online/offline status with semantic design-system styles.
  */
 
-import { useOnlineStatus } from '@/hooks/useOnlineStatus';
+import { useEffect, useState } from 'react'
+import { Wifi, WifiOff } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n/TranslationContext'
+
+import { useOnlineStatus } from '@/hooks/useOnlineStatus'
 
 export const OfflineIndicator: React.FC = () => {
-  const { isOnline, isLoading } = useOnlineStatus();
+  const { t } = useTranslation()
+  const { isOnline, isLoading } = useOnlineStatus()
+  const [isMounted, setIsMounted] = useState(false)
 
-  // Show nothing while loading to avoid flashing
-  if (isLoading) {
-    return null;
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
+
+  if (!isMounted || isLoading) {
+    return null
   }
+
+  const badgeClassName = isOnline
+    ? 'status-badge status-badge-success'
+    : 'status-badge status-badge-error'
 
   return (
     <div
-      className={`flex items-center gap-2 px-3 py-2 rounded-md font-semibold text-sm ${
-        isOnline
-          ? 'bg-green-100 text-green-800 border border-green-300'
-          : 'bg-red-100 text-red-800 border border-red-300'
-      }`}
+      className={badgeClassName}
       role="status"
       aria-live="polite"
-      aria-label={`Connection status: ${isOnline ? 'Online' : 'Offline'}`}
+      aria-label={`${t('status.online')}: ${isOnline ? t('status.online') : t('status.offline')}`}
     >
-      <span className="text-lg">{isOnline ? '🟢' : '🔴'}</span>
-      <span>{isOnline ? 'ONLINE' : 'OFFLINE'}</span>
+      {isOnline ? <Wifi aria-hidden="true" className="h-4 w-4" /> : <WifiOff aria-hidden="true" className="h-4 w-4" />}
+      <span>{isOnline ? t('status.online') : t('status.offline')}</span>
     </div>
-  );
-};
+  )
+}
 
-export default OfflineIndicator;
+export default OfflineIndicator

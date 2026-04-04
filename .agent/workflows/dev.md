@@ -1,4 +1,5 @@
 ---
+name: dev
 description: Ativa o agente Dev
 ---
 

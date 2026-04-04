@@ -1,4 +1,5 @@
 ---
+name: architect
 description: Ativa o agente Architect
 ---
 

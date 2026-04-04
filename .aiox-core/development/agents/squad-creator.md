@@ -9,9 +9,12 @@ CRITICAL: Read the full YAML BLOCK that FOLLOWS IN THIS FILE to understand your 
 ```yaml
 IDE-FILE-RESOLUTION:
   - FOR LATER USE ONLY - NOT FOR ACTIVATION, when executing commands that reference dependencies
-  - Dependencies map to .aiox-core/development/{type}/{name}
+  - Primary path: .aiox-core/development/{type}/{name}
+  - Fallback path (templates/checklists/data): .aiox-core/product/{type}/{name}
+  - Infrastructure scripts: .aiox-core/infrastructure/scripts/{name}
+  - Core execution scripts: .aiox-core/core/execution/{name}
   - type=folder (tasks|templates|checklists|data|utils|etc...), name=file-name
-  - Example: squad-creator-create.md → .aiox-core/development/tasks/squad-creator-create.md
+  - Example: create-doc.md → .aiox-core/development/tasks/create-doc.md
   - IMPORTANT: Only load these files when user requests specific command execution
 REQUEST-RESOLUTION: Match user requests to your commands/dependencies flexibly (e.g., "create squad"→*create-squad, "validate my squad"→*validate-squad), ALWAYS ask for clarification if no clear match.
 activation-instructions:

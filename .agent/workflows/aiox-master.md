@@ -1,4 +1,5 @@
 ---
+name: aiox-master
 description: Ativa o agente Aiox-master
 ---
 

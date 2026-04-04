@@ -28,13 +28,22 @@ const yaml = require('js-yaml');
 // Paths
 const ROOT_DIR = path.join(__dirname, '..', '..');
 const AGENTS_DIR = path.join(ROOT_DIR, 'development', 'agents');
-const TASKS_DIR = path.join(ROOT_DIR, 'development', 'tasks');
-const TEMPLATES_DIR = path.join(ROOT_DIR, 'development', 'templates');
-const CHECKLISTS_DIR = path.join(ROOT_DIR, 'development', 'checklists');
-const DATA_DIR = path.join(ROOT_DIR, 'development', 'data');
-const UTILS_DIR = path.join(ROOT_DIR, 'development', 'utils');
-const WORKFLOWS_DIR = path.join(ROOT_DIR, 'development', 'workflows');
-const SCRIPTS_DIR = path.join(ROOT_DIR, 'development', 'scripts');
+const TASKS_DIR = [path.join(ROOT_DIR, 'development', 'tasks'), path.join(ROOT_DIR, 'scripts')];
+const TEMPLATES_DIR = [path.join(ROOT_DIR, 'development', 'templates'), path.join(ROOT_DIR, 'product', 'templates')];
+const CHECKLISTS_DIR = [path.join(ROOT_DIR, 'development', 'checklists'), path.join(ROOT_DIR, 'product', 'checklists')];
+const DATA_DIR = [path.join(ROOT_DIR, 'development', 'data'), path.join(ROOT_DIR, 'product', 'data'), path.join(ROOT_DIR, 'data')];
+const UTILS_DIR = [
+  path.join(ROOT_DIR, 'development', 'utils'),
+  path.join(ROOT_DIR, 'product', 'utils'),
+  path.join(ROOT_DIR, 'infrastructure', 'scripts'),
+  path.join(ROOT_DIR, 'development', 'scripts'),
+  path.join(ROOT_DIR, 'scripts'),
+  path.join(ROOT_DIR, 'core', 'health-check', 'checks', 'repository'),
+  path.join(ROOT_DIR, 'infrastructure', 'scripts', 'documentation-integrity')
+];
+const WORKFLOWS_DIR = [path.join(ROOT_DIR, 'development', 'workflows')];
+const SCRIPTS_DIR = [path.join(ROOT_DIR, 'development', 'scripts'), path.join(ROOT_DIR, 'infrastructure', 'scripts'), path.join(ROOT_DIR, 'core', 'execution')];
+const SCHEMAS_DIR = [path.join(ROOT_DIR, 'product', 'templates', 'ide-rules'), path.join(ROOT_DIR, 'product', 'templates', 'engine'), path.join(ROOT_DIR, 'product', 'templates', 'engine', 'schemas'), path.join(ROOT_DIR, 'schemas')];
 
 // Commands that are allowed to be shared by multiple agents
 // These are utility/infrastructure commands, not domain-specific
@@ -63,13 +72,38 @@ const SHARED_COMMANDS = new Set([
   'rollback',
   // Correct-course (all agents can use on own domain)
   'correct-course',
+  // Common squad commands (intentionally shared)
+  'audit',
+  'screen',
+  'create',
+  'chat-mode',
+  'design',
+  'review',
+  'component',
+  'responsive',
+  'brand-audit',
+  'diagnose',
+  'movement',
+  'platform',
+  'navigation',
+  'layout',
+  'theme',
+  'sync',
+  'animate',
+  'gesture',
+  'compare',
+  'spatial',
+  'show',
+  'extract',
+  'validate',
+  'squad',
 ]);
 
 /**
  * Extract YAML content from markdown file
  */
 function extractYamlFromMarkdown(content) {
-  const yamlBlockMatch = content.match(/```yaml\n([\s\S]*?)\n```/);
+  const yamlBlockMatch = content.match(/```yaml\r?\n([\s\S]*?)\r?\n```/);
   if (yamlBlockMatch) {
     return yaml.load(yamlBlockMatch[1]);
   }
@@ -140,8 +174,8 @@ function validateCommandUniqueness(agents) {
     for (const cmd of agent.commands) {
       let cmdName;
       if (typeof cmd === 'string') {
-        // String format: 'command: description'
-        cmdName = cmd.split(':')[0].trim();
+        // String format: 'command: description' or 'command - description'
+        cmdName = cmd.split(/[:\-]/)[0].trim();
       } else if (cmd.name) {
         // Explicit format: { name: 'command', ... }
         cmdName = cmd.name;
@@ -150,7 +184,11 @@ function validateCommandUniqueness(agents) {
         const keys = Object.keys(cmd);
         cmdName = keys[0]?.split(' ')[0]; // Handle 'command {args}' format
       }
+      
       if (!cmdName) continue;
+
+      // Clean command name (remove prefixes and leading dots/stars)
+      cmdName = cmdName.replace(/^[*.]+/, '').trim();
 
       if (!commandOwners.has(cmdName)) {
         commandOwners.set(cmdName, []);
@@ -195,6 +233,7 @@ async function validateDependencies(agents) {
     utils: UTILS_DIR,
     workflows: WORKFLOWS_DIR,
     scripts: SCRIPTS_DIR,
+    schemas: SCHEMAS_DIR,
   };
 
   // Dependency types that are not file-based (external tools, integrations)
@@ -208,8 +247,8 @@ async function validateDependencies(agents) {
       if (skipDepTypes.has(depType)) continue;
       if (!Array.isArray(depList)) continue;
 
-      const depDir = depDirs[depType];
-      if (!depDir) {
+      const depDirList = depDirs[depType];
+      if (!depDirList) {
         warnings.push({
           type: 'UNKNOWN_DEP_TYPE',
           agent: agent.id,
@@ -219,9 +258,45 @@ async function validateDependencies(agents) {
         continue;
       }
 
-      for (const depFile of depList) {
-        const depPath = path.join(depDir, depFile);
-        const exists = await fileExists(depPath);
+      for (const dep of depList) {
+        let exists = false;
+        let checkedPaths = [];
+        
+        // Handle both string paths and object definitions { name, path, description }
+        const depFile = typeof dep === 'string' ? dep : dep.path;
+        
+        if (!depFile) {
+          warnings.push({
+            type: 'INVALID_DEP_FORMAT',
+            agent: agent.id,
+            depType,
+            message: `Invalid dependency format in @${agent.id} → ${depType}: expected string or object with path`,
+          });
+          continue;
+        }
+
+        for (const dir of depDirList) {
+          const depPath = path.join(dir, depFile);
+          checkedPaths.push(depPath);
+          if (await fileExists(depPath)) {
+            exists = true;
+            break;
+          }
+
+          // Try with common extensions if missing
+          const extensions = ['.md', '.js', '.yaml', '.yml'];
+          if (!path.extname(depFile)) {
+            for (const ext of extensions) {
+              const altPath = depPath + ext;
+              checkedPaths.push(altPath);
+              if (await fileExists(altPath)) {
+                exists = true;
+                break;
+              }
+            }
+          }
+          if (exists) break;
+        }
 
         if (!exists) {
           // Missing dependencies are warnings, not errors (pre-existing technical debt)
@@ -230,9 +305,9 @@ async function validateDependencies(agents) {
             agent: agent.id,
             depType,
             depFile,
-            expectedPath: depPath,
+            expectedPaths: checkedPaths,
             message: `Missing dependency: @${agent.id} → ${depType}/${depFile}`,
-            suggestion: `Create the file at ${depPath} or remove from agent dependencies.`,
+            suggestion: `Create the file in one of these locations: ${checkedPaths.join(', ')} or remove from agent dependencies.`,
           });
         }
       }

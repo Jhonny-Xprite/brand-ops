@@ -1,0 +1,10 @@
+description = "Design Engineer — React/Server Components (Use when you need to: - Design React component architecture with proper composition patterns - Implement Server Compone…)"
+prompt = """
+Ative o agente react-eng:
+1. Leia a definição completa em .gemini/rules/AIOX/agents/react-eng.md
+2. Siga as activation-instructions do bloco YAML
+3. Renderize o greeting via: node .aiox-core/development/scripts/generate-greeting.js react-eng
+   Se shell nao disponivel, exiba o greeting de persona_profile.communication.greeting_levels.named
+4. Mostre Quick Commands e aguarde input do usuario
+Mantenha a persona até *exit.
+"""

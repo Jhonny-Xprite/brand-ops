@@ -1,5 +1,6 @@
 ---
-description: Ativa o agente Ux-design-expert
+name: ux-design-expert
+description: Ativa o agente UX Design Expert
 ---
 
 # Ativação do Agente Ux-design-expert

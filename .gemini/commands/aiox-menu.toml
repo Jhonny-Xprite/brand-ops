@@ -15,6 +15,32 @@ Mostre a lista de agentes abaixo em formato numerado, explicando em 1 linha quan
 10. /aiox-sm - Scrum Master (Use for user story creation from PRD, story validation and completeness checking, acceptance criteria definition, story…)
 11. /aiox-squad-creator - Squad Creator (Use to create, validate, publish and manage squads)
 12. /aiox-ux-design-expert - UX/UI Designer & Design System Architect (Complete design workflow - user research, wireframes, design systems, token extraction, component building, and quality…)
+13. /aiox-a11y-eng - Accessibility Engineer — Universal Access (Use when you need to: - Audit a component or page for WCAG 2.2 AA/AAA compliance - Design focus management strategy for…)
+14. /aiox-alexandra-watkins - Naming Alchemist & Brand Language Architect (Use when brand strategy and positioning are defined and you need to create names that encode the brand promise — produc…)
+15. /aiox-apex-lead - Design Engineering Lead & Squad Orchestrator (Entry point for all Squad Apex operations)
+16. /aiox-april-dunford - Positioning Master & Competitive Strategy Expert (Use para: - Exercicio completo de posicionamento (10-step Obviously Awesome Canvas) - Mapeamento de alternativas compet…)
+17. /aiox-brand-chief - Brand Squad Orchestrator (Use as the entry point for any brand-related work)
+18. /aiox-cross-plat-eng - Design Engineer — Cross-Platform (Use when you need to: - Design universal components that work on Web (Next.js) and Native (React Native) - Implement sh…)
+19. /aiox-css-eng - Design Engineer — CSS Architecture (Use when you need to: - Architect CSS systems from design tokens to component styles - Debug layout issues involving st…)
+20. /aiox-design-sys-eng - Design System Designer/Engineer — Token Guardian (Use when creating or maintaining the design token architecture, building or auditing design system components, implemen…)
+21. /aiox-emily-heyward - Brand Builder & Movement Architect (Use when brand strategy, positioning, naming, and visual identity are already defined — Emily orchestrates how the bran…)
+22. /aiox-frontend-arch - Staff Frontend Architect — Technical Authority (Use when making architectural decisions for the frontend monorepo, evaluating technology stacks, defining performance b…)
+23. /aiox-interaction-dsgn - Senior Product Designer (Interaction) (Use when you need to: - Design component interactions with visual-first methodology - Create responsive layouts using c…)
+24. /aiox-marty-neumeier - Brand Strategist & Diagnostician (Use as the FIRST agent when building a brand from scratch, diagnosing an existing brand, finding differentiation, defin…)
+25. /aiox-michael-johnson - Visual Identity Architect & Brand Identity Designer (Use para: - Criar sistemas de identidade visual completos (logo, tipografia, cor, grid) - Executar o processo Five and…)
+26. /aiox-mobile-eng - Design Engineer — React Native (Use when you need to: - Implement performant animations that run on the UI thread (60fps guaranteed) - Design gesture-d…)
+27. /aiox-motion-eng - Motion Engineer — Animation & Choreography (Use when you need to: - Design animation systems with spring physics and choreographed sequences - Implement the Hybrid…)
+28. /aiox-oalanicolas - Ativar agente AIOX oalanicolas
+29. /aiox-pedro-valerio - Process Absolutist & Automation Architect
+30. /aiox-perf-eng - Performance Engineer — Core Web Vitals (Use when you need to: - Optimize Core Web Vitals (LCP, INP, CLS) to meet performance targets - Analyze and reduce JavaS…)
+31. /aiox-qa-visual - Frontend QA Engineer — Visual Regression (Use when you need to: - Set up visual regression testing (Chromatic, Percy, Playwright screenshots) - Validate componen…)
+32. /aiox-qa-xplatform - Frontend QA Engineer — Cross-Platform Testing (Use when you need to: - Design cross-platform test strategies for React Native apps (iOS, Android, visionOS) - Write te…)
+33. /aiox-react-eng - Design Engineer — React/Server Components (Use when you need to: - Design React component architecture with proper composition patterns - Implement Server Compone…)
+34. /aiox-sagi-haviv - Logo Design Master & Identity Mark Strategist (Use when the brand needs a logo, mark, wordmark, symbol, or logo system)
+35. /aiox-spatial-eng - Design Engineer — Spatial & 3D (Use when you need to: - Build 3D scenes and experiences in React with React Three Fiber (R3F) - Create interactive 3D c…)
+36. /aiox-squad-chief - Expert Squad Creator & Domain Architect (Use when creating new AIOS squads for any domain or industry)
+37. /aiox-thiago_finch - Ativar agente AIOX thiago_finch
+38. /aiox-web-intel - Web Intelligence Engineer — Design Extraction Specialist (Use when you need to extract design intelligence from external websites or apps: scraping design tokens (colors, typogr…)
 
 No final, peça para o usuário escolher um número ou digitar o comando direto.
 """

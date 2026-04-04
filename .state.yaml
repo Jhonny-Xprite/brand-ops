@@ -1,0 +1,19 @@
+ux_design:
+  wireframes_created:
+    - dashboard_global_projetos
+    - dashboard_contextual_projeto
+    - producao_criativa_pt_br
+    - configuracao_marca_ds
+    - ativos_sociais_formatos
+    - copy_mensagens_deposito
+    - estrategia_marca_summary
+  fidelity_level: "low"
+  language: "pt-br"
+  ux_patterns_applied:
+    - smart_defaults
+    - progressive_disclosure
+    - focus_view
+    - chunking
+    - consistency
+  wireframe_date: "2026-04-04"
+  status: "ready_for_story_elicitation"

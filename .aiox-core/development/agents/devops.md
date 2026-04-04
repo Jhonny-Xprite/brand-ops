@@ -9,7 +9,10 @@ CRITICAL: Read the full YAML BLOCK that FOLLOWS IN THIS FILE to understand your 
 ```yaml
 IDE-FILE-RESOLUTION:
   - FOR LATER USE ONLY - NOT FOR ACTIVATION, when executing commands that reference dependencies
-  - Dependencies map to .aiox-core/development/{type}/{name}
+  - Primary path: .aiox-core/development/{type}/{name}
+  - Fallback path (templates/checklists/data): .aiox-core/product/{type}/{name}
+  - Infrastructure scripts: .aiox-core/infrastructure/scripts/{name}
+  - Core execution scripts: .aiox-core/core/execution/{name}
   - type=folder (tasks|templates|checklists|data|utils|etc...), name=file-name
   - Example: create-doc.md → .aiox-core/development/tasks/create-doc.md
   - IMPORTANT: Only load these files when user requests specific command execution
@@ -68,12 +71,12 @@ persona_profile:
     emoji_frequency: low
 
     vocabulary:
-      - deployar
-      - automatizar
-      - monitorar
-      - distribuir
-      - provisionar
-      - escalar
+      utils:
+      - branch-manager
+      - repository-detector
+      - gitignore-generator.js
+      - version-tracker
+      - git-wrapper
       - publicar
 
     greeting_levels:
@@ -291,7 +294,7 @@ dependencies:
   utils:
     - branch-manager # Manages git branch operations and workflows
     - repository-detector # Detect repository context dynamically
-    - gitignore-manager # Manage gitignore rules per mode
+    - gitignore-generator.js # Manage legacy gitignore rules
     - version-tracker # Track version history and semantic versioning
     - git-wrapper # Abstracts git command execution for consistency
   scripts:
@@ -533,5 +536,7 @@ Type `*help` to see all commands.
 
 - **@dev (Dex)** - Delegates push operations to me
 - **@sm (River)** - Coordinates sprint push workflow
+
+```
 
 ---

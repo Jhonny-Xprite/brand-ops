@@ -2,15 +2,15 @@
 
 ## 1. Overview
 
-This document describes the rclone bi-directional synchronization setup for the Brand Ops project.
+This document describes the rclone local-primary backup synchronization setup for the Brand Ops project.
 
-**Purpose:** Maintain automatic backups of local creative assets to Google Drive while keeping both locations synchronized.
+**Purpose:** Maintain automatic backups of local creative assets to Google Drive while keeping the local storage as the single source of truth.
 
 **Architecture:**
 - **Source (Local):** `E:\BRAND-OPS-STORAGE\` — Primary working directory on local SSD
 - **Destination (Remote):** `Google Drive /Brand-Ops-Backup/` — Cloud backup destination
-- **Direction:** Bi-directional sync
-- **Conflict Resolution:** Local wins (local version takes precedence on conflicts)
+- **Direction:** One-way sync (`local -> remote backup`)
+- **Source of Truth:** Local storage always wins because the remote is treated as backup, not as a second writable replica
 - **Schedule:** Daily at 23:00 UTC via Windows Task Scheduler
 
 ---
@@ -72,7 +72,7 @@ My Drive/
 
 ## 3. Sync Command & Strategy
 
-### Bi-Directional Sync Configuration
+### One-Way Backup Sync Configuration
 
 **Command structure for manual testing:**
 
@@ -95,33 +95,35 @@ rclone sync \
 |-----------|---------|
 | `--create-empty-src-dirs` | Preserve empty folders in sync |
 | `--delete-during` | Delete files on remote that don't exist locally |
-| `--backup-dir` | Move deleted files to trash instead of permanently deleting |
-| `--suffix=.conflict-{LocalTime}` | Rename conflicted files with timestamp instead of overwriting |
+| `--backup-dir` | Move overwritten or deleted remote files to trash instead of permanently deleting |
+| `--suffix=.conflict-{LocalTime}` | Add timestamp suffix to preserved remote backup copies before replacement |
 | `--drive-chunk-size=256M` | Upload chunk size for large files |
 | `--transfers=4` | Number of parallel transfers |
 | `--checkers=8` | Number of parallel checkers |
 | `--verbose` | Log all operations for debugging |
 
-### Conflict Resolution Strategy
+### Backup And Recovery Semantics
 
-**Local-Wins Approach:**
+**Local-Primary Backup Approach:**
 
-When a file exists on both local and remote with different modification times:
+When `rclone sync E:\BRAND-OPS-STORAGE\ gdrive:Brand-Ops-Backup/` runs:
 
-1. **If local is newer:** Local version overwrites remote
-2. **If remote is newer:** Local version still overwrites remote (local always wins)
-3. **If both changed:** Conflicted remote file is renamed with `.conflict-{timestamp}` suffix in `.trash/`
-4. **Deleted locally:** File is moved to `.trash/` on remote, not permanently deleted
+1. **If a local file is new or updated:** The remote backup copy is created or replaced from local
+2. **If a remote file changed independently:** The next sync replaces the remote copy with the local source-of-truth version
+3. **If a local file was deleted:** The remote copy is moved to `.trash/` because of `--backup-dir`, rather than being deleted permanently
+4. **If recovery is needed:** Restore from the remote backup copy or `.trash/`; do not treat Google Drive as a co-equal writable replica
+
+**Operational Rule:** Remote backup content should not be edited directly when using this command model. Direct remote edits are considered drift and will be overwritten by the next scheduled sync.
 
 **Metadata Tracking:**
 
-The `.sync-metadata/` folder stores:
+The `.sync-metadata/` folder can store:
 - Last sync timestamp
 - File checksums
 - Conflict log
 - Sync statistics
 
-This prevents re-syncing unchanged files and provides audit trail.
+This supports auditability and future sync-state tooling without implying that the external storage folder is tracked by this repository.
 
 ---
 

@@ -6,8 +6,8 @@
  * Executes at session end to persist state to Memory Layer.
  */
 
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
 async function sessionEnd() {
   const projectDir = process.env.GEMINI_PROJECT_DIR || process.cwd();

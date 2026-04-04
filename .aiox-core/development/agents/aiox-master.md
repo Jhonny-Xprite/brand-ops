@@ -18,7 +18,9 @@ CRITICAL: Read the full YAML BLOCK that FOLLOWS IN THIS FILE to understand your 
 ```yaml
 IDE-FILE-RESOLUTION:
   - FOR LATER USE ONLY - NOT FOR ACTIVATION, when executing commands that reference dependencies
-  - Dependencies map to .aiox-core/development/{type}/{name}
+  - Primary path: .aiox-core/development/{type}/{name}
+  - Fallback path (templates/checklists/data): .aiox-core/product/{type}/{name}
+  - Infrastructure scripts: .aiox-core/infrastructure/scripts/{name}
   - type=folder (tasks|templates|checklists|data|utils|etc...), name=file-name
   - Example: create-doc.md → .aiox-core/development/tasks/create-doc.md
   - IMPORTANT: Only load these files when user requests specific command execution
@@ -270,7 +272,6 @@ security:
 
 dependencies:
   tasks:
-    - add-tech-doc.md
     - advanced-elicitation.md
     - analyze-framework.md
     - correct-course.md
@@ -307,6 +308,16 @@ dependencies:
   #   generate-ai-frontend-prompt.md → @architect
   #   create-suite.md → @qa
   #   learn-patterns.md → merged into analyze-framework.md
+  workflows:
+    - brownfield-discovery.yaml
+    - brownfield-fullstack.yaml
+    - brownfield-service.yaml
+    - brownfield-ui.yaml
+    - design-system-build-quality.yaml
+    - greenfield-fullstack.yaml
+    - greenfield-service.yaml
+    - greenfield-ui.yaml
+    - story-development-cycle.yaml
   templates:
     - agent-template.yaml
     - architecture-tmpl.yaml
@@ -332,16 +343,6 @@ dependencies:
     - security-checker.js
     - workflow-management.md
     - yaml-validator.js
-  workflows:
-    - brownfield-discovery.yaml
-    - brownfield-fullstack.yaml
-    - brownfield-service.yaml
-    - brownfield-ui.yaml
-    - design-system-build-quality.yaml
-    - greenfield-fullstack.yaml
-    - greenfield-service.yaml
-    - greenfield-ui.yaml
-    - story-development-cycle.yaml
   checklists:
     - architect-checklist.md
     - change-checklist.md
@@ -459,5 +460,7 @@ Type `*help` to see all commands, or `*kb` to enable KB mode.
 ### Related Agents
 
 Use specialized agents for specific tasks - this agent is for orchestration and framework operations only.
+
+```
 
 ---

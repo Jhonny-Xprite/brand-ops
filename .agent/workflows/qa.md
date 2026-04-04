@@ -1,5 +1,6 @@
 ---
-description: Ativa o agente Qa
+name: qa
+description: Ativa o agente QA
 ---
 
 # Ativação do Agente Qa

@@ -142,7 +142,7 @@ function getTransformer(format) {
  * @param {object} options - Sync options
  * @returns {object} - Sync result
  */
-function syncIde(agents, ideConfig, ideName, projectRoot, options) {
+function syncIde(agents, ideConfig, ideName, projectRoot, options, fullConfig = {}) {
   const result = {
     ide: ideName,
     targetDir: path.join(projectRoot, ideConfig.path),
@@ -162,8 +162,19 @@ function syncIde(agents, ideConfig, ideName, projectRoot, options) {
     fs.ensureDirSync(result.targetDir);
   }
 
+  const ALLOWED_CORE_AGENTS = [
+    'architect', 'dev', 'qa', 'pm', 'po', 'sm', 'analyst', 'devops', 'data-engineer', 
+    'ux-design-expert', 'squad-creator', 'aiox-master', 'aiox-developer', 'aiox-orchestrator',
+    'brand-chief', 'apex-lead', 'squad-chief'
+  ];
+
   // Transform and write each agent
   for (const agent of agents) {
+    // Filter if onlyLeads is enabled
+    if (fullConfig.onlyLeads && !ALLOWED_CORE_AGENTS.includes(agent.id)) {
+      continue;
+    }
+
     // Skip agents with fatal errors (no YAML block found or failed parse with no fallback)
     if (agent.error && agent.error === 'Failed to parse YAML') {
       result.errors.push({
@@ -263,7 +274,7 @@ async function commandSync(options) {
       console.log(`${colors.cyan}📁 Syncing ${ideName}...${colors.reset}`);
     }
 
-    const result = syncIde(agents, ideConfig, ideName, projectRoot, options);
+    const result = syncIde(agents, ideConfig, ideName, projectRoot, options, config);
 
     // Gemini CLI: also sync slash launcher command files (.gemini/commands/*.toml)
     if (ideName === 'gemini') {
@@ -369,8 +380,19 @@ async function commandValidate(options) {
     const transformer = getTransformer(ideConfig.format);
     const expectedFiles = [];
 
+    const ALLOWED_CORE_AGENTS = [
+      'architect', 'dev', 'qa', 'pm', 'po', 'sm', 'analyst', 'devops', 'data-engineer', 
+      'ux-design-expert', 'squad-creator', 'aiox-master', 'aiox-developer', 'aiox-orchestrator',
+      'brand-chief', 'apex-lead', 'squad-chief'
+    ];
+
     for (const agent of agents) {
       if (agent.error) continue;
+
+      // Filter if onlyLeads is enabled
+      if (config.onlyLeads && !ALLOWED_CORE_AGENTS.includes(agent.id)) {
+        continue;
+      }
 
       try {
         const content = transformer.transform(agent);

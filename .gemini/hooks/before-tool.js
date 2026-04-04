@@ -8,8 +8,8 @@
  * Exit code 2 = block, Exit code 0 = allow.
  */
 
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
 // Patterns to block
 const BLOCKED_PATTERNS = [

@@ -1,88 +1,88 @@
 import prisma from '../prisma'
 
 describe('Prisma CRUD Operations', () => {
-  // Clean up after all tests
   afterAll(async () => {
     await prisma.$disconnect()
   })
 
-  describe('Creative Model', () => {
-    it('should create a creative record', async () => {
-      const creative = await prisma.creative.create({
+  describe('CreativeFile Model', () => {
+    it('should create a creative file record', async () => {
+      const creativeFile = await prisma.creativeFile.create({
         data: {
-          name: 'Test Creative PSD',
-          type: 'psd',
           path: '/files/test.psd',
-          fileSize: 1024000,
+          filename: 'test.psd',
+          type: 'psd',
+          size: BigInt(1024000),
+          mimeType: 'image/vnd.adobe.photoshop',
         },
       })
 
-      expect(creative).toBeDefined()
-      expect(creative.name).toBe('Test Creative PSD')
-      expect(creative.type).toBe('psd')
-      expect(creative.fileSize).toBe(1024000)
+      expect(creativeFile).toBeDefined()
+      expect(creativeFile.filename).toBe('test.psd')
+      expect(creativeFile.type).toBe('psd')
+      expect(creativeFile.size).toBe(BigInt(1024000))
 
-      // Cleanup
-      await prisma.creative.delete({ where: { id: creative.id } })
+      await prisma.creativeFile.delete({ where: { id: creativeFile.id } })
     })
 
-    it('should read a creative record', async () => {
-      const created = await prisma.creative.create({
+    it('should read a creative file record', async () => {
+      const created = await prisma.creativeFile.create({
         data: {
-          name: 'Test Creative for Read',
+          path: '/files/read.png',
+          filename: 'read.png',
           type: 'png',
-          path: '/files/test.png',
-          fileSize: 512000,
+          size: BigInt(512000),
+          mimeType: 'image/png',
         },
       })
 
-      const read = await prisma.creative.findUnique({
+      const read = await prisma.creativeFile.findUnique({
         where: { id: created.id },
       })
 
       expect(read).toBeDefined()
       expect(read?.id).toBe(created.id)
-      expect(read?.name).toBe('Test Creative for Read')
+      expect(read?.filename).toBe('read.png')
 
-      // Cleanup
-      await prisma.creative.delete({ where: { id: created.id } })
+      await prisma.creativeFile.delete({ where: { id: created.id } })
     })
 
-    it('should update a creative record', async () => {
-      const created = await prisma.creative.create({
+    it('should update a creative file record', async () => {
+      const created = await prisma.creativeFile.create({
         data: {
-          name: 'Test Creative for Update',
+          path: '/files/update.jpg',
+          filename: 'update.jpg',
           type: 'jpg',
-          path: '/files/test.jpg',
-          fileSize: 256000,
+          size: BigInt(256000),
+          mimeType: 'image/jpeg',
         },
       })
 
-      const updated = await prisma.creative.update({
+      const updated = await prisma.creativeFile.update({
         where: { id: created.id },
-        data: { fileSize: 512000, name: 'Updated Name' },
+        data: { size: BigInt(512000), filename: 'updated.jpg' },
       })
 
-      expect(updated.fileSize).toBe(512000)
-      expect(updated.name).toBe('Updated Name')
+      expect(updated.size).toBe(BigInt(512000))
+      expect(updated.filename).toBe('updated.jpg')
 
-      // Cleanup
-      await prisma.creative.delete({ where: { id: created.id } })
+      await prisma.creativeFile.delete({ where: { id: created.id } })
     })
 
-    it('should delete a creative record', async () => {
-      const created = await prisma.creative.create({
+    it('should delete a creative file record', async () => {
+      const created = await prisma.creativeFile.create({
         data: {
-          name: 'Test Creative for Delete',
+          path: '/files/delete.mp4',
+          filename: 'delete.mp4',
           type: 'mp4',
-          path: '/files/test.mp4',
-          fileSize: 2048000,
+          size: BigInt(2048000),
+          mimeType: 'video/mp4',
         },
       })
 
-      await prisma.creative.delete({ where: { id: created.id } })
+      await prisma.creativeFile.delete({ where: { id: created.id } })
 
-      const deleted = await prisma.creative.findUnique({
+      const deleted = await prisma.creativeFile.findUnique({
         where: { id: created.id },
       })
 
@@ -90,245 +90,259 @@ describe('Prisma CRUD Operations', () => {
     })
   })
 
-  describe('Metadata Model', () => {
-    it('should create metadata for a creative', async () => {
-      const creative = await prisma.creative.create({
+  describe('FileMetadata Model', () => {
+    it('should create metadata for a creative file', async () => {
+      const creativeFile = await prisma.creativeFile.create({
         data: {
-          name: 'Test with Metadata',
+          path: '/files/metadata.psd',
+          filename: 'metadata.psd',
           type: 'psd',
-          path: '/files/test.psd',
-          fileSize: 1024000,
+          size: BigInt(1024000),
+          mimeType: 'image/vnd.adobe.photoshop',
         },
       })
 
-      const metadata = await prisma.metadata.create({
+      const metadata = await prisma.fileMetadata.create({
         data: {
-          description: 'Test metadata description',
-          tags: 'test,metadata,brand',
-          properties: JSON.stringify({ color: 'red' }),
-          creativeId: creative.id,
+          fileId: creativeFile.id,
+          type: 'image',
+          status: 'Draft',
+          tags: '["test","metadata","brand"]',
+          notes: 'Test metadata notes',
         },
       })
 
       expect(metadata).toBeDefined()
-      expect(metadata.description).toBe('Test metadata description')
-      expect(metadata.creativeId).toBe(creative.id)
+      expect(metadata.fileId).toBe(creativeFile.id)
+      expect(metadata.status).toBe('Draft')
 
-      // Cleanup (cascade delete)
-      await prisma.creative.delete({ where: { id: creative.id } })
+      await prisma.creativeFile.delete({ where: { id: creativeFile.id } })
     })
 
     it('should read metadata', async () => {
-      const creative = await prisma.creative.create({
+      const creativeFile = await prisma.creativeFile.create({
         data: {
-          name: 'Test with Metadata Read',
+          path: '/files/metadata-read.psd',
+          filename: 'metadata-read.psd',
           type: 'psd',
-          path: '/files/test.psd',
-          fileSize: 1024000,
+          size: BigInt(1024000),
+          mimeType: 'image/vnd.adobe.photoshop',
         },
       })
 
-      const metadata = await prisma.metadata.create({
+      const metadata = await prisma.fileMetadata.create({
         data: {
-          description: 'Read test',
-          tags: 'read,test',
-          creativeId: creative.id,
+          fileId: creativeFile.id,
+          type: 'image',
+          status: 'In Review',
+          tags: '["read","test"]',
+          notes: 'Read test',
         },
       })
 
-      const read = await prisma.metadata.findUnique({
+      const read = await prisma.fileMetadata.findUnique({
         where: { id: metadata.id },
       })
 
-      expect(read?.description).toBe('Read test')
-      expect(read?.tags).toBe('read,test')
+      expect(read?.notes).toBe('Read test')
+      expect(read?.tags).toBe('["read","test"]')
 
-      // Cleanup
-      await prisma.creative.delete({ where: { id: creative.id } })
+      await prisma.creativeFile.delete({ where: { id: creativeFile.id } })
     })
 
     it('should update metadata', async () => {
-      const creative = await prisma.creative.create({
+      const creativeFile = await prisma.creativeFile.create({
         data: {
-          name: 'Test with Metadata Update',
+          path: '/files/metadata-update.psd',
+          filename: 'metadata-update.psd',
           type: 'psd',
-          path: '/files/test.psd',
-          fileSize: 1024000,
+          size: BigInt(1024000),
+          mimeType: 'image/vnd.adobe.photoshop',
         },
       })
 
-      const metadata = await prisma.metadata.create({
+      const metadata = await prisma.fileMetadata.create({
         data: {
-          description: 'Original description',
-          creativeId: creative.id,
+          fileId: creativeFile.id,
+          type: 'image',
+          status: 'Draft',
+          tags: '[]',
+          notes: 'Original notes',
         },
       })
 
-      const updated = await prisma.metadata.update({
+      const updated = await prisma.fileMetadata.update({
         where: { id: metadata.id },
-        data: { description: 'Updated description' },
+        data: { status: 'Approved', notes: 'Updated notes' },
       })
 
-      expect(updated.description).toBe('Updated description')
+      expect(updated.status).toBe('Approved')
+      expect(updated.notes).toBe('Updated notes')
 
-      // Cleanup
-      await prisma.creative.delete({ where: { id: creative.id } })
+      await prisma.creativeFile.delete({ where: { id: creativeFile.id } })
     })
 
     it('should delete metadata', async () => {
-      const creative = await prisma.creative.create({
+      const creativeFile = await prisma.creativeFile.create({
         data: {
-          name: 'Test with Metadata Delete',
+          path: '/files/metadata-delete.psd',
+          filename: 'metadata-delete.psd',
           type: 'psd',
-          path: '/files/test.psd',
-          fileSize: 1024000,
+          size: BigInt(1024000),
+          mimeType: 'image/vnd.adobe.photoshop',
         },
       })
 
-      const metadata = await prisma.metadata.create({
+      const metadata = await prisma.fileMetadata.create({
         data: {
-          description: 'To be deleted',
-          creativeId: creative.id,
+          fileId: creativeFile.id,
+          type: 'image',
+          status: 'Draft',
+          tags: '[]',
         },
       })
 
-      await prisma.metadata.delete({ where: { id: metadata.id } })
+      await prisma.fileMetadata.delete({ where: { id: metadata.id } })
 
-      const deleted = await prisma.metadata.findUnique({
+      const deleted = await prisma.fileMetadata.findUnique({
         where: { id: metadata.id },
       })
 
       expect(deleted).toBeNull()
 
-      // Cleanup
-      await prisma.creative.delete({ where: { id: creative.id } })
+      await prisma.creativeFile.delete({ where: { id: creativeFile.id } })
     })
   })
 
-  describe('Version Model', () => {
+  describe('FileVersion Model', () => {
     it('should create a version record', async () => {
-      const creative = await prisma.creative.create({
+      const creativeFile = await prisma.creativeFile.create({
         data: {
-          name: 'Test with Version',
+          path: '/files/version.psd',
+          filename: 'version.psd',
           type: 'psd',
-          path: '/files/test.psd',
-          fileSize: 1024000,
+          size: BigInt(1024000),
+          mimeType: 'image/vnd.adobe.photoshop',
         },
       })
 
-      const version = await prisma.version.create({
+      const version = await prisma.fileVersion.create({
         data: {
-          versionNumber: 1,
-          changes: 'Initial version',
-          creativeId: creative.id,
+          fileId: creativeFile.id,
+          versionNum: 1,
+          commitHash: 'abc123def456',
+          message: 'feat: Upload version.psd (v1)',
         },
       })
 
       expect(version).toBeDefined()
-      expect(version.versionNumber).toBe(1)
-      expect(version.changes).toBe('Initial version')
+      expect(version.versionNum).toBe(1)
+      expect(version.commitHash).toBe('abc123def456')
 
-      // Cleanup
-      await prisma.creative.delete({ where: { id: creative.id } })
+      await prisma.creativeFile.delete({ where: { id: creativeFile.id } })
     })
 
     it('should read a version record', async () => {
-      const creative = await prisma.creative.create({
+      const creativeFile = await prisma.creativeFile.create({
         data: {
-          name: 'Test Version Read',
+          path: '/files/version-read.psd',
+          filename: 'version-read.psd',
           type: 'psd',
-          path: '/files/test.psd',
-          fileSize: 1024000,
+          size: BigInt(1024000),
+          mimeType: 'image/vnd.adobe.photoshop',
         },
       })
 
-      const version = await prisma.version.create({
+      const version = await prisma.fileVersion.create({
         data: {
-          versionNumber: 2,
-          changes: 'Version 2 changes',
-          creativeId: creative.id,
+          fileId: creativeFile.id,
+          versionNum: 2,
+          commitHash: 'def456ghi789',
+          message: 'docs: Update version-read.psd metadata',
         },
       })
 
-      const read = await prisma.version.findUnique({
+      const read = await prisma.fileVersion.findUnique({
         where: { id: version.id },
       })
 
-      expect(read?.versionNumber).toBe(2)
-      expect(read?.changes).toBe('Version 2 changes')
+      expect(read?.versionNum).toBe(2)
+      expect(read?.message).toBe('docs: Update version-read.psd metadata')
 
-      // Cleanup
-      await prisma.creative.delete({ where: { id: creative.id } })
+      await prisma.creativeFile.delete({ where: { id: creativeFile.id } })
     })
 
     it('should update a version record', async () => {
-      const creative = await prisma.creative.create({
+      const creativeFile = await prisma.creativeFile.create({
         data: {
-          name: 'Test Version Update',
+          path: '/files/version-update.psd',
+          filename: 'version-update.psd',
           type: 'psd',
-          path: '/files/test.psd',
-          fileSize: 1024000,
+          size: BigInt(1024000),
+          mimeType: 'image/vnd.adobe.photoshop',
         },
       })
 
-      const version = await prisma.version.create({
+      const version = await prisma.fileVersion.create({
         data: {
-          versionNumber: 1,
-          changes: 'Original changes',
-          creativeId: creative.id,
+          fileId: creativeFile.id,
+          versionNum: 1,
+          commitHash: 'ghi789jkl012',
+          message: 'Original version message',
         },
       })
 
-      const updated = await prisma.version.update({
+      const updated = await prisma.fileVersion.update({
         where: { id: version.id },
-        data: { changes: 'Updated changes' },
+        data: { message: 'Updated version message' },
       })
 
-      expect(updated.changes).toBe('Updated changes')
+      expect(updated.message).toBe('Updated version message')
 
-      // Cleanup
-      await prisma.creative.delete({ where: { id: creative.id } })
+      await prisma.creativeFile.delete({ where: { id: creativeFile.id } })
     })
 
     it('should delete a version record', async () => {
-      const creative = await prisma.creative.create({
+      const creativeFile = await prisma.creativeFile.create({
         data: {
-          name: 'Test Version Delete',
+          path: '/files/version-delete.psd',
+          filename: 'version-delete.psd',
           type: 'psd',
-          path: '/files/test.psd',
-          fileSize: 1024000,
+          size: BigInt(1024000),
+          mimeType: 'image/vnd.adobe.photoshop',
         },
       })
 
-      const version = await prisma.version.create({
+      const version = await prisma.fileVersion.create({
         data: {
-          versionNumber: 1,
-          changes: 'To be deleted',
-          creativeId: creative.id,
+          fileId: creativeFile.id,
+          versionNum: 1,
+          commitHash: 'jkl012mno345',
+          message: 'To be deleted',
         },
       })
 
-      await prisma.version.delete({ where: { id: version.id } })
+      await prisma.fileVersion.delete({ where: { id: version.id } })
 
-      const deleted = await prisma.version.findUnique({
+      const deleted = await prisma.fileVersion.findUnique({
         where: { id: version.id },
       })
 
       expect(deleted).toBeNull()
 
-      // Cleanup
-      await prisma.creative.delete({ where: { id: creative.id } })
+      await prisma.creativeFile.delete({ where: { id: creativeFile.id } })
     })
   })
 
   describe('SyncMetadata Model', () => {
     it('should create sync metadata', async () => {
-      const creative = await prisma.creative.create({
+      const creativeFile = await prisma.creativeFile.create({
         data: {
-          name: 'Test with SyncMetadata',
+          path: '/files/sync.psd',
+          filename: 'sync.psd',
           type: 'psd',
-          path: '/files/test.psd',
-          fileSize: 1024000,
+          size: BigInt(1024000),
+          mimeType: 'image/vnd.adobe.photoshop',
         },
       })
 
@@ -337,7 +351,7 @@ describe('Prisma CRUD Operations', () => {
           syncStatus: 'synced',
           externalId: 'ext-123',
           externalSource: 'dropbox',
-          creativeId: creative.id,
+          fileId: creativeFile.id,
         },
       })
 
@@ -345,17 +359,17 @@ describe('Prisma CRUD Operations', () => {
       expect(sync.syncStatus).toBe('synced')
       expect(sync.externalSource).toBe('dropbox')
 
-      // Cleanup
-      await prisma.creative.delete({ where: { id: creative.id } })
+      await prisma.creativeFile.delete({ where: { id: creativeFile.id } })
     })
 
     it('should read sync metadata', async () => {
-      const creative = await prisma.creative.create({
+      const creativeFile = await prisma.creativeFile.create({
         data: {
-          name: 'Test SyncMetadata Read',
+          path: '/files/sync-read.psd',
+          filename: 'sync-read.psd',
           type: 'psd',
-          path: '/files/test.psd',
-          fileSize: 1024000,
+          size: BigInt(1024000),
+          mimeType: 'image/vnd.adobe.photoshop',
         },
       })
 
@@ -364,7 +378,7 @@ describe('Prisma CRUD Operations', () => {
           syncStatus: 'pending',
           externalId: 'ext-456',
           externalSource: 'google-drive',
-          creativeId: creative.id,
+          fileId: creativeFile.id,
         },
       })
 
@@ -375,24 +389,24 @@ describe('Prisma CRUD Operations', () => {
       expect(read?.syncStatus).toBe('pending')
       expect(read?.externalSource).toBe('google-drive')
 
-      // Cleanup
-      await prisma.creative.delete({ where: { id: creative.id } })
+      await prisma.creativeFile.delete({ where: { id: creativeFile.id } })
     })
 
     it('should update sync metadata', async () => {
-      const creative = await prisma.creative.create({
+      const creativeFile = await prisma.creativeFile.create({
         data: {
-          name: 'Test SyncMetadata Update',
+          path: '/files/sync-update.psd',
+          filename: 'sync-update.psd',
           type: 'psd',
-          path: '/files/test.psd',
-          fileSize: 1024000,
+          size: BigInt(1024000),
+          mimeType: 'image/vnd.adobe.photoshop',
         },
       })
 
       const sync = await prisma.syncMetadata.create({
         data: {
           syncStatus: 'pending',
-          creativeId: creative.id,
+          fileId: creativeFile.id,
         },
       })
 
@@ -403,24 +417,24 @@ describe('Prisma CRUD Operations', () => {
 
       expect(updated.syncStatus).toBe('synced')
 
-      // Cleanup
-      await prisma.creative.delete({ where: { id: creative.id } })
+      await prisma.creativeFile.delete({ where: { id: creativeFile.id } })
     })
 
     it('should delete sync metadata', async () => {
-      const creative = await prisma.creative.create({
+      const creativeFile = await prisma.creativeFile.create({
         data: {
-          name: 'Test SyncMetadata Delete',
+          path: '/files/sync-delete.psd',
+          filename: 'sync-delete.psd',
           type: 'psd',
-          path: '/files/test.psd',
-          fileSize: 1024000,
+          size: BigInt(1024000),
+          mimeType: 'image/vnd.adobe.photoshop',
         },
       })
 
       const sync = await prisma.syncMetadata.create({
         data: {
           syncStatus: 'syncing',
-          creativeId: creative.id,
+          fileId: creativeFile.id,
         },
       })
 
@@ -432,8 +446,7 @@ describe('Prisma CRUD Operations', () => {
 
       expect(deleted).toBeNull()
 
-      // Cleanup
-      await prisma.creative.delete({ where: { id: creative.id } })
+      await prisma.creativeFile.delete({ where: { id: creativeFile.id } })
     })
   })
 })

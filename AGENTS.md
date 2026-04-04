@@ -62,4 +62,32 @@ Interprete os atalhos abaixo carregando o arquivo correspondente em `.aiox-core/
 - `@ux-design-expert`, `/ux-design-expert`, `/ux-design-expert.md` -> `.aiox-core/development/agents/ux-design-expert.md`
 - `@squad-creator`, `/squad-creator`, `/squad-creator.md` -> `.aiox-core/development/agents/squad-creator.md`
 - `@aiox-master`, `/aiox-master`, `/aiox-master.md` -> `.aiox-core/development/agents/aiox-master.md`
+
+### Apex Design Squad (ApexDesign-Squad)
+- `@apex-lead` -> `.aiox-core/development/agents/apex-lead.md`
+- `@css-eng` -> `.aiox-core/development/agents/css-eng.md`
+- `@react-eng` -> `.aiox-core/development/agents/react-eng.md`
+- `@interaction-dsgn` -> `.aiox-core/development/agents/interaction-dsgn.md`
+- `@perf-eng` -> `.aiox-core/development/agents/perf-eng.md`
+- `@a11y-eng` -> `.aiox-core/development/agents/a11y-eng.md`
+- `@motion-eng` -> `.aiox-core/development/agents/motion-eng.md`
+- `@frontend-arch` -> `.aiox-core/development/agents/frontend-arch.md`
+- `@mobile-eng` -> `.aiox-core/development/agents/mobile-eng.md`
+- `@spatial-eng` -> `.aiox-core/development/agents/spatial-eng.md`
+- `@cross-plat-eng` -> `.aiox-core/development/agents/cross-plat-eng.md`
+- `@qa-visual` -> `.aiox-core/development/agents/qa-visual.md`
+- `@qa-xplatform` -> `.aiox-core/development/agents/qa-xplatform.md`
+
+### Brand Strategy Squad (brand-squad)
+- `@brand-chief` -> `.aiox-core/development/agents/brand-chief.md`
+- `@marty-neumeier` -> `.aiox-core/development/agents/marty-neumeier.md`
+- `@april-dunford` -> `.aiox-core/development/agents/april-dunford.md`
+- `@sagi-haviv` -> `.aiox-core/development/agents/sagi-haviv.md`
+- `@alexandra-watkins` -> `.aiox-core/development/agents/alexandra-watkins.md`
+- `@emily-heyward` -> `.aiox-core/development/agents/emily-heyward.md`
+- `@michael-johnson` -> `.aiox-core/development/agents/michael-johnson.md`
+- `@thiago_finch` -> `.aiox-core/development/agents/thiago_finch.md`
+- `@pedro-valerio` -> `.aiox-core/development/agents/pedro-valerio.md`
+- `@squad-chief` -> `.aiox-core/development/agents/squad-chief.md`
+- `@web-intel` -> `.aiox-core/development/agents/web-intel.md`
 <!-- AIOX-MANAGED-END: shortcuts -->

@@ -1,5 +1,6 @@
 ---
-description: Ativa o agente Devops
+name: devops
+description: Ativa o agente DevOps
 ---
 
 # Ativação do Agente Devops

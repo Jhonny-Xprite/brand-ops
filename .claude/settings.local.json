@@ -8,7 +8,22 @@
       "Bash(gh --version)",
       "Bash(npm --version)",
       "Bash(gh auth:*)",
-      "Bash(gh repo:*)"
+      "Bash(gh repo:*)",
+      "Bash(mkdir -p \"E:\\\\BRAND-OPS-STORAGE\\\\.sync-metadata\" \"E:\\\\BRAND-OPS-STORAGE\\\\.sync-locks\")",
+      "Bash(touch \"E:\\\\BRAND-OPS-STORAGE\\\\.sync-metadata\\\\.gitkeep\" \"E:\\\\BRAND-OPS-STORAGE\\\\.sync-locks\\\\.gitkeep\")",
+      "Read(//e/BRAND-OPS-STORAGE/\" | grep -E ^/**)",
+      "Bash(^d\")",
+      "Bash(mkdir -p '/mnt/e/BRAND-OPS-STORAGE/.sync-metadata' '/mnt/e/BRAND-OPS-STORAGE/.sync-locks')",
+      "Bash(touch '/mnt/e/BRAND-OPS-STORAGE/.sync-metadata/.gitkeep' '/mnt/e/BRAND-OPS-STORAGE/.sync-locks/.gitkeep')",
+      "Read(//mnt/e/**)",
+      "Read(//e/BRAND-OPS-STORAGE/**)",
+      "Bash(mkdir -p \"E:/BRAND-OPS-STORAGE\")",
+      "Bash(mkdir -p \"E:/BRAND-OPS-STORAGE/.sync-metadata\" \"E:/BRAND-OPS-STORAGE/.sync-locks\")",
+      "Bash(touch \"E:/BRAND-OPS-STORAGE/.sync-metadata/.gitkeep\" \"E:/BRAND-OPS-STORAGE/.sync-locks/.gitkeep\")",
+      "Bash(npm run:*)",
+      "Bash(npm test:*)",
+      "Bash(wsl bash:*)",
+      "Bash(wc -l docs/stories/*.md)"
     ]
   },
   "hooks": {

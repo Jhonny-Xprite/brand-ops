@@ -115,3 +115,38 @@ agentIdentity:
     performance:
       gitCheckCache: true
       gitCheckTTL: 300
+
+ideSync:
+  enabled: true
+  onlyLeads: true
+  source: .aiox-core/development/agents
+  targets:
+    claude-code:
+      enabled: true
+      path: .claude/commands/AIOX/agents
+      format: full-markdown-yaml
+    codex:
+      enabled: true
+      path: .codex/agents
+      format: full-markdown-yaml
+    gemini:
+      enabled: true
+      path: .gemini/rules/AIOX/agents
+      format: full-markdown-yaml
+    github-copilot:
+      enabled: true
+      path: .github/agents
+      format: github-copilot
+    cursor:
+      enabled: true
+      path: .cursor/rules/agents
+      format: condensed-rules
+    antigravity:
+      enabled: true
+      path: .antigravity/rules/agents
+      format: cursor-style
+  redirects:
+    aiox-developer: aiox-master
+    aiox-orchestrator: aiox-master
+    db-sage: data-engineer
+    github-devops: devops

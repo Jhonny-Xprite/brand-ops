@@ -1,5 +1,6 @@
 ---
-description: Ativa o agente Sm
+name: sm
+description: Ativa o agente SM
 ---
 
 # Ativação do Agente Sm

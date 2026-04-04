@@ -1,79 +1,69 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Design Tokens */
-:root {
-  /* Colors */
-  --color-primary: #0ea5e9;
-  --color-secondary: #a855f7;
-  --color-success: #22c55e;
-  --color-warning: #f59e0b;
-  --color-error: #ef4444;
-  --color-info: #3b82f6;
+@layer base {
+  :root {
+    --surface-canvas: 15 23 42;
+    --surface-default: 26 31 53;
+    --surface-muted: 31 41 55;
+    --action-primary: 147 51 234;
+    --action-primary-hover: 126 34 206;
+    --action-secondary: 251 191 36;
+    --action-secondary-hover: 217 119 6;
+    --text-default: 241 245 249;
+    --text-muted: 148 163 184;
+    --text-inverse: 15 23 42;
+    --border-default: 45 55 72;
+    --border-strong: 75 85 99;
+    
+    --status-success: 34 197 94;
+    --status-warning: 245 158 11;
+    --status-error: 239 68 68;
+    --status-info: 59 130 246;
 
-  /* Spacing */
-  --spacing-xs: 0.5rem;
-  --spacing-sm: 1rem;
-  --spacing-md: 1.5rem;
-  --spacing-lg: 2rem;
-  --spacing-xl: 3rem;
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-display: 'Sora', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
 
-  /* Typography */
-  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  --font-mono: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+    --radius-sm: 0.5rem;
+    --radius-md: 0.75rem;
+    --radius-lg: 1.5rem;
+  }
+
+  body {
+    @apply bg-canvas text-text antialiased;
+    font-family: var(--font-sans);
+  }
 }
 
-/* Base Styles */
-html,
-body {
-  @apply h-full;
-}
-
-body {
-  @apply bg-white text-gray-900;
-  font-family: var(--font-sans);
-}
-
-#__next {
-  @apply h-full;
-}
-
-/* Component Styles */
 @layer components {
   .btn-primary {
-    @apply px-4 py-2 rounded-lg bg-primary-500 text-white font-medium hover:bg-primary-600 transition-colors;
+    @apply px-5 py-3 rounded-md font-medium text-white bg-action-primary hover:bg-action-primary-hover transition-all shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
   .btn-secondary {
-    @apply px-4 py-2 rounded-lg bg-secondary-500 text-white font-medium hover:bg-secondary-600 transition-colors;
+    @apply px-5 py-3 rounded-md font-bold text-text-inverse bg-action-secondary hover:bg-action-secondary-hover transition-all shadow-sm disabled:opacity-50;
   }
 
-  .card {
-    @apply rounded-lg border border-gray-200 bg-white p-6 shadow-sm;
+  .btn-ghost {
+    @apply px-5 py-3 rounded-md font-medium text-text-muted hover:text-text hover:bg-surface transition-all disabled:opacity-50;
   }
 
-  .form-input {
-    @apply w-full rounded-lg border border-gray-300 px-4 py-2 font-medium focus:border-primary-500 focus:ring-2 focus:ring-primary-500 focus:ring-opacity-50;
+  .clarity-radical {
+    @apply backdrop-blur-3xl bg-surface/90;
   }
 }
 
-/* Utilities */
-@layer utilities {
-  .flex-center {
-    @apply flex items-center justify-center;
-  }
+/* Animations */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
 
-  .flex-between {
-    @apply flex items-center justify-between;
-  }
-
-  .truncate-2 {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
+.animate-shake {
+  animation: shake 0.2s ease-in-out 0s 2;
 }

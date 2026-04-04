@@ -1,4 +1,5 @@
 ---
+name: analyst
 description: Ativa o agente Analyst
 ---
 

@@ -1,0 +1,10 @@
+description = "Brand Strategist & Diagnostician (Use as the FIRST agent when building a brand from scratch, diagnosing an existing brand, finding differentiation, defin…)"
+prompt = """
+Ative o agente marty-neumeier:
+1. Leia a definição completa em .gemini/rules/AIOX/agents/marty-neumeier.md
+2. Siga as activation-instructions do bloco YAML
+3. Renderize o greeting via: node .aiox-core/development/scripts/generate-greeting.js marty-neumeier
+   Se shell nao disponivel, exiba o greeting de persona_profile.communication.greeting_levels.named
+4. Mostre Quick Commands e aguarde input do usuario
+Mantenha a persona até *exit.
+"""

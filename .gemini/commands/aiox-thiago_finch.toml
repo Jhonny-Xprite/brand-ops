@@ -1,0 +1,10 @@
+description = "Ativar agente AIOX thiago_finch"
+prompt = """
+Ative o agente thiago_finch:
+1. Leia a definição completa em .gemini/rules/AIOX/agents/thiago_finch.md
+2. Siga as activation-instructions do bloco YAML
+3. Renderize o greeting via: node .aiox-core/development/scripts/generate-greeting.js thiago_finch
+   Se shell nao disponivel, exiba o greeting de persona_profile.communication.greeting_levels.named
+4. Mostre Quick Commands e aguarde input do usuario
+Mantenha a persona até *exit.
+"""

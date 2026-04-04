@@ -7,8 +7,8 @@
  * Output must be valid JSON to stdout.
  */
 
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
 async function beforeAgent() {
   const projectDir = process.env.GEMINI_PROJECT_DIR || process.cwd();

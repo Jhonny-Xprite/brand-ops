@@ -1,6 +1,7 @@
 import type { AppProps } from 'next/app'
 import { useEffect } from 'react'
 import { Provider } from 'react-redux'
+import { TranslationProvider } from '@/lib/i18n/TranslationContext'
 import store from '@/store'
 import '@/styles/globals.css'
 
@@ -17,11 +18,12 @@ export default function App({ Component, pageProps }: AppProps) {
 
   return (
     <Provider store={store}>
-      <Component {...pageProps} />
+      <TranslationProvider>
+        <Component {...pageProps} />
+      </TranslationProvider>
     </Provider>
   )
 }
-
 /**
  * Registers the Service Worker
  * Gracefully handles browsers that don't support Service Workers

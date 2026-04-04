@@ -1,0 +1,55 @@
+{
+  "app_name": "Brand Ops",
+  "navigation": {
+    "dashboard": "Início",
+    "strategy": "Estratégia",
+    "media": "Mídia",
+    "social": "Social",
+    "production": "Produção",
+    "copy": "Textos",
+    "config": "Configuração",
+    "back_to_projects": "Voltar para Projetos"
+  },
+  "status": {
+    "online": "ONLINE",
+    "offline": "OFFLINE",
+    "syncing": "Sincronizando...",
+    "synced_at": "Sincronizado há {{time}}",
+    "draft": "Rascunho",
+    "in_review": "Em Revisão",
+    "approved": "Aprovado",
+    "done": "Concluído"
+  },
+  "creative_library": {
+    "title": "Biblioteca Criativa",
+    "description": "Gerencie seus ativos de marca e metadados.",
+    "upload_button": "Curar Novo Ativo",
+    "uploading": "Curando...",
+    "empty_state_title": "Sua tela criativa aguarda",
+    "empty_state_subtitle": "Cure seu primeiro ativo para começar a construir sua biblioteca.",
+    "select_asset": "Selecione um ativo para ver e editar metadados"
+  },
+  "metadata": {
+    "editor_title": "Editor de Metadados",
+    "asset_type": "Tipo de Ativo",
+    "curation_status": "Status de Curadoria",
+    "tags": "Tags de Metadados",
+    "internal_notes": "Notas Internas",
+    "save_sync": "Salvar e Sincronizar",
+    "saving": "Salvando...",
+    "cancel": "Cancelar",
+    "select_type_placeholder": "Selecione o tipo...",
+    "types": {
+      "image": "Imagem",
+      "video": "Vídeo",
+      "carousel": "Carrossel",
+      "document": "Documento",
+      "other": "Outro"
+    },
+    "validation": {
+      "type_required": "O tipo é obrigatório",
+      "status_required": "O status é obrigatório",
+      "notes_max": "Máximo de 500 caracteres"
+    }
+  }
+}
