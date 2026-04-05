@@ -32,7 +32,19 @@
       "Bash(taskkill /PID 30788 /F)",
       "Bash(ls -la \"d:\\\\MINI-PROJETOS-AIOX\\\\brand-ops\\\\docs\\\\stories\\\\epic-0\\\\\" && echo \"---\" && find \"d:\\\\MINI-PROJETOS-AIOX\\\\brand-ops\\\\.aiox-core\" -name \"*story*tmpl*\" -o -name \"*template*2.0*\" 2>/dev/null | head -5)",
       "Bash(npx prisma:*)",
-      "Bash(npm list:*)"
+      "Bash(npm list:*)",
+      "Bash(xargs grep:*)",
+      "Bash(xargs wc:*)",
+      "Bash(mv BACKLOG_REVIEW_COMPLETE.md _archive/)",
+      "Bash(mv ORCHESTRATOR_EXECUTION_SUMMARY.md _archive/)",
+      "Bash(mv PO_BACKLOG_INSIGHTS.md _archive/)",
+      "Bash(mv stories/epic-0/COMPONENT_REGISTRY.md _archive/)",
+      "Bash(mv stories/epic-1/EXECUTION_PLAN.md _archive/)",
+      "Bash(mv architecture:*)",
+      "Bash(mv brand:*)",
+      "Bash(mv decisions:*)",
+      "Bash(mv framework:*)",
+      "Bash(mv guides:*)"
     ]
   },
   "hooks": {
