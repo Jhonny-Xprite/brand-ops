@@ -3,6 +3,7 @@ import { useEffect } from 'react'
 import { Provider } from 'react-redux'
 import { TranslationProvider } from '@/lib/i18n/TranslationContext'
 import { ThemeProvider } from '@/lib/theme/ThemeContext'
+import { ErrorBoundary } from '@/components/ErrorBoundary'
 import store from '@/store'
 import '@/styles/globals.css'
 
@@ -18,13 +19,15 @@ export default function App({ Component, pageProps }: AppProps) {
   }, [])
 
   return (
-    <Provider store={store}>
-      <ThemeProvider>
-        <TranslationProvider>
-          <Component {...pageProps} />
-        </TranslationProvider>
-      </ThemeProvider>
-    </Provider>
+    <ErrorBoundary>
+      <Provider store={store}>
+        <ThemeProvider>
+          <TranslationProvider>
+            <Component {...pageProps} />
+          </TranslationProvider>
+        </ThemeProvider>
+      </Provider>
+    </ErrorBoundary>
   )
 }
 /**
