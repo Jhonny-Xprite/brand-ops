@@ -1,5 +1,6 @@
 import { useCallback } from 'react'
 import { useAppDispatch, useAppSelector } from '@/store'
+import type { ProjectBusinessModel } from '@/lib/projectDomain'
 import {
   fetchProjects,
   createProject,
@@ -7,28 +8,19 @@ import {
   type Project,
 } from '@/store/projects/projects.slice'
 
-export interface UseProjectsReturn {
-  projects: Project[]
-  loading: boolean
-  error: string | null
-  syncStatus: 'synced' | 'syncing' | 'failed'
-  syncError: string | null
-  fetchProjects: () => Promise<void>
-  createProject: (name: string, logoFile: File) => Promise<Project | void>
-  setSyncStatus: (status: 'synced' | 'syncing' | 'failed', error?: string) => void
-  retry: () => Promise<void>
-}
+type ProjectsSyncStatus = 'synced' | 'syncing' | 'failed'
+type FetchProjectsFn = () => Promise<void>
 
 /**
  * Hook para gerenciar projetos via Redux
  */
-export const useProjects = (): UseProjectsReturn => {
+export const useProjects = () => {
   const dispatch = useAppDispatch()
   const { items, loading, error, syncStatus, syncError } = useAppSelector(
     (state) => state.projects
   )
 
-  const fetchProjectsList = useCallback(async () => {
+  const fetchProjectsList = useCallback<FetchProjectsFn>(async () => {
     try {
       dispatch(setSyncStatus({ status: 'syncing' }))
       const result = await dispatch(fetchProjects())
@@ -46,30 +38,36 @@ export const useProjects = (): UseProjectsReturn => {
   }, [dispatch])
 
   const createNewProject = useCallback(
-    async (name: string, logoFile: File) => {
-      try {
-        const result = await dispatch(createProject({ projectName: name, logoFile }))
-        if (createProject.fulfilled.match(result)) {
-          return result.payload
-        } else {
-          throw new Error(result.payload as string)
-        }
-      } catch (err) {
-        const message = err instanceof Error ? err.message : 'Failed to create project'
-        throw new Error(message)
+    async ({
+      projectName,
+      niche,
+      businessModel,
+      logoFile,
+    }: {
+      projectName: string
+      niche: string
+      businessModel: ProjectBusinessModel
+      logoFile?: File | null
+    }): Promise<Project> => {
+      const result = await dispatch(createProject({ projectName, niche, businessModel, logoFile }))
+
+      if (createProject.fulfilled.match(result)) {
+        return result.payload
       }
+
+      throw new Error((result.payload as string) || 'Failed to create project')
     },
     [dispatch]
   )
 
   const handleSetSyncStatus = useCallback(
-    (status: 'synced' | 'syncing' | 'failed', error?: string) => {
-      dispatch(setSyncStatus({ status, error }))
+    (status: ProjectsSyncStatus, errorMessage?: string) => {
+      dispatch(setSyncStatus({ status, error: errorMessage }))
     },
     [dispatch]
   )
 
-  const retry = useCallback(async () => {
+  const retry = useCallback<FetchProjectsFn>(async () => {
     await fetchProjectsList()
   }, [fetchProjectsList])
 
@@ -85,3 +83,5 @@ export const useProjects = (): UseProjectsReturn => {
     retry,
   }
 }
+
+export type UseProjectsReturn = ReturnType<typeof useProjects>

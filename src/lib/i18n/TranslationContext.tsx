@@ -1,43 +1,59 @@
-import React, { createContext, useContext, ReactNode } from 'react';
-import common from '../../../public/locales/pt-BR/common.json';
+import React, { createContext, useContext, ReactNode } from 'react'
+import common from '../../../public/locales/pt-BR/common.json'
 
-interface TranslationContextType {
-  t: (key: string, options?: { time?: string }) => string;
+interface TranslationOptions {
+  [key: string]: string | number | undefined
 }
 
-const TranslationContext = createContext<TranslationContextType | undefined>(undefined);
+const translateCommon = (key: string, options?: TranslationOptions): string => {
+  const segments = key.split('.')
+  let result: unknown = common
+
+  for (const segment of segments) {
+    if (typeof result !== 'object' || result === null) {
+      return key
+    }
+
+    result = (result as Record<string, unknown>)[segment]
+  }
+
+  if (typeof result === 'string') {
+    if (options) {
+      return Object.entries(options).reduce((translated, [token, value]) => {
+        if (value === undefined) {
+          return translated
+        }
+
+        return translated.split(`{{${token}}}`).join(String(value))
+      }, result)
+    }
+
+    return result
+  }
+
+  return key
+}
+
+interface TranslationContextType {
+  t: typeof translateCommon
+}
+
+const TranslationContext = createContext<TranslationContextType | undefined>(undefined)
 
 export const TranslationProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const t = (key: string, options?: { time?: string }): string => {
-    const keys = key.split('.');
-    let result: any = common;
-
-    for (const k of keys) {
-      result = result?.[k as keyof typeof result];
-    }
-
-    if (typeof result === 'string') {
-      if (options?.time) {
-        return result.replace('{{time}}', options.time);
-      }
-      return result;
-    }
-
-    return key; // Fallback para a chave se não encontrar
-  };
-
   return (
-    <TranslationContext.Provider value={{ t }}>
+    <TranslationContext.Provider value={{ t: translateCommon }}>
       {children}
     </TranslationContext.Provider>
-  );
-};
+  )
+}
 
 export const useTranslation = () => {
-  const context = useContext(TranslationContext);
+  const context = useContext(TranslationContext)
+
   if (!context) {
-    // Fallback silencioso para facilitar testes e desenvolvimento
-    return { t: (key: string) => key };
+    return { t: translateCommon }
   }
-  return context;
-};
+
+  return context
+}

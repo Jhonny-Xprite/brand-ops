@@ -3,13 +3,14 @@ import { useTranslation } from '@/lib/i18n/TranslationContext'
 import { MotionButton } from '@/components/atoms'
 
 import { useAppDispatch, useAppSelector } from '../../store'
-import { uploadFile } from '../../store/creativeLibrary/files.slice'
+import { uploadFile, type UploadFileRequest } from '../../store/creativeLibrary/files.slice'
 
 interface FileUploadInputProps {
-  onFilesSelected?(files: File[]): Promise<void> | void
+  onFilesSelected?: React.Dispatch<File[]>
+  uploadContext?: Omit<UploadFileRequest, 'file'>
 }
 
-const FileUploadInput: React.FC<FileUploadInputProps> = ({ onFilesSelected }) => {
+const FileUploadInput: React.FC<FileUploadInputProps> = ({ onFilesSelected, uploadContext }) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -28,7 +29,7 @@ const FileUploadInput: React.FC<FileUploadInputProps> = ({ onFilesSelected }) =>
     }
 
     for (const file of files) {
-      await dispatch(uploadFile(file))
+      await dispatch(uploadFile({ file, ...uploadContext }))
     }
   }
 
@@ -55,7 +56,7 @@ const FileUploadInput: React.FC<FileUploadInputProps> = ({ onFilesSelected }) =>
         onClick={() => fileInputRef.current?.click()}
         disabled={uploading}
         aria-busy={uploading ? 'true' : 'false'}
-        className="gap-3 px-8"
+        className="gap-3 rounded-2xl px-6 py-3 shadow-sm"
       >
         {uploading ? (
           <>
@@ -64,8 +65,10 @@ const FileUploadInput: React.FC<FileUploadInputProps> = ({ onFilesSelected }) =>
           </>
         ) : (
           <>
-            <span className="text-xs font-bold uppercase tracking-[0.25em] opacity-70">Comando:</span>
-            <span className="text-sm font-bold uppercase tracking-[0.1em]">{t('creative_library.upload_button') || 'Ingerir Ativos'}</span>
+            <span className="rounded-full border border-white/20 bg-white/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.24em]">
+              {t('creative_library.upload_add')}
+            </span>
+            <span className="text-sm font-bold tracking-[0.02em]">{t('creative_library.upload_button') || 'Ingerir Ativos'}</span>
           </>
         )}
       </MotionButton>

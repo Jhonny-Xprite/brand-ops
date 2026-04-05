@@ -47,6 +47,9 @@ export const createAppStore = () =>
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware({
+        immutableCheck: {
+          warnAfter: 128,
+        },
         serializableCheck: {
           isSerializable: isReduxSerializable,
           ignoredActionPaths: ['meta.arg'],

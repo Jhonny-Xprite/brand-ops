@@ -1,12 +1,23 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 
 import { serializeCreativeFile } from '@/lib/creativeFiles'
+import { buildProjectWorkspaceWhere, type ProjectWorkspaceScope } from '@/lib/projectWorkspace'
 import prisma from '@/lib/prisma';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
     try {
+      const { projectId, scope } = req.query
+      const where =
+        typeof projectId === 'string'
+          ? buildProjectWorkspaceWhere(
+              projectId,
+              typeof scope === 'string' ? (scope as ProjectWorkspaceScope) : 'all',
+            )
+          : undefined
+
       const files = await prisma.creativeFile.findMany({
+        where,
         include: {
           metadata: true,
         },

@@ -18,7 +18,7 @@ import {
 import { StatusNotice } from '@/components/molecules'
 import VersionHistoryPanel from './VersionHistoryPanel'
 import { useAppDispatch, useAppSelector } from '../../store'
-import { fetchFiles, selectFile } from '../../store/creativeLibrary/files.slice'
+import { fetchFiles, selectFile, type FilesQuery } from '../../store/creativeLibrary/files.slice'
 import { updateMetadata, clearMetadataError } from '../../store/creativeLibrary/metadata.slice'
 import { fetchVersioningStatus } from '../../store/creativeLibrary/versioning.slice'
 
@@ -30,6 +30,11 @@ interface MetadataFormState {
 }
 
 type DetailTab = 'metadata' | 'history'
+
+interface MetadataFormProps {
+  lockedTags?: string[]
+  fetchContext?: FilesQuery
+}
 
 function toFormState(input: {
   type?: string | null
@@ -45,7 +50,7 @@ function toFormState(input: {
   }
 }
 
-const MetadataForm: React.FC = () => {
+const MetadataForm: React.FC<MetadataFormProps> = ({ lockedTags = [], fetchContext }) => {
   const { t } = useTranslation()
   const formId = 'metadata-form'
   const typeFieldId = 'metadata-type'
@@ -108,6 +113,10 @@ const MetadataForm: React.FC = () => {
   }, [selectedFileId])
 
   const parsedTags = useMemo(() => parseTagInput(formState.tags), [formState.tags])
+  const effectiveTags = useMemo(
+    () => Array.from(new Set([...lockedTags, ...parsedTags])),
+    [lockedTags, parsedTags],
+  )
   const existingTags = useMemo(
     () =>
       Array.from(
@@ -141,9 +150,18 @@ const MetadataForm: React.FC = () => {
 
   if (!selectedFileId) {
     return (
-      <div className="empty-state flex-1 rounded-none border-0 p-12">
-        <div className="empty-state-icon">Panel</div>
-        <p className="font-display text-lg text-text">{t('creative_library.select_asset')}</p>
+      <div className="flex h-full min-h-[320px] items-center justify-center bg-surface-subtle/60 px-8">
+        <div className="max-w-xs text-center">
+          <div className="summary-pill mx-auto border-border bg-surface-default text-text">
+            {t('creative_library.panel_badge')}
+          </div>
+          <h3 className="mt-6 text-3xl font-display font-semibold text-text">
+            {t('creative_library.panel_empty_title')}
+          </h3>
+          <p className="mt-3 text-base text-text-muted">
+            {t('creative_library.panel_empty_description')}
+          </p>
+        </div>
       </div>
     )
   }
@@ -189,7 +207,7 @@ const MetadataForm: React.FC = () => {
           metadata: {
             type: formState.type,
             status: formState.status,
-            tags: parsedTags,
+            tags: effectiveTags,
             notes: formState.notes,
           },
         }),
@@ -201,7 +219,7 @@ const MetadataForm: React.FC = () => {
     const nextInitialState = toFormState({
       type: formState.type,
       status: formState.status,
-      tags: parsedTags,
+      tags: effectiveTags,
       notes: formState.notes,
     })
 
@@ -209,7 +227,7 @@ const MetadataForm: React.FC = () => {
     setFormState(nextInitialState)
 
     if (typeof window !== 'undefined') {
-      const nextHistory = mergeTagHistory(tagHistory, parsedTags)
+      const nextHistory = mergeTagHistory(tagHistory, effectiveTags)
       setTagHistory(nextHistory)
       writeTagHistory(window.localStorage, nextHistory)
     }
@@ -259,7 +277,7 @@ const MetadataForm: React.FC = () => {
       </header>
 
       {activeTab === 'history' ? (
-        <VersionHistoryPanel file={selectedFile} versioningState={selectedVersioningState} />
+        <VersionHistoryPanel file={selectedFile} versioningState={selectedVersioningState} fetchContext={fetchContext} />
       ) : (
         <>
       {versioningPresentation ? (
@@ -275,7 +293,7 @@ const MetadataForm: React.FC = () => {
                 variant="secondary"
                 className="px-3 py-2 text-xs font-bold uppercase tracking-[0.2em]"
                 onClick={async () => {
-                  await dispatch(fetchFiles()).unwrap()
+                  await dispatch(fetchFiles(fetchContext)).unwrap()
                   if (selectedFileId) {
                     await dispatch(fetchVersioningStatus(selectedFileId)).unwrap()
                   }
@@ -371,6 +389,9 @@ const MetadataForm: React.FC = () => {
             }`}
           />
           <p id={`${tagsFieldId}-helper`} className="field-helper">{t('metadata.tags_helper') || 'O histórico de tags permanece local.'}</p>
+          {lockedTags.length > 0 ? (
+            <p className="field-helper">Tags obrigatorias deste workspace: {lockedTags.join(', ')}</p>
+          ) : null}
           {validationErrors.tags ? <p id={`${tagsFieldId}-error`} className="field-error">{validationErrors.tags}</p> : null}
 
           {tagSuggestions.length > 0 ? (

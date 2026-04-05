@@ -7,6 +7,7 @@ import Busboy from 'busboy'
 import { serializeCreativeFile } from '@/lib/creativeFiles'
 import { detectFileType, sanitizeFilename } from '@/lib/fileUtils'
 import prisma from '@/lib/prisma'
+import { getFilesystemErrorMessage } from '@/lib/storageRoot'
 import { versioningService, type VersioningLifecycleState } from '@/lib/versioning'
 
 export const config = {
@@ -26,29 +27,15 @@ interface ReplaceError {
   error: string
 }
 
-function getFilesystemErrorMessage(error: unknown): string {
-  const code = typeof error === 'object' && error !== null && 'code' in error ? String(error.code) : null
-
-  if (code === 'EACCES' || code === 'EPERM') {
-    return 'Permission denied. Check folder permissions and try again.'
-  }
-
-  if (code === 'ENOSPC') {
-    return 'Storage is full. Free up space and try again.'
-  }
-
-  return 'Storage folder is unavailable. Check the local storage path and try again.'
-}
-
 export default async function handler(req: NextApiRequest, res: NextApiResponse<ReplaceResponse | ReplaceError>) {
   const { id } = req.query
 
   if (typeof id !== 'string') {
-    return res.status(400).json({ error: 'Invalid ID' })
+    return res.status(400).json({ error: 'ID invalido.' })
   }
 
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' })
+    return res.status(405).json({ error: 'Metodo nao permitido.' })
   }
 
   const currentFile = await prisma.creativeFile.findUnique({
@@ -57,11 +44,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   })
 
   if (!currentFile) {
-    return res.status(404).json({ error: 'This item could not be loaded. Refresh and try again.' })
+    return res.status(404).json({ error: 'Nao foi possivel carregar este item. Atualize e tente novamente.' })
   }
 
   if (!fs.existsSync(currentFile.path)) {
-    return res.status(404).json({ error: 'The file is no longer available. Choose the file again.' })
+    return res.status(404).json({ error: 'O arquivo nao esta mais disponivel. Selecione-o novamente.' })
   }
 
   const tempUploadPath = `${currentFile.path}.replace-upload`
@@ -82,7 +69,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
         file.on('limit', () => {
           file.resume()
-          reject(new Error('File too large. Maximum size is 100 MB.'))
+          reject(new Error('Arquivo grande demais. O tamanho maximo permitido e 100 MB.'))
         })
 
         writeStream.on('finish', () => {
@@ -97,7 +84,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
       bb.on('finish', () => {
         if (!hasFile) {
-          reject(new Error('Storage folder is unavailable. Check the local storage path and try again.'))
+          reject(new Error('A pasta de armazenamento nao esta disponivel. Verifique o caminho local e tente novamente.'))
         }
       })
 

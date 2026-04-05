@@ -1,17 +1,10 @@
 import React, { useState, useCallback, useMemo } from 'react'
 import { Search, X } from 'lucide-react'
-
-interface Project {
-  id: string
-  name: string
-  logoUrl?: string
-  assetCount: number
-  createdAt: string
-}
+import type { Project } from '@/store/projects/projects.slice'
 
 interface ProjectSearchProps {
   projects: Project[]
-  onFilterChange: (filtered: Project[]) => void
+  onFilterChange: React.Dispatch<React.SetStateAction<Project[]>>
 }
 
 export const ProjectSearch: React.FC<ProjectSearchProps> = ({
@@ -20,7 +13,6 @@ export const ProjectSearch: React.FC<ProjectSearchProps> = ({
 }) => {
   const [searchQuery, setSearchQuery] = useState('')
 
-  // Debounced filter
   const filteredProjects = useMemo(() => {
     if (!searchQuery.trim()) {
       return projects
@@ -31,7 +23,6 @@ export const ProjectSearch: React.FC<ProjectSearchProps> = ({
     )
   }, [projects, searchQuery])
 
-  // Notify parent of filtered results
   React.useEffect(() => {
     onFilterChange(filteredProjects)
   }, [filteredProjects, onFilterChange])
@@ -41,37 +32,36 @@ export const ProjectSearch: React.FC<ProjectSearchProps> = ({
   }, [])
 
   return (
-    <div className="relative w-full max-w-md">
-      {/* Search Input */}
+    <div className="relative w-full max-w-xl">
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted" size={18} />
         <input
           type="text"
-          placeholder="Buscar projetos..."
+          placeholder="Buscar projetos, squads ou operacoes..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="input-field pl-11 pr-12"
         />
         {searchQuery && (
           <button
+            type="button"
             onClick={handleClear}
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1 text-text-muted transition hover:bg-surface hover:text-text"
             title="Limpar"
             aria-label="Limpar busca"
           >
-            <X size={20} />
+            <X size={16} />
           </button>
         )}
       </div>
 
-      {/* Results Count */}
-      {searchQuery && (
-        <div className="absolute top-full left-0 mt-2 text-xs text-gray-500">
-          {filteredProjects.length === 0
-            ? 'Nenhum projeto encontrado'
-            : `${filteredProjects.length} projeto${filteredProjects.length !== 1 ? 's' : ''} encontrado${filteredProjects.length !== 1 ? 's' : ''}`}
-        </div>
-      )}
+      <div className="mt-2 min-h-[1.25rem] text-xs font-medium text-text-muted">
+        {searchQuery
+          ? filteredProjects.length === 0
+            ? 'Nenhum projeto corresponde a busca atual.'
+            : `${filteredProjects.length} projeto${filteredProjects.length !== 1 ? 's' : ''} em foco`
+          : 'Busque por nome para reduzir o workspace em vista.'}
+      </div>
     </div>
   )
 }

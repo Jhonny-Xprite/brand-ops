@@ -25,6 +25,11 @@ model CreativeFile {
   versions     FileVersion[]
   syncMetadata SyncMetadata?
   projects     Project[] // Projects using this file as logo
+  projectLogos ProjectConfig[] @relation("ProjectLogo") // ProjectConfig logos
+  projectIcons ProjectConfig[] @relation("ProjectIcon") // ProjectConfig icons
+  projectSymbols ProjectConfig[] @relation("ProjectSymbol")
+  projectWordmarks ProjectConfig[] @relation("ProjectWordmark")
+  projectLibraryAssets ProjectLibraryItem[] @relation("ProjectLibraryAsset")
 
   @@index([filename])
   @@index([type])
@@ -81,14 +86,97 @@ model SyncMetadata {
 
 // Project model for brand/client project organization (Story 0.2)
 model Project {
-  id        String   @id @default(cuid())
-  name      String
-  logoFileId String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id            String   @id @default(cuid())
+  name          String
+  niche         String        @default("")
+  businessModel String        @default("INFOPRODUTO")
+  instagramUrl  String?
+  youtubeUrl    String?
+  facebookUrl   String?
+  tiktokUrl     String?
+  logoFileId    String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
-  logoFile CreativeFile? @relation(fields: [logoFileId], references: [id], onDelete: SetNull)
+  logoFile     CreativeFile?       @relation(fields: [logoFileId], references: [id], onDelete: SetNull)
+  config       ProjectConfig?
+  libraryItems ProjectLibraryItem[]
 
   @@index([name])
+  @@index([businessModel])
   @@index([createdAt])
+}
+
+// ProjectConfig model for brand identity settings (Story 0.4)
+model ProjectConfig {
+  id            String   @id @default(cuid())
+  projectId     String   @unique
+  primaryColor  String   @default("#7c3aed") // violet-600
+  secondaryColor String  @default("#fcd34d") // amber-300
+  accentColor   String   @default("#f97316")
+  neutralBase   String   @default("#1A1427")
+  titleFont     String   @default("Sora")
+  bodyFont      String   @default("Inter")
+  clientBrandMode String @default("FULL_SHELL")
+  surfaceStyle  String   @default("AURORA")
+  visualDensity String   @default("BALANCED")
+  brandTone     String   @default("LUXURY_STRATEGIC")
+  logoFileId    String?
+  iconFileId    String?
+  symbolFileId  String?
+  wordmarkFileId String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  logoFile CreativeFile? @relation("ProjectLogo", fields: [logoFileId], references: [id], onDelete: SetNull)
+  iconFile CreativeFile? @relation("ProjectIcon", fields: [iconFileId], references: [id], onDelete: SetNull)
+  symbolFile CreativeFile? @relation("ProjectSymbol", fields: [symbolFileId], references: [id], onDelete: SetNull)
+  wordmarkFile CreativeFile? @relation("ProjectWordmark", fields: [wordmarkFileId], references: [id], onDelete: SetNull)
+
+  @@index([projectId])
+}
+
+model ProjectLibraryItem {
+  id          String               @id @default(cuid())
+  projectId   String
+  domain      String
+  category    String
+  title       String
+  description String?
+  content     String?
+  status      String   @default("Draft")
+  kind        String   @default("NOTE")
+  payload     String   @default("{}")
+  linkUrl     String?
+  assetFileId String?
+  isPrimary   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  project   Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  assetFile CreativeFile? @relation("ProjectLibraryAsset", fields: [assetFileId], references: [id], onDelete: SetNull)
+  outgoingRelations ProjectLibraryItemRelation[] @relation("ProjectLibraryItemOutgoing")
+  incomingRelations ProjectLibraryItemRelation[] @relation("ProjectLibraryItemIncoming")
+
+  @@index([projectId, domain])
+  @@index([projectId, domain, category])
+  @@index([projectId, updatedAt])
+}
+
+model ProjectLibraryItemRelation {
+  id           String   @id @default(cuid())
+  sourceItemId String
+  targetItemId String
+  relationType String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  sourceItem ProjectLibraryItem @relation("ProjectLibraryItemOutgoing", fields: [sourceItemId], references: [id], onDelete: Cascade)
+  targetItem ProjectLibraryItem @relation("ProjectLibraryItemIncoming", fields: [targetItemId], references: [id], onDelete: Cascade)
+
+  @@unique([sourceItemId, targetItemId, relationType])
+  @@index([sourceItemId])
+  @@index([targetItemId])
+  @@index([relationType])
 }

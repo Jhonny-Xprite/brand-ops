@@ -1,6 +1,7 @@
 import fs from 'fs'
 
 import prisma from '@/lib/prisma'
+import { ensureStorageRoot, STORAGE_ROOT } from '@/lib/storageRoot'
 import { GitRepositoryAdapter } from '@/lib/versioning/gitRepositoryAdapter'
 import { buildVersionCommitMessage } from '@/lib/versioning/messages'
 import type {
@@ -12,7 +13,7 @@ import type {
   VersioningRequestResult,
 } from '@/lib/versioning/types'
 
-const DEFAULT_STORAGE_ROOT = 'E:\\BRAND-OPS-STORAGE'
+const DEFAULT_STORAGE_ROOT = ensureStorageRoot(STORAGE_ROOT)
 const DEFAULT_BATCH_WINDOW_MS = 5000
 const DEFAULT_RETRY_DELAYS_MS = [1000, 3000, 10000]
 const HARD_QUEUE_LIMIT = 100
@@ -42,6 +43,7 @@ export class VersioningService {
     this.storageRoot = options.storageRoot ?? DEFAULT_STORAGE_ROOT
     this.batchWindowMs = options.batchWindowMs ?? DEFAULT_BATCH_WINDOW_MS
     this.retryDelaysMs = options.retryDelaysMs ?? DEFAULT_RETRY_DELAYS_MS
+    ensureStorageRoot(this.storageRoot)
     this.gitAdapter = options.gitAdapter ?? new GitRepositoryAdapter(this.storageRoot)
   }
 

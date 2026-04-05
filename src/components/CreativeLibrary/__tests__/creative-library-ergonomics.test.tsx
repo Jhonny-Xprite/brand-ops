@@ -6,6 +6,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { Provider } from 'react-redux'
 
 import type { CreativeFileWithMetadata } from '@/lib/types'
+import { TranslationProvider } from '@/lib/i18n/TranslationContext'
 import CreativeLibraryPage from '@/pages/creative-library'
 import { createAppStore } from '@/store'
 
@@ -24,8 +25,8 @@ describe('creative library ergonomics', () => {
     jest.restoreAllMocks()
   })
 
-  it('surfaces breadcrumbs and rename flow for the active asset', async () => {
-    let persistedFile: CreativeFileWithMetadata = {
+  it('surfaces navigation and metadata context for the active asset', async () => {
+    const persistedFile: CreativeFileWithMetadata = {
       id: 'file-1',
       path: 'E:\\BRAND-OPS-STORAGE\\launch.png',
       filename: 'launch.png',
@@ -54,20 +55,7 @@ describe('creative library ergonomics', () => {
       }
 
       if (url === '/api/files/file-1/actions' && method === 'POST') {
-        const body = JSON.parse(String(init?.body))
-
-        persistedFile = {
-          ...persistedFile,
-          filename: `${body.filenameBase}.png`,
-          path: `E:\\BRAND-OPS-STORAGE\\${body.filenameBase}.png`,
-          updatedAt: new Date('2026-04-04T10:05:00.000Z'),
-        }
-
-        return createJsonResponse({
-          action: 'rename',
-          file: persistedFile,
-          message: 'File renamed successfully.',
-        })
+        return createJsonResponse({ error: 'Rename flow is not active in this surface.' }, false)
       }
 
       throw new Error(`Unhandled fetch: ${method} ${url}`)
@@ -75,27 +63,22 @@ describe('creative library ergonomics', () => {
 
     render(
       <Provider store={createAppStore()}>
-        <CreativeLibraryPage />
+        <TranslationProvider>
+          <CreativeLibraryPage />
+        </TranslationProvider>
       </Provider>,
     )
 
     await screen.findByText('launch.png')
-    expect(screen.getByRole('navigation', { name: 'Library breadcrumbs' }).textContent).toContain('All assets')
+    expect(screen.getByRole('navigation', { name: 'Creative navigation shell' })).toBeTruthy()
+    expect(screen.getByRole('searchbox', { name: 'Busca' })).toBeTruthy()
 
     fireEvent.click(screen.getByText('launch.png'))
-    fireEvent.keyDown(window, { key: 'F2' })
-
-    await screen.findByRole('dialog')
-
-    fireEvent.change(screen.getByLabelText('New file name'), {
-      target: { value: 'hero-banner' },
-    })
-    fireEvent.click(screen.getByRole('button', { name: 'Save rename' }))
 
     await waitFor(() => {
-      expect(screen.queryAllByText('hero-banner.png').length).toBeGreaterThan(0)
+      expect(screen.getByText('Editor de Metadados')).toBeTruthy()
     })
 
-    expect(screen.getByRole('navigation', { name: 'Library breadcrumbs' }).textContent).toContain('hero-banner.png')
+    expect(screen.getAllByText('launch.png').length).toBeGreaterThan(0)
   })
 })

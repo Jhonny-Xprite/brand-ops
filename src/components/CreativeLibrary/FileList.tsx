@@ -1,16 +1,17 @@
 /* eslint-disable no-unused-vars */
-import { motion, AnimatePresence } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import React, { useMemo, useRef, useState } from 'react'
-import { getFileTypeLabel, getNextFocusIndex, type ViewMode } from '@/lib/creativeLibraryBrowser'
+
+import { formatFileSize, getFileTypeLabel, getNextFocusIndex, type ViewMode } from '@/lib/creativeLibraryBrowser'
+import { useTranslation } from '@/lib/i18n/TranslationContext'
 import type { CreativeFileWithMetadata } from '@/lib/types'
-import {
-  buildVersioningPresentation,
-} from '@/lib/versioning/presentation'
+import { buildVersioningPresentation } from '@/lib/versioning/presentation'
 import type { VersioningLifecycleState } from '@/lib/versioning/types'
 
 interface FileListProps {
   activeFileId: string | null
   files: CreativeFileWithMetadata[]
+  hasActiveFilters?: boolean
   selectedFileIds: string[]
   viewMode: ViewMode
   versioningByFileId?: Record<string, VersioningLifecycleState>
@@ -21,30 +22,60 @@ interface FileListProps {
   ): void
 }
 
-/**
- * FileList Component (Premium Elevation)
- * Renders the asset list with orchestrated reordering and refined interaction feedback.
- */
+function getStatusClasses(status: string) {
+  switch (status) {
+    case 'Approved':
+      return 'border-status-success/30 bg-status-success/10 text-status-success'
+    case 'In Review':
+      return 'border-status-warning/30 bg-status-warning/10 text-status-warning'
+    case 'Done':
+      return 'border-status-info/30 bg-status-info/10 text-status-info'
+    default:
+      return 'border-border bg-surface-default text-text-muted'
+  }
+}
+
+function getVersionClasses(tone: 'neutral' | 'info' | 'warning' | 'success' | 'error') {
+  switch (tone) {
+    case 'info':
+      return 'border-status-info/30 bg-status-info/10 text-status-info'
+    case 'warning':
+      return 'border-status-warning/30 bg-status-warning/10 text-status-warning'
+    case 'success':
+      return 'border-status-success/30 bg-status-success/10 text-status-success'
+    case 'error':
+      return 'border-status-error/30 bg-status-error/10 text-status-error'
+    default:
+      return 'border-border bg-surface-subtle text-text-muted'
+  }
+}
+
 const FileList: React.FC<FileListProps> = ({
   activeFileId,
   files,
+  hasActiveFilters = false,
   selectedFileIds,
   viewMode,
   versioningByFileId = {},
   onSelectFile,
 }) => {
+  const { t } = useTranslation()
   const containerRef = useRef<HTMLDivElement>(null)
   const [brokenPreviewIds, setBrokenPreviewIds] = useState<string[]>([])
-
   const items = useMemo(() => files, [files])
 
-  // Accessibility handle
   const handleKeyDown = (event: React.KeyboardEvent, index: number, fileId: string) => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault()
       onSelectFile(fileId, event)
     } else if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key)) {
-      const nextIndex = getNextFocusIndex(index, event.key as 'ArrowUp' | 'ArrowDown' | 'ArrowLeft' | 'ArrowRight', items.length, viewMode)
+      const nextIndex = getNextFocusIndex(
+        index,
+        event.key as 'ArrowUp' | 'ArrowDown' | 'ArrowLeft' | 'ArrowRight',
+        items.length,
+        viewMode,
+      )
+
       if (nextIndex !== -1) {
         event.preventDefault()
         const buttons = containerRef.current?.querySelectorAll('button')
@@ -53,32 +84,17 @@ const FileList: React.FC<FileListProps> = ({
     }
   }
 
-  const formatFileSize = (bytes: number): string => {
-    if (bytes === 0) return '0 Bytes'
-    const k = 1024
-    const sizes = ['Bytes', 'KB', 'MB', 'GB']
-    const i = Math.floor(Math.log(bytes) / Math.log(k))
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
-  }
-
-  const getStatusColor = (status: string): string => {
-    switch (status) {
-      case 'Approved': return 'bg-status-success/10 text-status-success border-status-success/20'
-      case 'In Review': return 'bg-status-warning/10 text-status-warning border-status-warning/20'
-      case 'Draft': return 'bg-surface-muted text-text-muted border-border'
-      default: return 'bg-surface-muted text-text-muted border-border'
-    }
-  }
-
   if (items.length === 0) {
     return (
-      <div className="flex min-h-[400px] flex-col items-center justify-center rounded-3xl border-2 border-dashed border-border/50 bg-surface-muted/30 p-12 text-center">
-        <div className="empty-state-icon mb-6 h-16 w-16 text-2xl bg-surface-canvas rounded-2xl flex items-center justify-center text-text-muted/40 font-bold border border-border/30">
-          ∅
+      <div className="flex min-h-[360px] flex-col items-center justify-center rounded-[2rem] border border-dashed border-border bg-surface px-8 py-16 text-center shadow-sm">
+        <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-[1.75rem] border border-border bg-surface-subtle text-3xl text-text-muted/45">
+          0
         </div>
-        <h3 className="text-xl font-display font-bold text-text">No assets found</h3>
-        <p className="mt-2 text-text-muted max-w-sm">
-          Drop files into the workspace or clear filters to start curating your library.
+        <h3 className="text-2xl font-display font-semibold text-text">
+          {hasActiveFilters ? t('creative_library.empty_filters_title') : t('creative_library.empty_results_title')}
+        </h3>
+        <p className="mt-3 max-w-md text-base text-text-muted">
+          {hasActiveFilters ? t('creative_library.empty_filters_subtitle') : t('creative_library.empty_results_subtitle')}
         </p>
       </div>
     )
@@ -89,9 +105,11 @@ const FileList: React.FC<FileListProps> = ({
       <motion.div
         ref={containerRef}
         layout
-        className={viewMode === 'grid' 
-          ? 'grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' 
-          : 'flex flex-col gap-3'}
+        className={
+          viewMode === 'grid'
+            ? 'grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3'
+            : 'flex flex-col gap-4'
+        }
         role="grid"
         aria-label="Creative assets library"
       >
@@ -101,27 +119,42 @@ const FileList: React.FC<FileListProps> = ({
           const metadata = file.metadata
           const fileType = metadata?.type ?? file.type
           const showImagePreview = fileType === 'image' && !brokenPreviewIds.includes(file.id)
-          
+          const fileStatus = metadata?.status || 'Draft'
           const versioningState = versioningByFileId[file.id]
-          const versioningPresentation = versioningState ? 
-            buildVersioningPresentation(versioningState, file.filename) : 
-            null
+          const versioningPresentation = versioningState
+            ? buildVersioningPresentation(versioningState, file.filename)
+            : null
+          const previewLabel = getFileTypeLabel(file.type)
+          const fileTypeLabel =
+            fileType === 'image'
+              ? t('metadata.types.image')
+              : fileType === 'video'
+                ? t('metadata.types.video')
+                : fileType === 'carousel'
+                  ? t('metadata.types.carousel')
+                  : fileType === 'document'
+                    ? t('metadata.types.document')
+                    : t('metadata.types.other')
+          const fileStatusLabel =
+            fileStatus === 'Draft'
+              ? t('status.draft')
+              : fileStatus === 'In Review'
+                ? t('status.in_review')
+                : fileStatus === 'Approved'
+                  ? t('status.approved')
+                  : fileStatus === 'Done'
+                    ? t('status.done')
+                    : fileStatus
+          const updatedAtLabel = new Date(file.updatedAt).toLocaleDateString()
 
           return (
             <motion.button
               key={file.id}
               layout
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              whileHover={{ y: -4, scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              transition={{ 
-                type: 'spring', 
-                stiffness: 300, 
-                damping: 25,
-                layout: { duration: 0.3 }
-              }}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 12 }}
+              transition={{ duration: 0.18 }}
               type="button"
               role="gridcell"
               aria-selected={isSelected}
@@ -129,88 +162,96 @@ const FileList: React.FC<FileListProps> = ({
               onKeyDown={(event) => handleKeyDown(event, index, file.id)}
               className={
                 viewMode === 'grid'
-                  ? `panel-shell group flex flex-col p-4 text-left transition-shadow hover:shadow-xl ${
-                      isSelected ? 'ring-2 ring-action-primary bg-action-primary/5' : ''
-                    } ${isActive ? 'ring-1 ring-action-primary/40' : ''}`
-                  : `flex items-center gap-4 p-3 rounded-2xl border border-border bg-surface transition-all hover:border-action-primary/40 group ${
-                      isSelected ? 'bg-action-primary/5 border-action-primary ring-1 ring-action-primary/20' : ''
+                  ? `group overflow-hidden rounded-[1.75rem] border bg-surface text-left shadow-sm transition-all hover:-translate-y-0.5 hover:border-action-primary/30 hover:shadow-md ${
+                      isSelected ? 'border-action-primary ring-2 ring-action-primary/15' : 'border-border'
+                    } ${isActive ? 'shadow-md' : ''}`
+                  : `group flex items-center gap-4 rounded-[1.5rem] border bg-surface px-4 py-4 text-left shadow-sm transition-all hover:border-action-primary/30 hover:shadow-md ${
+                      isSelected ? 'border-action-primary ring-2 ring-action-primary/15' : 'border-border'
                     }`
               }
             >
               {viewMode === 'grid' ? (
                 <>
-                  <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-surface-canvas mb-4 shadow-inner group-hover:shadow-md transition-shadow">
+                  <div className="relative aspect-[4/3] overflow-hidden border-b border-border bg-surface-subtle">
                     {showImagePreview ? (
-                      <motion.img 
-                        layoutId={`img-${file.id}`}
+                      <img
                         src={`/api/files/${file.id}?asset=preview`}
+                        alt={file.filename}
                         className="h-full w-full object-cover"
-                        onError={() => setBrokenPreviewIds(prev => [...prev, file.id])}
+                        onError={() =>
+                          setBrokenPreviewIds((previous) =>
+                            previous.includes(file.id) ? previous : [...previous, file.id],
+                          )
+                        }
                       />
                     ) : (
-                      <div className="flex h-full items-center justify-center text-4xl text-text-muted/20 font-display font-bold uppercase tracking-widest">
-                        {file.type.substring(0, 2)}
+                      <div className="flex h-full w-full items-center justify-center text-4xl font-display font-bold uppercase tracking-[0.25em] text-text-muted/25">
+                        {previewLabel}
                       </div>
                     )}
-                    <div className="absolute top-3 left-3 flex flex-col gap-2">
-                      <span className={`px-2 py-0.5 rounded-full border text-[10px] font-bold uppercase tracking-wider ${getStatusColor(metadata?.status || 'Draft')}`}>
-                        {metadata?.status || 'Draft'}
+
+                    <div className="absolute left-4 top-4 flex flex-wrap gap-2">
+                      <span className={`rounded-full border px-3 py-1 text-[10px] font-bold uppercase tracking-[0.24em] ${getStatusClasses(fileStatus)}`}>
+                        {fileStatusLabel}
                       </span>
+                      {versioningPresentation ? (
+                        <span className={`rounded-full border px-3 py-1 text-[10px] font-bold uppercase tracking-[0.24em] ${getVersionClasses(versioningPresentation.tone)}`}>
+                          {versioningPresentation.badgeLabel}
+                        </span>
+                      ) : null}
                     </div>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <h4 className="truncate font-bold text-text group-hover:text-action-primary transition-colors">
-                      {file.filename}
-                    </h4>
-                    <p className="mt-1 text-xs text-text-muted font-medium">
-                      {getFileTypeLabel(file.type)} • {formatFileSize(Number(file.size))}
-                    </p>
-                    {versioningPresentation ? (
-                      <div className="mt-3">
-                         <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg bg-${versioningPresentation.tone}/10 text-${versioningPresentation.tone} border border-${versioningPresentation.tone}/20`}>
-                            {versioningPresentation.badgeLabel}
-                         </span>
-                      </div>
-                    ) : null}
+
+                  <div className="space-y-2 px-5 py-5">
+                    <h4 className="truncate text-xl font-semibold text-text">{file.filename}</h4>
+                    <p className="text-sm text-text-muted">{fileTypeLabel}</p>
+                    <div className="flex items-center justify-between gap-4 text-sm text-text-muted">
+                      <span>{updatedAtLabel}</span>
+                      <span>{formatFileSize(file.size)}</span>
+                    </div>
                   </div>
                 </>
               ) : (
                 <>
-                  <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-surface-canvas overflow-hidden shadow-inner font-mono text-xs font-bold text-text-muted">
+                  <div className="flex h-20 w-24 shrink-0 items-center justify-center overflow-hidden rounded-[1.25rem] border border-border bg-surface-subtle">
                     {showImagePreview ? (
-                      <motion.img 
-                        layoutId={`img-${file.id}`}
+                      <img
                         src={`/api/files/${file.id}?asset=preview`}
+                        alt={file.filename}
                         className="h-full w-full object-cover"
-                        onError={() => setBrokenPreviewIds(prev => [...prev, file.id])}
+                        onError={() =>
+                          setBrokenPreviewIds((previous) =>
+                            previous.includes(file.id) ? previous : [...previous, file.id],
+                          )
+                        }
                       />
                     ) : (
-                      file.type.substring(0, 2).toUpperCase()
-                    )}
-                  </div>
-                  <div className="flex-1 min-w-0 text-left">
-                    <div className="flex items-center gap-3">
-                      <h4 className="truncate font-bold text-text group-hover:text-action-primary transition-colors">
-                        {file.filename}
-                      </h4>
-                      <span className={`px-2 py-0.5 rounded-full border text-[9px] font-bold uppercase tracking-wider ${getStatusColor(metadata?.status || 'Draft')}`}>
-                        {metadata?.status || 'Draft'}
+                      <span className="text-lg font-bold uppercase tracking-[0.25em] text-text-muted/35">
+                        {previewLabel}
                       </span>
-                    </div>
-                    <p className="text-[10px] uppercase font-bold tracking-widest text-text-muted mt-1 opacity-60">
-                      {getFileTypeLabel(file.type)} • {formatFileSize(Number(file.size))} • {new Date(file.updatedAt).toLocaleDateString()}
-                    </p>
+                    )}
                   </div>
 
-                  <div className="flex items-center gap-4">
-                    {versioningPresentation ? (
-                      <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-${versioningPresentation.tone}/10 text-${versioningPresentation.tone}`}>
-                        {versioningPresentation.badgeLabel}
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-3">
+                      <h4 className="truncate text-lg font-semibold text-text">{file.filename}</h4>
+                      <span className={`rounded-full border px-3 py-1 text-[10px] font-bold uppercase tracking-[0.24em] ${getStatusClasses(fileStatus)}`}>
+                        {fileStatusLabel}
                       </span>
-                    ) : null}
-                    {isSelected && (
-                      <div className="h-2 w-2 rounded-full bg-action-primary shadow-[0_0_8px_rgba(var(--action-primary-rgb),0.6)]" />
-                    )}
+                      {versioningPresentation ? (
+                        <span className={`rounded-full border px-3 py-1 text-[10px] font-bold uppercase tracking-[0.24em] ${getVersionClasses(versioningPresentation.tone)}`}>
+                          {versioningPresentation.badgeLabel}
+                        </span>
+                      ) : null}
+                    </div>
+
+                    <div className="mt-2 flex flex-wrap items-center gap-3 text-sm text-text-muted">
+                      <span>{fileTypeLabel}</span>
+                      <span>&bull;</span>
+                      <span>{formatFileSize(file.size)}</span>
+                      <span>&bull;</span>
+                      <span>{updatedAtLabel}</span>
+                    </div>
                   </div>
                 </>
               )}

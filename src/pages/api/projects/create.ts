@@ -4,7 +4,9 @@ import path from 'path'
 import Busboy from 'busboy'
 
 import { sanitizeFilename } from '@/lib/fileUtils'
+import { coerceBusinessModel, isBusinessModel, type ProjectBusinessModel } from '@/lib/projectDomain'
 import prisma from '@/lib/prisma'
+import { ensureStorageRoot, getFilesystemErrorMessage, STORAGE_ROOT } from '@/lib/storageRoot'
 
 export const config = {
   api: {
@@ -12,43 +14,32 @@ export const config = {
   },
 }
 
-const STORAGE_ROOT = 'E:\\BRAND-OPS-STORAGE'
 const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB for logos
 const ALLOWED_MIME_TYPES = ['image/png', 'image/jpeg', 'image/svg+xml']
-
-interface ApiError {
-  error: string
-}
 
 interface CreateProjectResponse {
   id: string
   name: string
+  niche: string
+  businessModel: ProjectBusinessModel
   logoUrl?: string
+  assetCount: number
   createdAt: string
+  socialLinks: {
+    instagramUrl?: string
+    youtubeUrl?: string
+    facebookUrl?: string
+    tiktokUrl?: string
+  }
 }
-
-function getFilesystemErrorMessage(error: unknown): string {
-  const code = typeof error === 'object' && error !== null && 'code' in error ? String(error.code) : null
-
-  if (code === 'EACCES' || code === 'EPERM') {
-    return 'Permission denied. Check folder permissions and try again.'
-  }
-
-  if (code === 'ENOSPC') {
-    return 'Storage is full. Free up space and try again.'
-  }
-
-  return 'Storage folder is unavailable. Check the local storage path and try again.'
-}
-
-async function ensureStorageRoot(): Promise<void> {
-  if (!fs.existsSync(STORAGE_ROOT)) {
-    fs.mkdirSync(STORAGE_ROOT, { recursive: true })
-  }
+interface ApiError {
+  error: string
 }
 
 interface FormFields {
   projectName?: string
+  niche?: string
+  businessModel?: string
 }
 
 interface UploadResult {
@@ -73,7 +64,7 @@ export default async function handler(
 
   let uploadResult: UploadResult | null = null
   let uploadError: string | null = null
-  let formFields: FormFields = {}
+  const formFields: FormFields = {}
 
   const processUpload = () =>
     new Promise<{ uploadResult: UploadResult | null; formFields: FormFields }>((resolve, reject) => {
@@ -84,6 +75,12 @@ export default async function handler(
         if (fieldname === 'projectName') {
           formFields.projectName = val
         }
+        if (fieldname === 'niche') {
+          formFields.niche = val
+        }
+        if (fieldname === 'businessModel') {
+          formFields.businessModel = val
+        }
       })
 
       bb.on('file', (_fieldName, file, info) => {
@@ -91,7 +88,7 @@ export default async function handler(
 
         // Validate MIME type
         if (!ALLOWED_MIME_TYPES.includes(mimeType || '')) {
-          uploadError = `Invalid file type. Allowed types: ${ALLOWED_MIME_TYPES.join(', ')}`
+          uploadError = `Tipo de arquivo invalido. Tipos permitidos: ${ALLOWED_MIME_TYPES.join(', ')}`
           file.resume()
           return
         }
@@ -105,7 +102,7 @@ export default async function handler(
         file.pipe(writeStream)
 
         file.on('limit', () => {
-          uploadError = 'File too large. Maximum size is 5 MB.'
+          uploadError = 'Arquivo grande demais. O tamanho maximo permitido e 5 MB.'
           file.resume()
         })
 
@@ -174,7 +171,7 @@ export default async function handler(
         }
         await prisma.creativeFile.delete({ where: { id: result.fileId } })
       }
-      return res.status(400).json({ error: 'Project name is required' })
+      return res.status(400).json({ error: 'O nome do projeto e obrigatorio.' })
     }
 
     if (projectName.length < 3 || projectName.length > 50) {
@@ -185,7 +182,38 @@ export default async function handler(
         }
         await prisma.creativeFile.delete({ where: { id: result.fileId } })
       }
-      return res.status(400).json({ error: 'Project name must be between 3 and 50 characters' })
+      return res.status(400).json({ error: 'O nome do projeto deve ter entre 3 e 50 caracteres.' })
+    }
+
+    const niche = fields.niche?.trim()
+    if (!niche) {
+      if (result) {
+        if (fs.existsSync(result.filePath)) {
+          fs.unlinkSync(result.filePath)
+        }
+        await prisma.creativeFile.delete({ where: { id: result.fileId } })
+      }
+      return res.status(400).json({ error: 'O nicho do projeto e obrigatorio.' })
+    }
+
+    if (niche.length < 2 || niche.length > 60) {
+      if (result) {
+        if (fs.existsSync(result.filePath)) {
+          fs.unlinkSync(result.filePath)
+        }
+        await prisma.creativeFile.delete({ where: { id: result.fileId } })
+      }
+      return res.status(400).json({ error: 'O nicho do projeto deve ter entre 2 e 60 caracteres.' })
+    }
+
+    if (!fields.businessModel || !isBusinessModel(fields.businessModel)) {
+      if (result) {
+        if (fs.existsSync(result.filePath)) {
+          fs.unlinkSync(result.filePath)
+        }
+        await prisma.creativeFile.delete({ where: { id: result.fileId } })
+      }
+      return res.status(400).json({ error: 'Selecione um modelo de negocio valido.' })
     }
 
     if (uploadError) {
@@ -196,6 +224,8 @@ export default async function handler(
     const project = await prisma.project.create({
       data: {
         name: projectName,
+        niche,
+        businessModel: fields.businessModel,
         logoFileId: result?.fileId,
       },
     })
@@ -203,8 +233,12 @@ export default async function handler(
     return res.status(201).json({
       id: project.id,
       name: project.name,
-      logoUrl: result?.filePath,
+      niche: project.niche,
+      businessModel: coerceBusinessModel(project.businessModel),
+      logoUrl: result?.fileId ? `/api/files/${result.fileId}?asset=preview` : undefined,
+      assetCount: 0,
       createdAt: project.createdAt.toISOString(),
+      socialLinks: {},
     })
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : 'Failed to create project'

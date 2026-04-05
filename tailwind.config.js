@@ -9,6 +9,7 @@ const config = {
     extend: {
       colors: {
         canvas: 'rgb(var(--surface-canvas) / <alpha-value>)',
+        'surface-canvas': 'rgb(var(--surface-canvas) / <alpha-value>)',
         surface: {
           DEFAULT: 'rgb(var(--surface-default) / <alpha-value>)',
           muted: 'rgb(var(--surface-muted) / <alpha-value>)',

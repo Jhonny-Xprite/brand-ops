@@ -6,6 +6,7 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { Provider } from 'react-redux'
 
+import { TranslationProvider } from '@/lib/i18n/TranslationContext'
 import type { CreativeFileWithMetadata } from '@/lib/types'
 import CreativeLibraryPage from '@/pages/creative-library'
 import { createAppStore } from '@/store'
@@ -144,24 +145,26 @@ describe('version history viewer', () => {
 
     render(
       <Provider store={store}>
-        <CreativeLibraryPage />
+        <TranslationProvider>
+          <CreativeLibraryPage />
+        </TranslationProvider>
       </Provider>,
     )
 
     await screen.findByText('launch.png')
     fireEvent.click(screen.getByText('launch.png'))
-    await screen.findByText('Metadata Editor')
+    await screen.findByText('Editor de Metadados')
 
-    fireEvent.click(screen.getByRole('button', { name: 'History' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Historico' }))
 
-    await screen.findByText('Version History')
+    await screen.findByText('Historico de Versoes')
     await waitFor(() => {
       expect(
         screen.getAllByText('docs: Update launch.png metadata - Type: image, Status: In Review').length,
       ).toBeGreaterThan(0)
     })
 
-    fireEvent.click(screen.getByRole('button', { name: 'Compare' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Comparar' }))
 
     expect(
       screen.getByText('Current metadata has drifted from v2. Review the differences before restoring.'),

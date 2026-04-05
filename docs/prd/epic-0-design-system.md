@@ -1,10 +1,10 @@
-# Epic 0: Desktop MVP Foundation & Multi-Project Navigation
+# Epic 0: Multi-Project Foundation and Design-System Reconciliation
 
-**Status:** Ready for Story Creation (Validated by @po)  
+**Status:** In Progress  
 **Priority:** P0 - Critical Foundation  
 **Owner:** @pm (Morgan)  
-**Estimated Effort:** 160-180 hours  
-**Target:** Weeks 1-6  
+**Estimated Effort:** 200+ hours  
+**Target:** Weeks 1-9  
 **Date Created:** 2026-04-04  
 **Last Updated:** 2026-04-04
 
@@ -12,91 +12,139 @@
 
 ## Overview
 
-O Epic 0 agora define a **fundação do sistema de design e a arquitetura de navegação multi-projeto** para o Brand-Ops. O objetivo mudou de um simples repositório de arquivos para uma plataforma de gestão de ativos para múltiplos clientes/marcas, com localização total em **PT-BR**.
+Epic 0 is no longer just a design-system setup epic. In the current project reality, it owns the combined foundation for:
+- PT-BR localization
+- multi-project navigation
+- project shell and initial area routes
+- brand configuration baseline
+- the first product-wide design-system correction pass
 
-Este épico está alinhado a:
-- `docs/front-end-spec.md` - IA de 7 áreas e interações desktop.
-- `outputs/wireframes/brand-ops/lo-fi-wireframes.md` - Definição visual das telas.
-- `research/market-research-award-winners.md` - Padrões de UX adotados.
+This scope expansion is necessary because the implemented product now contains:
+- a project-centered flow in `/` and `/projeto/[id]/*`
+- a more mature Creative Library in `/creative-library`
+- a partially adopted repo-native design-system
+- a new wireframe direction that did not fully account for already implemented surfaces
 
 ---
 
 ## Objectives
 
-| # | Objetivo | Métrica de Sucesso | Tipo |
+| # | Objective | Success Metric | Type |
 |---|-----------|----------------|------|
-| 1 | **Localização PT-BR** | 100% da interface traduzida e adaptada ao mercado brasileiro. | MVP |
-| 2 | **Navegação Multi-Projeto** | Fluxo completo entre Home Global e Dashboard do Projeto funcional. | MVP |
-| 3 | **Ecossistema de 7 Áreas** | Estrutura de navegação para as 7 áreas críticas (Strategy, Media, etc) implementada. | MVP |
-| 4 | **Design System Foundation** | Tokens e componentes (shadcn/ui) configurados para o tema Violeta & Ouro. | MVP |
-| 5 | **Smart UX Patterns** | Implementação de Smart Defaults e Progressive Disclosure conforme pesquisa. | MVP |
+| 1 | PT-BR Product Baseline | Core user-facing surfaces ship in Portuguese with consistent terminology. | MVP |
+| 2 | Multi-Project Navigation | Home, project shell, and context switching work coherently without state loss. | MVP |
+| 3 | Canonical Product Architecture | The project hub, project shell, and Creative Library are reconciled into one explicit navigation model. | MVP |
+| 4 | Shared Semantic Foundation | Existing UI surfaces use the approved semantic tokens, shared classes, and repo-native reusable components. | MVP |
+| 5 | Refactor Readiness | Future stories no longer need to guess whether to follow wireframes, placeholders, or implemented surfaces. | MVP |
+
+---
+
+## Current-State Problems This Epic Must Resolve
+
+1. The wireframe and the implemented product do not fully agree on which surfaces are canonical.
+2. The Creative Library is already a mature operational surface, but it is not integrated into the main project flow.
+3. The project hub and project shell have drifted away from the semantic design-system baseline.
+4. Shared CSS primitives used by the app are not fully defined in `globals.css`.
+5. Some flows bypass Redux state patterns already available in the repo.
 
 ---
 
 ## In Scope
 
-### Feature 0.1: Localização e Internacionalização (i18n)
-**Objetivo:** Garantir que o app fale a língua do usuário.
-- Configuração de `next-i18next` ou padrão similar.
-- Dicionário de termos PT-BR para as 7 áreas.
-- Formatação de data/hora e moeda (Real R$).
+### Feature 0.1: Localization and Multi-Project Foundation
+- PT-BR localization infrastructure
+- Home Global project selection
+- project context persistence
+- top bar and horizontal project navigation
 
-### Feature 0.2: Arquitetura de Navegação Dinâmica
-**Objetivo:** Criar o fluxo de contexto de projeto.
-- **Tela 0 (Home Global):** Seleção de projetos com visualização Grade/Lista.
-- **TopBar Global:** Persistente com nome do projeto e atalhos de perfil.
-- **Navbar Horizontal (Projeto):** 7 itens dinâmicos (Dashboard, Estratégia, Mídia, Social, Produção, Textos, Config).
+### Feature 0.2: Project Shell and Area Scaffolding
+- Dashboard route
+- Strategy route
+- Media route
+- Social route
+- Copy route
+- Config route
 
-### Feature 0.3: Componentes das 7 Áreas Fundamentais
-**Objetivo:** Suporte visual para todo o ecossistema.
-- **Dashboard:** Cards de métricas e gráfico de timeline.
-- **Strategy:** Visualização de funis e blocos de oferta.
-- **Media Library:** Navegação por pastas e preview de arquivos brutos.
-- **Social Assets:** Grid adaptativo por proporções (1:1, 9:16).
-- **Copy:** Interface de leitura/escrita limpa (FocusView).
-- **Config:** Painel de tokens de marca (Cores/Logos).
+### Feature 0.3: Shared Design-System Reconciliation
+- semantic token alignment
+- shared CSS component primitives
+- repo-native component reuse
+- reduction of duplicate visual systems in project hub and project shell
 
-### Feature 0.4: Design System (Tokens e Regras)
-- Tokens semânticos: `action-primary` (Violeta), `status-accent` (Ouro).
-- Tipografia: Sora (Títulos) e Inter (Corpo).
-- Padrões de Feedback: Skeleton Loaders e Toasts de Undo (sem modais de confirmação chatos).
+### Feature 0.4: Creative Library Product Integration
+- formal decision on how the Creative Library belongs inside the product IA
+- avoidance of duplicate “media library” implementations
+- reuse of already implemented creative operations flows where appropriate
+
+### Feature 0.5: Config and Quality Closure
+- config flow harmonization
+- upload and feedback pattern consistency
+- dependency manifest and lint/test/build closure for touched surfaces
 
 ---
 
 ## Out of Scope
-- Mobile/Tablet.
-- Autenticação Multi-usuário (o app continua single-user).
-- Integração externa real (Airtable/Notion) — apenas placeholders.
+
+- Mobile/tablet optimization
+- Multi-user auth and permissions
+- External integrations beyond existing local-first placeholders
+- Rebuilding the Creative Library from scratch
+- Inventing new future-facing product areas not already represented in the repo
 
 ---
 
-## Story Map (Proposta para o @sm)
+## Story Map
 
-- **0.1: Setup i18n e Localização PT-BR**
-- **0.2: Tela de Seleção de Projetos (Home Global)**
-- **0.3: Layout de Navegação Multi-Contexto (Navbar 7 áreas)**
-- **0.4: Página de Configurações da Marca (Design System)**
-- **0.5: Página de Dashboard e Métricas do Projeto**
-- **0.6: Estrutura da Strategy e Media Library**
-- **0.7: Estrutura da Social Assets e Copy Messaging**
+### Existing Foundation Stories
+- 0.1 Setup i18n e Localização PT-BR
+- 0.2 Tela de Seleção de Projetos
+- 0.3 Layout de Navegação Multi-Contexto
+- 0.4 Página de Configurações da Marca
+- 0.5 Dashboard e Métricas do Projeto
+- 0.6 Estrutura da Strategy e Media Library
+- 0.7 Estrutura da Social Assets e Copy Messaging
+
+### Corrective Extension Stories
+- 0.8 Reconciliação entre Wireframe, Código e Superfícies Reais
+- 0.9 Completar a Fundação CSS Semântica Compartilhada
+- 0.10 Unificação de Navegação e Estado de Projeto
+- 0.11 Integração da Creative Library à Arquitetura do Produto
+- 0.12 Migração das Superfícies de Projeto para o Design-System Real
+- 0.13 Harmonização de Config, Upload e Fechamento de Qualidade
+
+---
+
+## Corrective Principles
+
+1. Implemented product surfaces have priority over speculative wireframe interpretation until reconciled explicitly.
+2. The Creative Library must be treated as an implemented asset, not a disposable experiment.
+3. No new UI should duplicate an already working operational flow.
+4. Architecture decisions must precede large-scale visual refactors.
+5. The repo is the source of truth for the design-system, not disconnected mockups.
 
 ---
 
 ## Success Criteria
-- [ ] O usuário consegue alternar entre projetos em menos de 2 segundos.
-- [ ] A interface não possui termos em inglês.
-- [ ] O Design System reflete as cores Violeta e Ouro em 100% dos componentes.
-- [ ] Todos os 7 menus da Navbar carregam suas respectivas rotas.
+
+- [ ] Project selection and project navigation work without full reloads or state loss.
+- [ ] A single canonical IA exists for project hub, project shell, and Creative Library.
+- [ ] Shared semantic classes used by the app are defined and stable.
+- [ ] Project hub and project shell no longer operate with a parallel visual language disconnected from the repo-native design-system.
+- [ ] Config and upload flows follow the same reusable feedback and interaction patterns used elsewhere in the product.
+- [ ] Quality gates pass on the corrected surfaces with no unresolved blocking drift.
 
 ---
 
 ## Change Log
+
 | Date | Version | Description | Author |
 |------|---------|-------------|--------|
-| 2026-04-04 | 2.0 | Expansão para Multi-Projeto e PT-BR (7 áreas fundamentais) | @pm (Morgan) |
-| 2026-04-04 | 1.2 | Stories de adoção e QA | Codex |
+| 2026-04-04 | 3.0 | Reframed Epic 0 around the real project state and added the corrective reconciliation extension | Codex |
+| 2026-04-04 | 2.0 | Expanded Epic 0 to multi-project and PT-BR foundation | @pm (Morgan) |
+| 2026-04-04 | 1.0 | Initial design-system foundation framing | Project Team |
 
 ---
+
 **Epic 0 Owner:** @pm (Morgan)  
 **Framework:** AIOX Story-Driven  
-**Next Action:** Enviar para validação do @po (Pax)
+**Next Action:** Execute Story 0.8 and treat its reconciliation output as the architecture gate for the rest of the corrective extension

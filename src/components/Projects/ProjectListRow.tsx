@@ -1,18 +1,24 @@
+import { getBusinessModelLabel, type ProjectBusinessModel } from '@/lib/projectDomain'
 import React from 'react'
 import Image from 'next/image'
+import { AppIcon, BrandLogo } from '@/components/atoms'
 
 interface ProjectListRowProps {
   id: string
   name: string
+  niche: string
+  businessModel: ProjectBusinessModel
   logoUrl?: string
   assetCount: number
   createdAt: string
-  onSelect: (id: string) => void
+  onSelect: React.Dispatch<string>
 }
 
 export const ProjectListRow: React.FC<ProjectListRowProps> = ({
   id,
   name,
+  niche,
+  businessModel,
   logoUrl,
   assetCount,
   createdAt,
@@ -23,13 +29,12 @@ export const ProjectListRow: React.FC<ProjectListRowProps> = ({
   return (
     <tr
       onClick={() => onSelect(id)}
-      className="hover:bg-gray-50 border-b border-gray-200 cursor-pointer transition-colors"
+      className="cursor-pointer border-b border-border/60 transition-colors hover:bg-surface-muted/30"
     >
-      {/* Logo */}
       <td className="px-6 py-4 whitespace-nowrap">
-        <div className="w-10 h-10 rounded bg-gray-100 flex items-center justify-center">
+        <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-border/60 bg-surface-muted/60">
           {logoUrl ? (
-            <div className="relative w-8 h-8">
+            <div className="relative h-8 w-8">
               <Image
                 src={logoUrl}
                 alt={name}
@@ -39,31 +44,33 @@ export const ProjectListRow: React.FC<ProjectListRowProps> = ({
               />
             </div>
           ) : (
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white text-xs font-bold">
-              {name.charAt(0).toUpperCase()}
-            </div>
+            <BrandLogo size={32} variant="solid" />
           )}
         </div>
       </td>
 
-      {/* Name */}
       <td className="px-6 py-4 whitespace-nowrap">
-        <div className="text-sm font-medium text-gray-900">{name}</div>
+        <div>
+          <div className="text-sm font-semibold text-text">{name}</div>
+          <div className="mt-1 text-xs text-text-muted">{niche} · {getBusinessModelLabel(businessModel)}</div>
+        </div>
       </td>
 
-      {/* Asset Count */}
       <td className="px-6 py-4 whitespace-nowrap">
-        <div className="text-sm text-gray-700">{assetCount} assets</div>
+        <span className="status-badge status-badge-success">
+          {assetCount} ativos
+        </span>
       </td>
 
-      {/* Created Date */}
       <td className="px-6 py-4 whitespace-nowrap">
-        <div className="text-sm text-gray-500">{formattedDate}</div>
+        <div className="text-sm text-text-muted">{formattedDate}</div>
       </td>
 
-      {/* Action Arrow */}
       <td className="px-6 py-4 whitespace-nowrap text-right">
-        <div className="text-gray-400 hover:text-gray-600">→</div>
+        <div className="inline-flex items-center gap-2 text-action-primary">
+          <span className="text-xs font-bold uppercase tracking-[0.24em]">Abrir</span>
+          <AppIcon name="overview" size="sm" tone="active" decorative />
+        </div>
       </td>
     </tr>
   )

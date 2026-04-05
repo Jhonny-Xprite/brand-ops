@@ -120,8 +120,7 @@ describe('useOnlineStatus Hook', () => {
     })
   })
 
-  it('should log state changes', () => {
-    const consoleSpy = jest.spyOn(console, 'log').mockImplementation()
+  it('should update state changes without side effects in the console contract', async () => {
     Object.defineProperty(navigator, 'onLine', {
       writable: true,
       value: true,
@@ -136,8 +135,8 @@ describe('useOnlineStatus Hook', () => {
       window.dispatchEvent(event)
     })
 
-    expect(consoleSpy).toHaveBeenCalledWith('[useOnlineStatus] Going offline')
-
-    consoleSpy.mockRestore()
+    await waitFor(() => {
+      expect(result.current.isOnline).toBe(false)
+    })
   })
 })

@@ -1,11 +1,15 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit'
+import type { ProjectBusinessModel, ProjectSocialLinks } from '@/lib/projectDomain'
 
 export interface Project {
   id: string
   name: string
+  niche: string
+  businessModel: ProjectBusinessModel
   logoUrl?: string
   assetCount: number
   createdAt: string
+  socialLinks?: ProjectSocialLinks
 }
 
 export interface ProjectsState {
@@ -14,6 +18,7 @@ export interface ProjectsState {
   error: string | null
   syncStatus: 'synced' | 'syncing' | 'failed'
   syncError: string | null
+  activeProjectId: string | null
 }
 
 const initialState: ProjectsState = {
@@ -22,6 +27,7 @@ const initialState: ProjectsState = {
   error: null,
   syncStatus: 'synced',
   syncError: null,
+  activeProjectId: null,
 }
 
 /**
@@ -51,17 +57,25 @@ export const createProject = createAsyncThunk(
   async (
     {
       projectName,
+      niche,
+      businessModel,
       logoFile,
     }: {
       projectName: string
-      logoFile: File
+      niche: string
+      businessModel: ProjectBusinessModel
+      logoFile?: File | null
     },
     { rejectWithValue }
   ) => {
     try {
       const formData = new FormData()
       formData.append('projectName', projectName)
-      formData.append('logoFile', logoFile)
+      formData.append('niche', niche)
+      formData.append('businessModel', businessModel)
+      if (logoFile) {
+        formData.append('logoFile', logoFile)
+      }
 
       const response = await fetch('/api/projects/create', {
         method: 'POST',
@@ -74,6 +88,22 @@ export const createProject = createAsyncThunk(
       }
 
       return (await response.json()) as Project
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Unknown error'
+      return rejectWithValue(message)
+    }
+  }
+)
+
+/**
+ * Async thunk to clear project context
+ */
+export const clearProjectContext = createAsyncThunk(
+  'projects/clearProjectContext',
+  async (_, { rejectWithValue }) => {
+    try {
+      // Clear active project ID and reset state
+      return null
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Unknown error'
       return rejectWithValue(message)
@@ -94,6 +124,26 @@ const projectsSlice = createSlice({
     ) => {
       state.syncStatus = action.payload.status
       state.syncError = action.payload.error || null
+    },
+    setActiveProjectId: (state, action: PayloadAction<string | null>) => {
+      state.activeProjectId = action.payload
+    },
+    upsertProject: (state, action: PayloadAction<Project>) => {
+      const existingIndex = state.items.findIndex((project) => project.id === action.payload.id)
+
+      if (existingIndex >= 0) {
+        state.items[existingIndex] = {
+          ...state.items[existingIndex],
+          ...action.payload,
+          socialLinks: {
+            ...state.items[existingIndex].socialLinks,
+            ...action.payload.socialLinks,
+          },
+        }
+        return
+      }
+
+      state.items.unshift(action.payload)
     },
   },
   extraReducers: (builder) => {
@@ -126,13 +176,26 @@ const projectsSlice = createSlice({
         state.loading = false
         state.items.unshift(action.payload)
         state.error = null
+        state.syncStatus = 'synced'
+        state.syncError = null
       })
       .addCase(createProject.rejected, (state, action) => {
         state.loading = false
+        state.error = action.payload as string
+        state.syncStatus = 'failed'
+        state.syncError = action.payload as string
+      })
+
+    // Clear project context
+    builder
+      .addCase(clearProjectContext.fulfilled, (state) => {
+        state.activeProjectId = null
+      })
+      .addCase(clearProjectContext.rejected, (state, action) => {
         state.error = action.payload as string
       })
   },
 })
 
-export const { setSyncStatus } = projectsSlice.actions
+export const { setSyncStatus, setActiveProjectId, upsertProject } = projectsSlice.actions
 export default projectsSlice.reducer

@@ -1,194 +1,207 @@
-# EPIC 0: Desktop MVP Design System Foundation - Stories Index
+# EPIC 0: Multi-Project Foundation, Design-System Reconciliation, and Product Integration
 
-**Status:** In Progress  
-**Owner:** @ux-design-expert (Uma)  
-**Timeline:** 5 weeks total (extension adds 2 weeks)  
-**Total Effort:** 121 hours  
+**Status:** Done  
+**Owner:** @pm (Morgan)  
+**Timeline:** 6 weeks + 3-week corrective extension  
+**Total Effort:** 208 hours  
 **Last Updated:** 2026-04-04
 
 ---
 
 ## Purpose
 
-This index tracks the corrected Epic 0 story set after scope normalization. Epic 0 now exists to support the **desktop MVP only**, using the repo's existing Tailwind + shadcn/ui direction and the operational story structure already used elsewhere in the project.
+Epic 0 established the desktop MVP foundation for Brand-Ops:
+- PT-BR localization
+- multi-project navigation
+- project shell and core routes
+- brand configuration baseline
+- initial area scaffolding for dashboard, strategy/media, and social/copy
 
-The original foundation package in Stories 0.1-0.6 is complete. The new extension Stories 0.7-0.9 exist to verify and enforce **real adoption of that design-system in the implemented MVP UI**.
+After implementation drift and a new wireframe cycle, Epic 0 also incorporated a corrective extension to reconcile:
+- the wireframe and product architecture
+- the existing Creative Library
+- the actual reusable design-system assets already in the repo
+- the current project-area surfaces that had diverged from the approved baseline
+
+The legacy stories and the corrective extension are now closed against the same corrected baseline.
 
 ---
 
 ## Story Overview
 
-### Story 0.1: Design System Foundation (15h)
-**Owner:** @ux-design-expert  
-**Status:** Done  
-**Link:** [0.1.design-system-foundation.md](0.1.design-system-foundation.md)
-
-**Delivers:**
-- Semantic tokens
-- Visual rules for desktop MVP
-- Foundation guidance for implementation
-
-### Story 0.2: Component Library Design (30h)
-**Owner:** @ux-design-expert  
-**Status:** Done  
-**Link:** [0.2.component-library-design.md](0.2.component-library-design.md)
-
-**Delivers:**
-- MVP-scoped component inventory
-- Stack mapping to shadcn/ui or project wrappers
-- Accessibility and state rules per family
-
-### Story 0.3: Desktop Layout System (10h)
-**Owner:** @ux-design-expert  
-**Status:** Done  
-**Link:** [0.3.layout-system-responsive.md](0.3.layout-system-responsive.md)
-
-**Delivers:**
-- Desktop window-size patterns
-- App shell layout rules
-- Overflow and density guidance
-
-### Story 0.4: Design Specification and Developer Handoff (10h)
-**Owner:** @ux-design-expert  
-**Status:** Done  
-**Link:** [0.4.design-specification-handoff.md](0.4.design-specification-handoff.md)
-
-**Delivers:**
-- Handoff mapped to Tailwind + shadcn/ui
-- Token and component naming guidance
-- Implementation and QA checklists
-
-### Story 0.5: Accessibility Audit and Compliance (8h)
-**Owner:** @ux-design-expert  
-**Quality Gate:** @qa  
-**Status:** Done  
-**Link:** [0.5.accessibility-compliance.md](0.5.accessibility-compliance.md)
-
-**Delivers:**
-- WCAG AA guidance
-- Keyboard/focus rules
-- Accessible form and icon guidance
-
-### Story 0.6: Icon System Policy (6h)
-**Owner:** @ux-design-expert  
-**Status:** Done  
-**Link:** [0.6.icon-system.md](0.6.icon-system.md)
-
-**Delivers:**
-- Library-first icon policy
-- Naming, size, and accessibility rules
-- Exception path for future custom icons
-
-### Story 0.7: Design-System Adoption Audit (10h)
-**Owner:** @ux-design-expert  
-**Status:** Done  
-**Link:** [0.7.design-system-adoption-audit.md](0.7.design-system-adoption-audit.md)
-
-**Delivers:**
-- Repo-first audit matrix of current design-system adoption
-- Classification of aligned, partial, and non-compliant surfaces
-- Remediation priority order for implementation
-
-### Story 0.8: Design-System Remediation and Component Extraction (24h)
+### Story 0.1: Setup i18n e Localizacao PT-BR (8h)
 **Owner:** @dev  
 **Quality Gate:** @qa  
 **Status:** Done  
-**Link:** [0.8.design-system-remediation.md](0.8.design-system-remediation.md)
+**Link:** [0.1.setup-i18n-pt-br.md](0.1.setup-i18n-pt-br.md)
 
-**Delivers:**
-- Remediated design-system usage in current MVP UI
-- Pragmatic component extraction for repeated patterns
-- Updated atomic exports and reduced UI drift
+### Story 0.2: Tela de Selecao de Projetos (Home Global) (10h)
+**Owner:** @dev  
+**Quality Gate:** @qa  
+**Status:** Done  
+**Link:** [0.2.home-selecao-projetos.md](0.2.home-selecao-projetos.md)
 
-### Story 0.9: Design-System Compliance QA Gate (8h)
-**Owner:** @qa  
+### Story 0.3: Layout de Navegacao Multi-Contexto (12h)
+**Owner:** @dev  
+**Quality Gate:** @qa  
+**Status:** Done  
+**Link:** [0.3.layout-navegacao-multi-contexto.md](0.3.layout-navegacao-multi-contexto.md)
+
+### Story 0.4: Configuracao da Marca no Sistema Compartilhado (8h)
+**Owner:** @dev  
+**Quality Gate:** @qa  
+**Status:** Done  
+**Link:** [0.4.configuracoes-marca.md](0.4.configuracoes-marca.md)
+
+### Story 0.5: Dashboard do Projeto na Superficie Canonica (10h)
+**Owner:** @dev  
+**Quality Gate:** @qa  
+**Status:** Done  
+**Link:** [0.5.dashboard-metricas.md](0.5.dashboard-metricas.md)
+
+### Story 0.6: Strategy Workspace e Integracao de Media Compartilhada (15h)
+**Owner:** @dev  
+**Quality Gate:** @qa  
+**Status:** Done  
+**Link:** [0.6.strategy-media-library.md](0.6.strategy-media-library.md)
+
+### Story 0.7: Estrutura da Social Assets e Copy Messaging (15h)
+**Owner:** @dev  
+**Quality Gate:** @qa  
+**Status:** Done  
+**Link:** [0.7.social-copy-library.md](0.7.social-copy-library.md)
+
+---
+
+## Corrective Extension
+
+### Story 0.8: Reconciliacao entre Wireframe, Codigo e Superficies Reais (8h)
+**Owner:** @po  
+**Quality Gate:** @architect  
+**Status:** Done  
+**Link:** [0.8.reconciliacao-wireframe-codigo.md](0.8.reconciliacao-wireframe-codigo.md)
+
+### Story 0.9: Completar a Fundacao CSS Semantica Compartilhada (8h)
+**Owner:** @dev  
+**Quality Gate:** @qa  
+**Status:** Done  
+**Link:** [0.9.fundacao-css-semantica-compartilhada.md](0.9.fundacao-css-semantica-compartilhada.md)
+
+### Story 0.10: Unificacao de Navegacao e Estado de Projeto (10h)
+**Owner:** @dev  
+**Quality Gate:** @qa  
+**Status:** Done  
+**Link:** [0.10.unificacao-navegacao-estado-projeto.md](0.10.unificacao-navegacao-estado-projeto.md)
+
+### Story 0.11: Integracao da Creative Library a Arquitetura do Produto (12h)
+**Owner:** @architect  
 **Quality Gate:** @po  
-**Status:** Ready  
-**Link:** [0.9.design-system-compliance-gate.md](0.9.design-system-compliance-gate.md)
+**Status:** Done  
+**Link:** [0.11.integracao-creative-library-arquitetura-produto.md](0.11.integracao-creative-library-arquitetura-produto.md)
 
-**Delivers:**
-- Formal compliance review against the approved Epic 0 guides
-- Reusable compliance checklist or QA artifact
-- Final gate decision on design-system adoption
+### Story 0.12: Migracao das Superficies de Projeto para o Design-System Real (14h)
+**Owner:** @dev  
+**Quality Gate:** @qa  
+**Status:** Done  
+**Link:** [0.12.migracao-superficies-projeto-design-system.md](0.12.migracao-superficies-projeto-design-system.md)
+
+### Story 0.13: Harmonizacao de Config, Upload e Fechamento de Qualidade (10h)
+**Owner:** @dev  
+**Quality Gate:** @qa  
+**Status:** Done  
+**Link:** [0.13.harmonizacao-config-upload-quality-closure.md](0.13.harmonizacao-config-upload-quality-closure.md)
+
+### Story 0.14: Creative Library por Projeto e Navbar Lateral (12h)
+**Owner:** @dev  
+**Quality Gate:** @qa  
+**Status:** Done  
+**Link:** [0.14.project-scoped-creative-library-shell.md](0.14.project-scoped-creative-library-shell.md)
+
+### Story 0.15: Renomeacao de Projeto e Dark/Light Mode (8h)
+**Owner:** @dev  
+**Quality Gate:** @qa  
+**Status:** Done  
+**Link:** [0.15.project-rename-and-theme-modes.md](0.15.project-rename-and-theme-modes.md)
+
+### Story 0.16: Paridade Visual da Media Library e Menu Explicito de Config (8h)
+**Owner:** @dev  
+**Quality Gate:** @qa  
+**Status:** Done  
+**Link:** [0.16.media-library-parity-and-project-config-nav.md](0.16.media-library-parity-and-project-config-nav.md)
+
+### Story 0.17: Localizacao da Media Library e Resiliencia do Storage Local (6h)
+**Owner:** @dev  
+**Quality Gate:** @qa  
+**Status:** Done  
+**Link:** [0.17.media-library-localization-and-storage-resilience.md](0.17.media-library-localization-and-storage-resilience.md)
 
 ---
 
-## Execution Order
+## Final Execution Sequence
 
-### Week 1
-- Story 0.1: Design System Foundation
-- Story 0.2: Component Library Design starts
-
-### Week 2
-- Story 0.2: Continue component coverage
-- Story 0.3: Desktop Layout System
-- Story 0.4: Handoff structure starts
-
-### Week 3
-- Story 0.4: Finalize developer handoff
-- Story 0.5: Accessibility audit
-- Story 0.6: Icon system policy
-
-### Week 4
-- Story 0.7: Design-System Adoption Audit
-- Story 0.8: Remediation planning handoff
-
-### Week 5
-- Story 0.8: Design-System Remediation and Component Extraction
-- Story 0.9: Design-System Compliance QA Gate
+1. Story 0.1
+2. Story 0.2
+3. Story 0.3
+4. Story 0.8
+5. Story 0.9
+6. Story 0.10
+7. Story 0.11
+8. Story 0.12
+9. Story 0.13
+10. Story 0.4
+11. Story 0.5
+12. Story 0.6
+13. Story 0.7
+14. Story 0.14
+15. Story 0.15
+16. Story 0.16
+17. Story 0.17
 
 ---
 
-## Relationship to Epic 1
+## Final Epic Assessment
 
-Epic 0 now supports Epic 1 without expanding product scope.
-
-**Epic 1 surfaces that must be covered by Epic 0**
-- File browser card
-- Metadata panel
-- Version timeline
-- Rollback dialog
-- Sync status
-- Export feedback states
-
-**Epic 0 no longer claims**
-- Mobile-first design
-- Tablet acceptance criteria
-- Premium positioning work
-- Collaboration-focused components
-- Mandatory custom icon production
-
-**Epic 0 extension now adds**
-- Adoption governance for currently implemented MVP UI
-- Repo-first audit of actual design-system usage
-- Remediation of design drift already present in the codebase
-- Formal QA gate for real-world compliance
+- The multi-project workspace baseline is in place and localized in PT-BR
+- Home, project shell, navigation, config, dashboard, strategy/media, social, and copy now share the corrected product architecture
+- The corrective extension removed the previous drift between wireframe, Creative Library, and reusable design-system assets
+- The remaining backlog inconsistencies from legacy stories were normalized and closed without reopening obsolete requirements
+- Each project now owns its Creative Library experience and the project shell now follows the lateral Creative Library language
+- The product now supports project rename in settings and persistent dark/light mode
+- Media Library parity was corrected and the project shell now exposes explicit CONFIG navigation
+- Media Library localization and resilient local storage are now closed
 
 ---
 
 ## AIOX Governance Checklist
 
-- [x] All stories use the repo's operational structure
-- [x] All stories include `Dev Agent Record`
-- [x] All stories include `File List`
-- [x] All stories include `QA Results`
-- [x] All stories are traceable to brief, PRD MVP, or frontend spec
-- [x] No story invents mobile, premium-brand, or collaboration scope
+- [x] Stories use the repo's operational structure
+- [x] Existing implemented work remains traceable
+- [x] Corrective work is split into executor-owned stories
+- [x] Architecture decisions are separated from implementation where needed
+- [x] Quality gates are attached to every story
+- [x] The extension is grounded in current repo artifacts
+- [x] Legacy backlog and final implementation are now semantically aligned
 
 ---
 
 ## Deliverables Checklist
 
-- [x] Repo-based foundation and component handoff guides
-- [x] Desktop layout rules
-- [x] Token mapping notes for implementation
-- [x] Component mapping to stack primitives
-- [x] Accessibility checklist
-- [x] Icon policy
-- [x] QA-ready handoff notes
-- [x] Design-system adoption audit matrix
-- [x] Design-system remediation pass on current MVP UI
-- [ ] Compliance checklist and final QA gate
+- [x] PT-BR localization baseline
+- [x] project hub baseline
+- [x] project shell baseline
+- [x] wireframe-to-code reconciliation matrix
+- [x] shared semantic CSS completion
+- [x] unified project navigation/state flow
+- [x] Creative Library integration decision and execution path
+- [x] project-area migration onto the approved shared system
+- [x] config/upload harmonization and quality closure
+- [x] canonical project dashboard delivery
+- [x] strategy workspace plus shared media integration
+- [x] social assets and copy deposit delivery
+- [x] project-scoped Creative Library delivery
+- [x] project rename and theme-mode support
+- [x] media library parity and explicit config navigation
+- [x] media library localization and resilient local storage
 
 ---
 
@@ -196,17 +209,25 @@ Epic 0 now supports Epic 1 without expanding product scope.
 
 | Date | Version | Description | Author |
 |------|---------|-------------|--------|
-| 2026-04-04 | 1.7 | Executed Story 0.8, remediated current MVP UI drift, and moved the extension to the final compliance gate | Codex |
-| 2026-04-04 | 1.6 | Executed Story 0.7, published the design-system adoption audit, and moved the extension into active remediation | Codex |
-| 2026-04-04 | 1.5 | Added Stories 0.7-0.9 for design-system adoption governance, remediation, and compliance gating | Codex |
-| 2026-04-04 | 1.4 | Completed Story 0.4 handoff package, aligned repo-first artifacts, and closed Epic 0 execution | Codex |
-| 2026-04-04 | 1.3 | Recorded QA PASS for Stories 0.1, 0.2, 0.3, 0.5, and 0.6; Epic 0 now waits on Story 0.4 handoff completion | Codex |
-| 2026-04-04 | 1.2 | Removed Figma as a blocker, promoted 0.1 and 0.2 to QA, and updated Epic 0 next actions | Codex |
-| 2026-04-04 | 1.1 | Rewritten for desktop-only MVP scope and AIOX-aligned story governance | Codex |
-| 2026-04-04 | 1.0 | Index created | @ux-design-expert |
+| 2026-04-04 | 4.3 | Executed Story 0.17, localized the Media Library main surfaces, and replaced the hard dependency on the `E:` storage drive with resilient local storage resolution | Codex |
+| 2026-04-04 | 4.2 | Opened Story 0.17 to finish PT-BR localization in the Media Library and remove the hard dependency on the `E:` storage drive | Codex |
+| 2026-04-04 | 4.1 | Executed Story 0.16, fixed Media Library layout parity against the approved reference, and restored explicit CONFIG in the project shell | Codex |
+| 2026-04-04 | 4.0 | Opened Story 0.16 to correct Media Library parity against the approved reference and restore explicit CONFIG in the project shell | Codex |
+| 2026-04-04 | 3.9 | Added and executed Stories 0.14 and 0.15 for project-scoped Creative Library, lateral shell navigation, project rename, and dark/light mode | Codex |
+| 2026-04-04 | 3.8 | Closed the remaining legacy stories, normalized final QA evidence, and marked Epic 0 as done | Codex |
+| 2026-04-04 | 3.7 | Re-scoped legacy Stories 0.4-0.6 to the corrected product architecture and updated the epic index for final backlog closeout planning | Codex |
+| 2026-04-04 | 3.6 | Executed Story 0.13, harmonized config and upload decisions, and closed the corrective extension quality gates with zero warnings | Codex |
+| 2026-04-04 | 3.5 | Executed Story 0.12, migrated Home and project shell surfaces onto the shared semantic system, and advanced the corrective extension to Story 0.13 | Codex |
+| 2026-04-04 | 3.4 | Executed Story 0.11, approved the canonical Creative Library integration path, and advanced the corrective extension to Story 0.12 | Codex |
+| 2026-04-04 | 3.3 | Executed Story 0.10, unified project navigation and state flow, and advanced the corrective extension to Story 0.11 | Codex |
+| 2026-04-04 | 3.2 | Executed Story 0.9, completed the shared semantic CSS foundation, and advanced the corrective extension to Story 0.10 | Codex |
+| 2026-04-04 | 3.1 | Executed Story 0.8, published the wireframe-to-code reconciliation guide, and moved the corrective extension to Story 0.9 | Codex |
+| 2026-04-04 | 3.0 | Rebuilt the Epic 0 index around the real multi-project story set and added the corrective reconciliation extension Stories 0.8-0.13 | Codex |
+| 2026-04-04 | 2.0 | Expanded Epic 0 to multi-project navigation and PT-BR operational foundation | @pm (Morgan) |
+| 2026-04-04 | 1.0 | Initial index version | Project Team |
 
 ---
 
-**Epic 0 Owner:** @ux-design-expert (Uma)  
-**Status:** In Progress  
-**Next Action:** Execute Story 0.9 to perform the formal design-system compliance gate on the remediated MVP UI
+**Epic 0 Owner:** @pm (Morgan)  
+**Status:** Done  
+**Next Action:** Hand off Epic 0 outputs to the next planning and delivery cycle

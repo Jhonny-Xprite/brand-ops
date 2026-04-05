@@ -31,13 +31,11 @@ export const useOnlineStatus = (): UseOnlineStatusReturn => {
 
     // Define event listeners
     const handleOnline = () => {
-      console.log('[useOnlineStatus] Going online');
       setIsOnline(true);
       setIsLoading(false);
     };
 
     const handleOffline = () => {
-      console.log('[useOnlineStatus] Going offline');
       setIsOnline(false);
       setIsLoading(false);
     };
@@ -51,7 +49,6 @@ export const useOnlineStatus = (): UseOnlineStatusReturn => {
 
     // Cleanup: remove event listeners when component unmounts
     return () => {
-      console.log('[useOnlineStatus] Cleaning up event listeners');
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
     };

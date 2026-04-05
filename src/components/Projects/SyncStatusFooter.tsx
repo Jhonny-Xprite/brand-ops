@@ -1,5 +1,6 @@
 import React from 'react'
-import { CheckCircle2, AlertCircle, RotateCw } from 'lucide-react'
+import { AlertCircle, CheckCircle2, RotateCw } from 'lucide-react'
+import { MotionButton } from '@/components/atoms'
 
 interface SyncStatusFooterProps {
   syncStatus: 'synced' | 'syncing' | 'failed'
@@ -18,52 +19,50 @@ export const SyncStatusFooter: React.FC<SyncStatusFooterProps> = ({
         return {
           icon: CheckCircle2,
           message: 'Tudo sincronizado',
-          color: 'bg-green-50 text-green-700 border-green-200',
+          toneClassName: 'border-status-success/30 bg-status-success/10 text-status-success',
         }
       case 'syncing':
         return {
           icon: RotateCw,
-          message: 'Sincronizando...',
-          color: 'bg-blue-50 text-blue-700 border-blue-200',
+          message: 'Sincronizando operacoes...',
+          toneClassName: 'border-status-info/30 bg-status-info/10 text-status-info',
           animate: true,
         }
       case 'failed':
         return {
           icon: AlertCircle,
-          message: error || 'Erro na sincronização',
-          color: 'bg-red-50 text-red-700 border-red-200',
+          message: error || 'Erro na sincronizacao',
+          toneClassName: 'border-status-error/30 bg-status-error/10 text-status-error',
         }
       default:
         return {
           icon: CheckCircle2,
           message: 'Status desconhecido',
-          color: 'bg-gray-50 text-gray-700 border-gray-200',
+          toneClassName: 'border-border bg-surface text-text-muted',
         }
     }
   }
 
-  const { icon: Icon, message, color, animate } = getStatusInfo()
+  const { icon: Icon, message, toneClassName, animate } = getStatusInfo()
 
   return (
-    <footer
-      className={`border-t border-gray-200 ${color} px-6 py-3 flex items-center justify-between`}
-    >
-      <div className="flex items-center gap-3">
-        <Icon
-          size={20}
-          className={animate ? 'animate-spin' : ''}
-        />
-        <span className="text-sm font-medium">{message}</span>
-      </div>
+    <footer className="border-t border-border/50 bg-surface/80 px-6 py-4 backdrop-blur-xl">
+      <div className={`mx-auto flex max-w-7xl flex-col gap-4 rounded-2xl border px-5 py-4 md:flex-row md:items-center md:justify-between ${toneClassName}`}>
+        <div className="flex items-center gap-3">
+          <Icon size={18} className={animate ? 'animate-spin' : ''} />
+          <span className="text-sm font-semibold">{message}</span>
+        </div>
 
-      {syncStatus === 'failed' && onRetry && (
-        <button
-          onClick={onRetry}
-          className="text-sm font-medium hover:underline"
-        >
-          Tentar novamente
-        </button>
-      )}
+        {syncStatus === 'failed' && onRetry ? (
+          <MotionButton
+            variant="secondary"
+            onClick={onRetry}
+            className="px-4 py-2 text-xs font-bold uppercase tracking-[0.2em]"
+          >
+            Tentar novamente
+          </MotionButton>
+        ) : null}
+      </div>
     </footer>
   )
 }

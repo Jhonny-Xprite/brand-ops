@@ -13,8 +13,9 @@ import {
 } from '@/lib/versioning/presentation'
 import { motion } from 'framer-motion'
 import { MotionButton } from '@/components/atoms'
+import { useTranslation } from '@/lib/i18n/TranslationContext'
 import { useAppDispatch } from '@/store'
-import { fetchFiles } from '@/store/creativeLibrary/files.slice'
+import { fetchFiles, type FilesQuery } from '@/store/creativeLibrary/files.slice'
 import { fetchVersioningStatus } from '@/store/creativeLibrary/versioning.slice'
 
 type HistoryMode = 'view' | 'compare'
@@ -22,6 +23,7 @@ type HistoryMode = 'view' | 'compare'
 interface VersionHistoryPanelProps {
   file: CreativeFileWithMetadata
   versioningState: VersioningLifecycleState | null
+  fetchContext?: FilesQuery
 }
 
 function createFallbackCompareDetail(file: CreativeFileWithMetadata): VersionHistoryDetail {
@@ -44,12 +46,13 @@ function createFallbackCompareDetail(file: CreativeFileWithMetadata): VersionHis
     isLatest: false,
     previewUrl: null,
     previewKind: 'unavailable',
-    previewMessage: 'Version details will appear once a saved timeline entry is selected.',
+    previewMessage: 'Os detalhes da versao aparecerao quando uma entrada salva da linha do tempo for selecionada.',
     compareSummary: summary,
   }
 }
 
-const VersionHistoryPanel: React.FC<VersionHistoryPanelProps> = ({ file, versioningState }) => {
+const VersionHistoryPanel: React.FC<VersionHistoryPanelProps> = ({ file, versioningState, fetchContext }) => {
+  const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const [entries, setEntries] = useState<VersionTimelineEntry[]>([])
   const [selectedVersionId, setSelectedVersionId] = useState<string | null>(null)
@@ -71,7 +74,7 @@ const VersionHistoryPanel: React.FC<VersionHistoryPanelProps> = ({ file, version
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.error || 'Version history is unavailable right now. Try again.')
+        throw new Error(data.error || 'O historico de versoes esta indisponivel no momento. Tente novamente.')
       }
 
       const nextEntries = data.versions as VersionTimelineEntry[]
@@ -87,7 +90,7 @@ const VersionHistoryPanel: React.FC<VersionHistoryPanelProps> = ({ file, version
       setEntries([])
       setSelectedVersionId(null)
       setDetail(null)
-      setError(refreshError instanceof Error ? refreshError.message : 'Version history is unavailable right now. Try again.')
+      setError(refreshError instanceof Error ? refreshError.message : 'O historico de versoes esta indisponivel no momento. Tente novamente.')
     } finally {
       setLoading(false)
     }
@@ -116,7 +119,7 @@ const VersionHistoryPanel: React.FC<VersionHistoryPanelProps> = ({ file, version
         const data = await response.json()
 
         if (!response.ok) {
-          throw new Error(data.error || 'Version history is unavailable right now. Try again.')
+          throw new Error(data.error || 'O historico de versoes esta indisponivel no momento. Tente novamente.')
         }
 
         if (active) {
@@ -128,7 +131,7 @@ const VersionHistoryPanel: React.FC<VersionHistoryPanelProps> = ({ file, version
           setDetailError(
             detailLoadError instanceof Error
               ? detailLoadError.message
-              : 'Version history is unavailable right now. Try again.',
+              : 'O historico de versoes esta indisponivel no momento. Tente novamente.',
           )
         }
       } finally {
@@ -207,10 +210,10 @@ const VersionHistoryPanel: React.FC<VersionHistoryPanelProps> = ({ file, version
       <div className="border-b border-border px-8 py-6">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <span className="eyebrow-label">Version History</span>
+            <span className="eyebrow-label">{t('version_history.title')}</span>
             <h3 className="mt-2 truncate text-xl font-display font-bold text-text">{file.filename}</h3>
             <p className="mt-2 text-sm text-text-muted">
-              Inspect timeline entries, compare current state, and prepare for rollback in `1.4`.
+              {t('version_history.description')}
             </p>
           </div>
           <MotionButton
@@ -221,19 +224,19 @@ const VersionHistoryPanel: React.FC<VersionHistoryPanelProps> = ({ file, version
               await dispatch(fetchVersioningStatus(file.id)).unwrap()
             }}
           >
-            Refresh
+            {t('version_history.refresh')}
           </MotionButton>
         </div>
 
         {pendingHistory ? (
           <div className="mt-4 rounded-xl border border-status-info/30 bg-status-info/10 px-4 py-3 text-sm text-status-info">
-            Version history is still updating for this file. The viewer will refresh when the current save settles.
+            {t('version_history.pending_notice')}
           </div>
         ) : null}
 
         {refreshRequired ? (
           <div className="mt-4 rounded-xl border border-status-warning/30 bg-status-warning/10 px-4 py-3 text-sm text-status-warning">
-            This file changed while version work was pending. Refresh the library before trusting older comparisons.
+            {t('version_history.refresh_required_notice')}
           </div>
         ) : null}
 
@@ -248,17 +251,19 @@ const VersionHistoryPanel: React.FC<VersionHistoryPanelProps> = ({ file, version
         <section className="border-b border-border xl:border-b-0 xl:border-r" aria-label="Version timeline">
           <div className="px-6 py-4">
             <div className="mb-3 flex items-center justify-between">
-              <p className="text-xs font-bold uppercase tracking-[0.24em] text-text-muted">Timeline</p>
+              <p className="text-xs font-bold uppercase tracking-[0.24em] text-text-muted">{t('version_history.timeline')}</p>
               <span className="text-xs text-text-muted">
-                {loading ? 'Loading...' : `${entries.length} ${entries.length === 1 ? 'entry' : 'entries'}`}
+                {loading
+                  ? t('version_history.loading')
+                  : `${entries.length} ${entries.length === 1 ? t('version_history.entry_singular') : t('version_history.entry_plural')}`}
               </span>
             </div>
 
             {entries.length === 0 && !loading && !error ? (
               <div className="rounded-xl border border-dashed border-border px-4 py-6 text-sm text-text-muted">
                 {pendingHistory
-                  ? 'No completed timeline entries yet. The current save is still moving through versioning.'
-                  : 'No version history has been recorded for this file yet.'}
+                  ? t('version_history.empty_pending')
+                  : t('version_history.empty')}
               </div>
             ) : null}
 
@@ -301,9 +306,9 @@ const VersionHistoryPanel: React.FC<VersionHistoryPanelProps> = ({ file, version
         <section className="flex min-h-0 flex-col overflow-auto px-6 py-5" aria-label="Selected version details">
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.24em] text-text-muted">Inspect</p>
+              <p className="text-xs font-bold uppercase tracking-[0.24em] text-text-muted">{t('version_history.inspect')}</p>
               <p className="mt-1 text-sm text-text-muted">
-                Open a saved version to review commit context before compare or restore.
+                {t('version_history.inspect_description')}
               </p>
             </div>
 
@@ -315,7 +320,7 @@ const VersionHistoryPanel: React.FC<VersionHistoryPanelProps> = ({ file, version
                   historyMode === 'view' ? 'segmented-control-button-active' : ''
                 }`}
               >
-                View
+                {t('version_history.view')}
               </MotionButton>
               <MotionButton
                 variant="ghost"
@@ -324,7 +329,7 @@ const VersionHistoryPanel: React.FC<VersionHistoryPanelProps> = ({ file, version
                   historyMode === 'compare' ? 'segmented-control-button-active' : ''
                 }`}
               >
-                Compare
+                {t('version_history.compare')}
               </MotionButton>
             </div>
           </div>
@@ -337,7 +342,7 @@ const VersionHistoryPanel: React.FC<VersionHistoryPanelProps> = ({ file, version
 
           {!selectedEntry && !loading ? (
             <div className="rounded-2xl border border-dashed border-border px-5 py-8 text-sm text-text-muted">
-              Select a version entry to inspect its commit context and preview state.
+              {t('version_history.select_entry')}
             </div>
           ) : null}
 
@@ -350,7 +355,7 @@ const VersionHistoryPanel: React.FC<VersionHistoryPanelProps> = ({ file, version
                       <h4 className="text-lg font-display font-bold text-text">v{selectedEntry.versionNum}</h4>
                       {selectedEntry.isLatest ? (
                         <span className="rounded-full bg-status-success/10 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-status-success">
-                          Current saved
+                          {t('version_history.current_saved')}
                         </span>
                       ) : null}
                     </div>
@@ -367,11 +372,11 @@ const VersionHistoryPanel: React.FC<VersionHistoryPanelProps> = ({ file, version
                 <article className="space-y-4 rounded-2xl border border-border bg-surface px-5 py-5">
                   <div className="flex items-center justify-between gap-3">
                     <div>
-                      <p className="text-xs font-bold uppercase tracking-[0.24em] text-text-muted">Snapshot</p>
+                      <p className="text-xs font-bold uppercase tracking-[0.24em] text-text-muted">{t('version_history.snapshot')}</p>
                       <p className="mt-1 text-sm text-text-muted">{displayDetail.previewMessage}</p>
                     </div>
                     <MotionButton variant="secondary" disabled className="px-4 py-2 text-xs">
-                      Restore in 1.4
+                      {t('version_history.restore_future')}
                     </MotionButton>
                   </div>
 
@@ -391,25 +396,25 @@ const VersionHistoryPanel: React.FC<VersionHistoryPanelProps> = ({ file, version
 
                   <div className="grid gap-4 md:grid-cols-2">
                     <div className="rounded-2xl border border-border bg-surface-muted px-4 py-4">
-                      <p className="text-xs font-bold uppercase tracking-[0.22em] text-text-muted">Historical metadata</p>
+                      <p className="text-xs font-bold uppercase tracking-[0.22em] text-text-muted">{t('version_history.historical_metadata')}</p>
                       <dl className="mt-3 space-y-3 text-sm">
                         <div className="flex items-center justify-between gap-4">
                           <dt className="text-text-muted">Type</dt>
                           <dd className="font-semibold text-text">
-                            {displayDetail.metadataContext?.type ?? 'Unavailable'}
+                            {displayDetail.metadataContext?.type ?? t('version_history.unavailable')}
                           </dd>
                         </div>
                         <div className="flex items-center justify-between gap-4">
                           <dt className="text-text-muted">Status</dt>
                           <dd className="font-semibold text-text">
-                            {displayDetail.metadataContext?.status ?? 'Unavailable'}
+                            {displayDetail.metadataContext?.status ?? t('version_history.unavailable')}
                           </dd>
                         </div>
                       </dl>
                     </div>
 
                     <div className="rounded-2xl border border-border bg-surface-muted px-4 py-4">
-                      <p className="text-xs font-bold uppercase tracking-[0.22em] text-text-muted">Current live metadata</p>
+                      <p className="text-xs font-bold uppercase tracking-[0.22em] text-text-muted">{t('version_history.current_metadata')}</p>
                       <dl className="mt-3 space-y-3 text-sm">
                         <div className="flex items-center justify-between gap-4">
                           <dt className="text-text-muted">Type</dt>
@@ -426,13 +431,13 @@ const VersionHistoryPanel: React.FC<VersionHistoryPanelProps> = ({ file, version
               ) : (
                 <article className="space-y-4 rounded-2xl border border-border bg-surface px-5 py-5">
                   <div>
-                    <p className="text-xs font-bold uppercase tracking-[0.24em] text-text-muted">Compare to current</p>
+                    <p className="text-xs font-bold uppercase tracking-[0.24em] text-text-muted">{t('version_history.compare_to_current')}</p>
                     <p className="mt-1 text-sm text-text-muted">{displayDetail.compareSummary.summary}</p>
                   </div>
 
                   <div className="grid gap-4 xl:grid-cols-2">
                     <div className="rounded-2xl border border-border bg-surface-muted px-4 py-4">
-                      <p className="text-xs font-bold uppercase tracking-[0.22em] text-text-muted">Current asset</p>
+                      <p className="text-xs font-bold uppercase tracking-[0.22em] text-text-muted">{t('version_history.current_asset')}</p>
                       <p className="mt-3 text-sm font-semibold text-text">{file.filename}</p>
                       <dl className="mt-4 space-y-3 text-sm">
                         <div className="flex items-center justify-between gap-4">
@@ -457,20 +462,20 @@ const VersionHistoryPanel: React.FC<VersionHistoryPanelProps> = ({ file, version
 
                     <div className="rounded-2xl border border-border bg-surface-muted px-4 py-4">
                       <p className="text-xs font-bold uppercase tracking-[0.22em] text-text-muted">
-                        Selected version
+                        {t('version_history.selected_version')}
                       </p>
                       <p className="mt-3 text-sm font-semibold text-text">v{selectedEntry.versionNum}</p>
                       <dl className="mt-4 space-y-3 text-sm">
                         <div className="flex items-center justify-between gap-4">
                           <dt className="text-text-muted">Type</dt>
                           <dd className="font-semibold text-text">
-                            {displayDetail.compareSummary.historicalType ?? 'Unavailable'}
+                            {displayDetail.compareSummary.historicalType ?? t('version_history.unavailable')}
                           </dd>
                         </div>
                         <div className="flex items-center justify-between gap-4">
                           <dt className="text-text-muted">Status</dt>
                           <dd className="font-semibold text-text">
-                            {displayDetail.compareSummary.historicalStatus ?? 'Unavailable'}
+                            {displayDetail.compareSummary.historicalStatus ?? t('version_history.unavailable')}
                           </dd>
                         </div>
                       </dl>
@@ -495,20 +500,20 @@ const VersionHistoryPanel: React.FC<VersionHistoryPanelProps> = ({ file, version
           ) : null}
 
           {detailLoading ? (
-            <p className="mt-4 text-sm text-text-muted">Loading version details...</p>
+            <p className="mt-4 text-sm text-text-muted">{t('version_history.loading_details')}</p>
           ) : null}
 
           <div className="mt-auto pt-5">
             <MotionButton
               variant="secondary"
               onClick={async () => {
-                await dispatch(fetchFiles()).unwrap()
+                await dispatch(fetchFiles(fetchContext)).unwrap()
                 await dispatch(fetchVersioningStatus(file.id)).unwrap()
                 await refreshHistory()
               }}
               className="w-full"
             >
-              Refresh library state
+              {t('version_history.refresh_library_state')}
             </MotionButton>
           </div>
         </section>

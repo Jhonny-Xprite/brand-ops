@@ -5,6 +5,7 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import { serializeCreativeFile } from '@/lib/creativeFiles'
 import { buildDuplicateFilename, buildRenamedFilename } from '@/lib/creativeLibraryActions'
 import prisma from '@/lib/prisma'
+import { getFilesystemErrorMessage } from '@/lib/storageRoot'
 
 interface ActionResponse {
   action: 'rename' | 'duplicate'
@@ -16,20 +17,6 @@ interface ActionError {
   error: string
 }
 
-function getFilesystemErrorMessage(error: unknown): string {
-  const code = typeof error === 'object' && error !== null && 'code' in error ? String(error.code) : null
-
-  if (code === 'EACCES' || code === 'EPERM') {
-    return 'Permission denied. Check folder permissions and try again.'
-  }
-
-  if (code === 'ENOSPC') {
-    return 'Storage is full. Free up space and try again.'
-  }
-
-  return 'Storage folder is unavailable. Check the local storage path and try again.'
-}
-
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<ActionResponse | ActionError>,
@@ -37,11 +24,11 @@ export default async function handler(
   const { id } = req.query
 
   if (typeof id !== 'string') {
-    return res.status(400).json({ error: 'Invalid ID' })
+    return res.status(400).json({ error: 'ID invalido.' })
   }
 
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' })
+    return res.status(405).json({ error: 'Metodo nao permitido.' })
   }
 
   const { action, filenameBase } = req.body as {
@@ -50,7 +37,7 @@ export default async function handler(
   }
 
   if (action !== 'rename' && action !== 'duplicate') {
-    return res.status(400).json({ error: 'Invalid file action.' })
+    return res.status(400).json({ error: 'Acao de arquivo invalida.' })
   }
 
   try {
@@ -60,30 +47,30 @@ export default async function handler(
     })
 
     if (!file) {
-      return res.status(404).json({ error: 'This item could not be loaded. Refresh and try again.' })
+      return res.status(404).json({ error: 'Nao foi possivel carregar este item. Atualize e tente novamente.' })
     }
 
     if (!fs.existsSync(file.path)) {
-      return res.status(404).json({ error: 'The file is no longer available. Choose the file again.' })
+      return res.status(404).json({ error: 'O arquivo nao esta mais disponivel. Selecione-o novamente.' })
     }
 
     if (action === 'rename') {
       if (typeof filenameBase !== 'string' || !filenameBase.trim()) {
-        return res.status(400).json({ error: 'Please enter a file name.' })
+        return res.status(400).json({ error: 'Informe um nome para o arquivo.' })
       }
 
       const nextFilename = buildRenamedFilename(file.filename, filenameBase)
       const nextPath = path.join(path.dirname(file.path), nextFilename)
 
       if (nextPath !== file.path && fs.existsSync(nextPath)) {
-        return res.status(409).json({ error: 'A file with that name already exists. Choose another name and try again.' })
+        return res.status(409).json({ error: 'Ja existe um arquivo com esse nome. Escolha outro nome e tente novamente.' })
       }
 
       if (nextPath === file.path) {
         return res.status(200).json({
           action,
           file: serializeCreativeFile(file),
-          message: 'File name is already up to date.',
+          message: 'O nome do arquivo ja esta atualizado.',
         })
       }
 
@@ -102,7 +89,7 @@ export default async function handler(
         return res.status(200).json({
           action,
           file: serializeCreativeFile(updatedFile),
-          message: 'File renamed successfully.',
+          message: 'Arquivo renomeado com sucesso.',
         })
       } catch (error) {
         if (fs.existsSync(nextPath) && !fs.existsSync(file.path)) {
@@ -152,7 +139,7 @@ export default async function handler(
       return res.status(200).json({
         action,
         file: serializeCreativeFile(duplicatedFile),
-        message: 'File duplicated successfully.',
+        message: 'Arquivo duplicado com sucesso.',
       })
     } catch (error) {
       if (fs.existsSync(duplicatePath)) {
@@ -164,21 +151,21 @@ export default async function handler(
   } catch (error) {
     console.error('File Action Error:', error)
     const message =
-      error instanceof Error && error.message === 'This item could not be loaded. Refresh and try again.'
+      error instanceof Error && error.message === 'Nao foi possivel carregar este item. Atualize e tente novamente.'
         ? error.message
         : getFilesystemErrorMessage(error)
 
-    if (message === 'Storage folder is unavailable. Check the local storage path and try again.') {
+    if (message === 'A pasta de armazenamento nao esta disponivel. Verifique o caminho local e tente novamente.') {
       return res.status(500).json({ error: message })
     }
 
     if (
-      message === 'Permission denied. Check folder permissions and try again.' ||
-      message === 'Storage is full. Free up space and try again.'
+      message === 'Permissao negada. Verifique as permissoes da pasta e tente novamente.' ||
+      message === 'O armazenamento esta cheio. Libere espaco e tente novamente.'
     ) {
       return res.status(500).json({ error: message })
     }
 
-    return res.status(500).json({ error: 'Failed to save your changes. Try again.' })
+    return res.status(500).json({ error: 'Nao foi possivel salvar suas alteracoes. Tente novamente.' })
   }
 }

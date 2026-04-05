@@ -1,55 +1,69 @@
 import React from 'react'
 import Image from 'next/image'
 
+import { getBusinessModelLabel, type ProjectBusinessModel } from '@/lib/projectDomain'
+import { AppIcon, BrandLogo, DomainIcon } from '@/components/atoms'
+
 interface ProjectCardProps {
   id: string
   name: string
+  niche: string
+  businessModel: ProjectBusinessModel
   logoUrl?: string
   assetCount: number
-  onSelect: (id: string) => void
+  onSelect: React.Dispatch<string>
 }
 
 export const ProjectCard: React.FC<ProjectCardProps> = ({
   id,
   name,
+  niche,
+  businessModel,
   logoUrl,
   assetCount,
   onSelect,
 }) => {
   return (
-    <div
+    <button
+      type="button"
       onClick={() => onSelect(id)}
-      className="flex flex-col items-center justify-center p-6 rounded-lg border border-gray-200 bg-white hover:shadow-lg hover:scale-105 transition-all duration-200 cursor-pointer"
+      className="panel-shell brand-card group relative flex h-full flex-col overflow-hidden p-6 text-left transition-all duration-200 hover:-translate-y-1 hover:border-action-primary/30 hover:shadow-[0_28px_60px_-30px_rgba(124,58,237,0.45)]"
     >
-      {/* Logo */}
-      <div className="w-24 h-24 mb-4 flex items-center justify-center rounded bg-gray-100">
-        {logoUrl ? (
-          <div className="relative w-20 h-20">
-            <Image
-              src={logoUrl}
-              alt={name}
-              fill
-              className="object-contain"
-              sizes="80px"
-            />
-          </div>
-        ) : (
-          <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white text-2xl font-bold">
-            {name.charAt(0).toUpperCase()}
-          </div>
-        )}
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-r from-action-primary/22 via-action-primary/6 to-action-secondary/10" />
+
+      <div className="relative flex items-start justify-between gap-4">
+        <div className="flex h-20 w-20 items-center justify-center rounded-3xl border border-border/60 bg-surface-muted/70 shadow-sm">
+          {logoUrl ? (
+            <div className="relative h-14 w-14">
+              <Image src={logoUrl} alt={name} fill className="object-contain" sizes="56px" />
+            </div>
+          ) : (
+            <BrandLogo size={56} variant="solid" />
+          )}
+        </div>
+
+        <div className="status-badge status-badge-success">
+          <DomainIcon domain="OVERVIEW" size="xs" tone="success" decorative />
+          <span>{assetCount} ativos</span>
+        </div>
       </div>
 
-      {/* Project Name */}
-      <h3 className="text-lg font-semibold text-gray-900 text-center mb-2 line-clamp-2">
-        {name}
-      </h3>
-
-      {/* Asset Count Badge */}
-      <div className="px-3 py-1 bg-blue-100 text-blue-800 text-sm font-medium rounded-full">
-        {assetCount} {assetCount === 1 ? 'asset' : 'assets'}
+      <div className="relative mt-8">
+        <p className="eyebrow-label text-action-primary/70">Projeto</p>
+        <h3 className="mt-3 line-clamp-2 text-2xl font-display font-bold tracking-tight text-text">
+          {name}
+        </h3>
+        <p className="mt-3 text-sm leading-6 text-text-muted">{`${niche} · ${getBusinessModelLabel(businessModel)}`}</p>
       </div>
-    </div>
+
+      <div className="relative mt-8 flex items-center justify-between border-t border-border/50 pt-5 text-xs font-bold uppercase tracking-[0.24em] text-text-muted">
+        <span>Workspace premium</span>
+        <span className="inline-flex items-center gap-2 text-action-primary transition-transform duration-200 group-hover:translate-x-1">
+          <AppIcon name="overview" size="xs" tone="active" decorative />
+          Abrir
+        </span>
+      </div>
+    </button>
   )
 }
 

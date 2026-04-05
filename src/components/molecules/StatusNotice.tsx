@@ -1,6 +1,9 @@
 import { motion } from 'framer-motion'
 import type { ReactNode } from 'react'
 
+import { AppIcon } from '@/components/atoms'
+import { getStatusIconName } from '@/lib/icons/iconSystem'
+
 type StatusNoticeTone = 'error' | 'success' | 'warning' | 'info' | 'neutral'
 
 export interface StatusNoticeProps {
@@ -55,9 +58,19 @@ export const StatusNotice = ({
       aria-live={live}
     >
       <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
-        <div>
-          <p className="font-semibold text-text">{title}</p>
-          <div className="mt-1">{message}</div>
+        <div className="flex items-start gap-3">
+          <div className="mt-0.5">
+            <AppIcon
+              name={getStatusIconName(tone)}
+              size="sm"
+              tone={tone === 'neutral' ? 'muted' : tone}
+              decorative
+            />
+          </div>
+          <div>
+            <p className="font-semibold text-text">{title}</p>
+            <div className="mt-1">{message}</div>
+          </div>
         </div>
         {aside ? <div className="flex flex-wrap gap-3">{aside}</div> : null}
       </div>

@@ -17,6 +17,8 @@
 | `icon-system-policy.md` | Library-first MVP icon policy, sizing rules, and exception path for custom icons | `@ux-design-expert` | Approved |
 | `design-specification-handoff.md` | Consolidated implementation handoff across tokens, components, layout, accessibility, and icons | `@ux-design-expert` | Approved |
 | `design-system-adoption-audit.md` | Audit matrix of current design-system adoption across implemented MVP UI surfaces | `@ux-design-expert` | Approved |
+| `wireframe-code-reconciliation.md` | Canonical mapping between the new wireframe direction and the implemented product surfaces | `@po` | Approved |
+| `creative-library-product-integration.md` | Canonical architecture guide for integrating Creative Library into the project-centric product flow | `@architect` | Approved |
 
 ---
 
@@ -45,6 +47,9 @@
 - Story 0.5 defines the accessibility baseline for implementation and QA
 - Story 0.6 defines the MVP icon policy and custom-icon exception path
 - Story 0.7 audits real design-system adoption across the current implemented MVP UI
+- Story 0.8 reconciles the new wireframe with the implemented project hub, project shell, and Creative Library
+- Story 0.9 completes the shared semantic CSS layer required by the current Home, Project Shell, and Creative Library surfaces
+- Story 0.11 defines the canonical integration path between Creative Library and the project media route
 
 ---
 

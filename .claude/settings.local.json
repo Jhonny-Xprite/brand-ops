@@ -24,7 +24,15 @@
       "Bash(npm test:*)",
       "Bash(wsl bash:*)",
       "Bash(wc -l docs/stories/*.md)",
-      "Bash(grep -E \"\\\\.\\(ts|js\\)$\")"
+      "Bash(grep -E \"\\\\.\\(ts|js\\)$\")",
+      "Bash(mkdir -p src/__tests__)",
+      "Bash(mv src/pages/__tests__/index.test.tsx src/__tests__/pages.index.test.tsx)",
+      "Bash(taskkill /PID 5996 /F)",
+      "Bash(kill -9 337)",
+      "Bash(taskkill /PID 30788 /F)",
+      "Bash(ls -la \"d:\\\\MINI-PROJETOS-AIOX\\\\brand-ops\\\\docs\\\\stories\\\\epic-0\\\\\" && echo \"---\" && find \"d:\\\\MINI-PROJETOS-AIOX\\\\brand-ops\\\\.aiox-core\" -name \"*story*tmpl*\" -o -name \"*template*2.0*\" 2>/dev/null | head -5)",
+      "Bash(npx prisma:*)",
+      "Bash(npm list:*)"
     ]
   },
   "hooks": {

@@ -1,6 +1,7 @@
 import type { CreativeFileWithMetadata } from '@/lib/types'
 
 import prisma from '@/lib/prisma'
+import { ensureStorageRoot, STORAGE_ROOT } from '@/lib/storageRoot'
 import {
   buildVersionCompareSummary,
   buildVersionTimelineEntry,
@@ -10,12 +11,13 @@ import {
 
 import { GitRepositoryAdapter } from './gitRepositoryAdapter'
 
-const DEFAULT_STORAGE_ROOT = 'E:\\BRAND-OPS-STORAGE'
+const DEFAULT_STORAGE_ROOT = ensureStorageRoot(STORAGE_ROOT)
 
 export class HistoryReader {
   private readonly gitAdapter: GitRepositoryAdapter
 
   constructor(storageRoot = DEFAULT_STORAGE_ROOT) {
+    ensureStorageRoot(storageRoot)
     this.gitAdapter = new GitRepositoryAdapter(storageRoot)
   }
 

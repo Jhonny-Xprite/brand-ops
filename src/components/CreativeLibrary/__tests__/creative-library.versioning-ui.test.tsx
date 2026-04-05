@@ -5,6 +5,7 @@
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { Provider } from 'react-redux'
 
+import { TranslationProvider } from '@/lib/i18n/TranslationContext'
 import type { CreativeFileWithMetadata } from '@/lib/types'
 import type { VersioningLifecycleState } from '@/lib/versioning'
 import CreativeLibraryPage from '@/pages/creative-library'
@@ -82,11 +83,15 @@ describe('creative library versioning UX', () => {
 
     render(
       <Provider store={store}>
-        <CreativeLibraryPage />
+        <TranslationProvider>
+          <CreativeLibraryPage />
+        </TranslationProvider>
       </Provider>,
     )
 
     await screen.findByText('launch.png')
+    fireEvent.click(screen.getByText('launch.png'))
+    await screen.findByText('Editor de Metadados')
 
     await act(async () => {
       store.dispatch(
@@ -99,7 +104,7 @@ describe('creative library versioning UX', () => {
     })
 
     expect(screen.getByText('Local save complete')).not.toBeNull()
-    expect(screen.getByText(/Version save queued/i)).not.toBeNull()
+    expect(screen.getByText(/Changes saved locally for launch\.png\. Version save queued\./i)).not.toBeNull()
 
     await act(async () => {
       store.dispatch(
@@ -113,7 +118,7 @@ describe('creative library versioning UX', () => {
     })
 
     expect(screen.getByText('Version history updated')).not.toBeNull()
-    expect(screen.getAllByText(/Version saved/i).length).toBeGreaterThan(0)
+    expect(screen.getByText(/Version history updated\./i)).not.toBeNull()
   })
 
   it('blocks additional edits when refresh-required state is emitted', async () => {
@@ -137,13 +142,15 @@ describe('creative library versioning UX', () => {
 
     render(
       <Provider store={store}>
-        <CreativeLibraryPage />
+        <TranslationProvider>
+          <CreativeLibraryPage />
+        </TranslationProvider>
       </Provider>,
     )
 
     await screen.findByText('launch.png')
     fireEvent.click(screen.getByText('launch.png'))
-    await screen.findByText('Metadata Editor')
+    await screen.findByText('Editor de Metadados')
 
     fireEvent.change(screen.getByLabelText('Metadata notes'), {
       target: { value: 'Updated notes' },
@@ -162,9 +169,8 @@ describe('creative library versioning UX', () => {
     })
 
     expect(screen.getAllByText('Refresh required').length).toBeGreaterThan(0)
-    expect(screen.getByText(/Refresh is required before more edits can be saved safely/i)).not.toBeNull()
     await waitFor(() => {
-      expect((screen.getByRole('button', { name: 'Save Metadata' }) as HTMLButtonElement).disabled).toBe(true)
+      expect((screen.getByRole('button', { name: 'Salvar e Sincronizar' }) as HTMLButtonElement).disabled).toBe(true)
     })
   })
 })

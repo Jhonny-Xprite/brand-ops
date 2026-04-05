@@ -24,6 +24,15 @@ export interface FilesState {
   selectedFileId: string | null;
 }
 
+export interface FilesQuery {
+  projectId?: string
+  scope?: string
+}
+
+export interface UploadFileRequest extends FilesQuery {
+  file: File
+}
+
 const initialState: FilesState = {
   items: [],
   loading: false,
@@ -32,8 +41,18 @@ const initialState: FilesState = {
   selectedFileId: null,
 };
 
-export const fetchFiles = createAsyncThunk('files/fetchFiles', async () => {
-  const response = await fetch('/api/files');
+export const fetchFiles = createAsyncThunk('files/fetchFiles', async (query?: FilesQuery) => {
+  const searchParams = new URLSearchParams();
+
+  if (query?.projectId) {
+    searchParams.set('projectId', query.projectId)
+  }
+
+  if (query?.scope && query.scope !== 'all') {
+    searchParams.set('scope', query.scope)
+  }
+
+  const response = await fetch(`/api/files${searchParams.size > 0 ? `?${searchParams.toString()}` : ''}`);
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({ error: 'Failed to fetch files' }));
     throw new Error(errorData.error || 'Failed to fetch files');
@@ -42,9 +61,15 @@ export const fetchFiles = createAsyncThunk('files/fetchFiles', async () => {
   return data as CreativeFileWithMetadata[];
 });
 
-export const uploadFile = createAsyncThunk('files/uploadFile', async (file: File, { dispatch }) => {
+export const uploadFile = createAsyncThunk('files/uploadFile', async ({ file, projectId, scope }: UploadFileRequest, { dispatch }) => {
   const formData = new FormData();
   formData.append('file', file);
+  if (projectId) {
+    formData.append('projectId', projectId)
+  }
+  if (scope && scope !== 'all') {
+    formData.append('scope', scope)
+  }
 
   const response = await fetch('/api/files/upload', {
     method: 'POST',

@@ -1,12 +1,21 @@
 import { NextApiRequest, NextApiResponse } from 'next'
+import { coerceBusinessModel, type ProjectBusinessModel } from '@/lib/projectDomain'
 import prisma from '@/lib/prisma'
 
 interface ProjectResponse {
   id: string
   name: string
+  niche: string
+  businessModel: ProjectBusinessModel
   logoUrl?: string
   assetCount: number
   createdAt: string
+  socialLinks: {
+    instagramUrl?: string
+    youtubeUrl?: string
+    facebookUrl?: string
+    tiktokUrl?: string
+  }
 }
 
 export default async function handler(
@@ -56,9 +65,17 @@ export default async function handler(
     const projectsResponse: ProjectResponse[] = projects.map((project) => ({
       id: project.id,
       name: project.name,
-      logoUrl: project.logoFile?.path,
+      niche: project.niche,
+      businessModel: coerceBusinessModel(project.businessModel),
+      logoUrl: project.logoFile?.id ? `/api/files/${project.logoFile.id}?asset=preview` : undefined,
       assetCount: assetCountMap.get(project.id) || 0,
       createdAt: project.createdAt.toISOString(),
+      socialLinks: {
+        instagramUrl: project.instagramUrl || undefined,
+        youtubeUrl: project.youtubeUrl || undefined,
+        facebookUrl: project.facebookUrl || undefined,
+        tiktokUrl: project.tiktokUrl || undefined,
+      },
     }))
 
     return res.status(200).json(projectsResponse)
