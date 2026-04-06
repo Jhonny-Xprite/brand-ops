@@ -1,7 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import handler from '../projeto/[id]/stats'
 import prisma from '@/lib/prisma'
-import * as projectDomain from '@/lib/projectDomain'
 import * as projectWorkspace from '@/lib/projectWorkspace'
 import * as types from '@/lib/types'
 
@@ -32,7 +31,7 @@ jest.mock('@/lib/projectDomain', () => ({
 jest.mock('@/lib/projectWorkspace', () => ({
   buildProjectWorkspaceWhere: jest.fn(() => ({ projectId: 'proj-123' })),
   buildProjectWorkspaceActivityMessage: jest.fn((data) => `Activity: ${data.filename}`),
-  getTaggedValue: jest.fn((tags, prefix) => 'test-scope'),
+  getTaggedValue: jest.fn((_tags, _prefix) => 'test-scope'),
 }))
 
 jest.mock('@/lib/types', () => ({

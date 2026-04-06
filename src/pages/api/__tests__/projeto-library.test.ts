@@ -132,7 +132,7 @@ describe('GET /api/projeto/[id]/library', () => {
 
     const mockProject = { id: 'proj-123' }
     ;(prisma.project.findUnique as jest.Mock).mockResolvedValue(mockProject)
-    ;(projectDomain.isProjectLibraryDomain as jest.Mock).mockReturnValue(false)
+    ;(projectDomain.isProjectLibraryDomain as unknown as jest.Mock).mockReturnValue(false)
 
     await handler(req as NextApiRequest, res as NextApiResponse)
 
@@ -230,7 +230,7 @@ describe('POST /api/projeto/[id]/library', () => {
 
     const mockProject = { id: 'proj-123' }
     ;(prisma.project.findUnique as jest.Mock).mockResolvedValue(mockProject)
-    ;(projectDomain.isProjectLibraryDomain as jest.Mock).mockReturnValue(false)
+    ;(projectDomain.isProjectLibraryDomain as unknown as jest.Mock).mockReturnValue(false)
 
     await handler(req as NextApiRequest, res as NextApiResponse)
 
@@ -243,7 +243,7 @@ describe('POST /api/projeto/[id]/library', () => {
 
     const mockProject = { id: 'proj-123' }
     ;(prisma.project.findUnique as jest.Mock).mockResolvedValue(mockProject)
-    ;(projectDomain.isProjectLibraryDomain as jest.Mock).mockReturnValue(true)
+    ;(projectDomain.isProjectLibraryDomain as unknown as jest.Mock).mockReturnValue(true)
 
     await handler(req as NextApiRequest, res as NextApiResponse)
 
@@ -256,7 +256,7 @@ describe('POST /api/projeto/[id]/library', () => {
 
     const mockProject = { id: 'proj-123' }
     ;(prisma.project.findUnique as jest.Mock).mockResolvedValue(mockProject)
-    ;(projectDomain.isProjectLibraryDomain as jest.Mock).mockReturnValue(true)
+    ;(projectDomain.isProjectLibraryDomain as unknown as jest.Mock).mockReturnValue(true)
 
     await handler(req as NextApiRequest, res as NextApiResponse)
 
@@ -281,7 +281,7 @@ describe('POST /api/projeto/[id]/library', () => {
 
     const mockProject = { id: 'proj-123' }
     ;(prisma.project.findUnique as jest.Mock).mockResolvedValue(mockProject)
-    ;(projectDomain.isProjectLibraryDomain as jest.Mock).mockReturnValue(true)
+    ;(projectDomain.isProjectLibraryDomain as unknown as jest.Mock).mockReturnValue(true)
     ;(prisma.$transaction as jest.Mock).mockRejectedValue(
       new Error('Transaction failed')
     )

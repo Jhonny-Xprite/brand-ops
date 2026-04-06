@@ -1,10 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import handler from '../projeto/[id]/overview/index'
 import prisma from '@/lib/prisma'
-import * as creativeFiles from '@/lib/creativeFiles'
-import * as projectWorkspace from '@/lib/projectWorkspace'
-import * as projectLibrary from '@/lib/projectLibrary'
-import * as overview from '@/lib/overview'
 
 jest.mock('@/lib/prisma', () => ({
   creativeFile: {
@@ -237,7 +233,7 @@ describe('GET /api/projeto/[id]/overview', () => {
   })
 
   describe('Filtering - Category', () => {
-    const mockFiles = []
+    const mockFiles: any[] = []
     const mockLibraryItems = [
       {
         id: 'lib-1',

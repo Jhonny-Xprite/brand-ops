@@ -201,9 +201,17 @@ describe('PATCH /api/files/[id]', () => {
     await handler(req as NextApiRequest, res as NextApiResponse)
 
     expect(statusMock).toHaveBeenCalledWith(400)
-    expect(jsonMock).toHaveBeenCalledWith({
-      error: 'Please select a file type.',
-    })
+    expect(jsonMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        error: 'Validation failed',
+        details: expect.arrayContaining([
+          expect.objectContaining({
+            field: 'type',
+            message: 'Please select a file type.',
+          }),
+        ]),
+      })
+    )
   })
 
   it('should return 400 when status is empty string', async () => {
@@ -212,9 +220,17 @@ describe('PATCH /api/files/[id]', () => {
     await handler(req as NextApiRequest, res as NextApiResponse)
 
     expect(statusMock).toHaveBeenCalledWith(400)
-    expect(jsonMock).toHaveBeenCalledWith({
-      error: 'Status is required.',
-    })
+    expect(jsonMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        error: 'Validation failed',
+        details: expect.arrayContaining([
+          expect.objectContaining({
+            field: 'status',
+            message: 'Status is required.',
+          }),
+        ]),
+      })
+    )
   })
 
   it('should return 400 when tags exceed 20', async () => {
@@ -224,9 +240,17 @@ describe('PATCH /api/files/[id]', () => {
     await handler(req as NextApiRequest, res as NextApiResponse)
 
     expect(statusMock).toHaveBeenCalledWith(400)
-    expect(jsonMock).toHaveBeenCalledWith({
-      error: 'You can add up to 20 tags.',
-    })
+    expect(jsonMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        error: 'Validation failed',
+        details: expect.arrayContaining([
+          expect.objectContaining({
+            field: 'tags',
+            message: 'You can add up to 20 tags.',
+          }),
+        ]),
+      })
+    )
   })
 
   it('should return 400 when notes exceed 500 characters', async () => {
@@ -239,9 +263,17 @@ describe('PATCH /api/files/[id]', () => {
     await handler(req as NextApiRequest, res as NextApiResponse)
 
     expect(statusMock).toHaveBeenCalledWith(400)
-    expect(jsonMock).toHaveBeenCalledWith({
-      error: 'Notes can have up to 500 characters.',
-    })
+    expect(jsonMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        error: 'Validation failed',
+        details: expect.arrayContaining([
+          expect.objectContaining({
+            field: 'notes',
+            message: 'Notes can have up to 500 characters.',
+          }),
+        ]),
+      })
+    )
   })
 
   it('should successfully update file metadata', async () => {

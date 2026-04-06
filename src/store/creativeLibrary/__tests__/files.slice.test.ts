@@ -16,6 +16,7 @@ global.fetch = jest.fn()
 describe('files.slice', () => {
   const mockFile: CreativeFileWithMetadata = {
     id: 'file-1',
+    path: '/assets/test.jpg',
     filename: 'test.jpg',
     type: 'image',
     mimeType: 'image/jpeg',
@@ -23,15 +24,19 @@ describe('files.slice', () => {
     createdAt: new Date('2026-04-01'),
     updatedAt: new Date('2026-04-01'),
     metadata: {
+      id: 'metadata-1',
+      fileId: 'file-1',
       type: 'image',
       status: 'Draft',
       tags: ['test'],
       notes: 'test file',
+      updatedAt: new Date('2026-04-01'),
     },
   }
 
   const mockFile2: CreativeFileWithMetadata = {
     id: 'file-2',
+    path: '/assets/test2.jpg',
     filename: 'test2.jpg',
     type: 'image',
     mimeType: 'image/jpeg',
@@ -39,10 +44,13 @@ describe('files.slice', () => {
     createdAt: new Date('2026-04-02'),
     updatedAt: new Date('2026-04-02'),
     metadata: {
+      id: 'metadata-2',
+      fileId: 'file-2',
       type: 'image',
       status: 'Approved',
       tags: ['test'],
       notes: 'another test file',
+      updatedAt: new Date('2026-04-02'),
     },
   }
 
