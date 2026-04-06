@@ -3,6 +3,7 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import { serializeCreativeFile } from '@/lib/creativeFiles'
 import { buildProjectWorkspaceWhere, type ProjectWorkspaceScope } from '@/lib/projectWorkspace'
 import { validateFileUpload, loadFileValidationConfig, getHttpStatusCode } from '@/lib/fileValidation'
+import { CreateFileSchema } from '@/lib/schemas'
 import prisma from '@/lib/prisma';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -36,18 +37,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   if (req.method === 'POST') {
     try {
-      const config = loadFileValidationConfig()
+      // Validate request body using Zod schema
+      const parsed = CreateFileSchema.safeParse(req.body)
 
-      // Extract file info from request body
-      // File info should be passed as: { filename, fileSizeBytes, mimeType }
-      const { filename, fileSizeBytes, mimeType } = req.body
-
-      // Validate required fields
-      if (!filename || fileSizeBytes === undefined || !mimeType) {
-        return res.status(400).json({ error: 'Missing required file information' })
+      if (!parsed.success) {
+        const flattened = parsed.error.flatten()
+        const errors = Object.entries(flattened.fieldErrors).map(([field, messages]) => ({
+          field,
+          message: messages?.[0] || 'Invalid value',
+        }))
+        return res.status(400).json({ error: 'Validation failed', details: errors })
       }
 
-      // Validate file upload
+      const { filename, fileSizeBytes, mimeType, projectId } = parsed.data
+      const config = loadFileValidationConfig()
+
+      // Validate file upload using file validation utility
       const validationResult = validateFileUpload(
         filename,
         fileSizeBytes,
@@ -65,7 +70,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       return res.status(200).json({
         message: 'File validated successfully',
-        file: { filename, mimeType, size: fileSizeBytes }
+        file: { filename, mimeType, size: fileSizeBytes, projectId }
       })
     } catch (err) {
       console.error('Upload Files Error:', err)

@@ -3,6 +3,7 @@ import fs from 'fs'
 
 import { serializeCreativeFile } from '@/lib/creativeFiles'
 import { validateFileUpload, loadFileValidationConfig, getHttpStatusCode } from '@/lib/fileValidation'
+import { UpdateFileMetadataSchema } from '@/lib/schemas'
 import prisma from '@/lib/prisma'
 import { versioningService } from '@/lib/versioning'
 
@@ -61,7 +62,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   if (req.method === 'PATCH') {
-    const { type, status, tags, notes, filename, fileSizeBytes, mimeType } = req.body
+    // Validate request body using Zod schema
+    const parsed = UpdateFileMetadataSchema.safeParse(req.body)
+
+    if (!parsed.success) {
+      const flattened = parsed.error.flatten()
+      const errors = Object.entries(flattened.fieldErrors).map(([field, messages]) => ({
+        field,
+        message: messages?.[0] || 'Invalid value',
+      }))
+      return res.status(400).json({ error: 'Validation failed', details: errors })
+    }
+
+    const { type, status, tags, notes } = parsed.data
+    const { filename, fileSizeBytes, mimeType } = req.body
 
     // Validate file content if being updated
     if (filename && fileSizeBytes !== undefined && mimeType) {
@@ -82,22 +96,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         console.error('File Validation Error:', err)
         return res.status(500).json({ error: 'Failed to validate file' })
       }
-    }
-
-    if (type === '') {
-      return res.status(400).json({ error: 'Please select a file type.' })
-    }
-
-    if (status === '') {
-      return res.status(400).json({ error: 'Status is required.' })
-    }
-
-    if (Array.isArray(tags) && tags.length > 20) {
-      return res.status(400).json({ error: 'You can add up to 20 tags.' })
-    }
-
-    if (typeof notes === 'string' && notes.length > 500) {
-      return res.status(400).json({ error: 'Notes can have up to 500 characters.' })
     }
 
     try {
