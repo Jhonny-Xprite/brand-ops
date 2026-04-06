@@ -54,6 +54,44 @@ node bin/aiox.js validate   # Validar estrutura
 4. **QA Gate** → `@qa` com `*qa-gate`
 5. **Push** → `@devops` com `*push`
 
+## 🔨 Development Setup
+
+### Pre-Commit Hooks (Husky + lint-staged)
+
+Este projeto usa **Husky** e **lint-staged** para executar verificações automáticas antes de cada commit:
+
+```bash
+# As dependências já estão instaladas
+npm install  # (se necessário)
+npx husky install
+```
+
+**O que roda em cada commit:**
+
+```bash
+git commit -m "mensagem"
+  ↓
+  # Hooks automáticos:
+  ├─ ESLint: Verificação de padrões de código
+  ├─ TypeScript: Verificação de tipos (tsc --noEmit)
+  └─ Apenas arquivos modificados são checados
+```
+
+**Comportamento:**
+
+- ✅ **Código válido** → Commit aceito normalmente
+- ❌ **Erros de linting/tipos** → Commit bloqueado, mensagem de erro exibida
+- 🔧 ESLint tenta auto-corrigir, TypeScript apenas reporta
+
+**Bypass (Emergência apenas):**
+
+```bash
+# NUNCA use em desenvolvimento normal
+git commit --no-verify -m "mensagem"  # Pula todos os hooks
+```
+
+Documentação completa: [`docs/DEVELOPMENT.md`](docs/DEVELOPMENT.md)
+
 ## 📋 Princípios AIOX
 
 ### Constitution (Inegociável)
