@@ -46,7 +46,10 @@
       "Bash(mv framework:*)",
       "Bash(mv guides:*)",
       "Bash(md-tree explode:*)",
-      "Bash(ls -1 *.md)"
+      "Bash(ls -1 *.md)",
+      "Bash(xargs ls:*)",
+      "Read(//d/MINI-PROJETOS-AIOX/brand-ops/**)",
+      "Bash(xargs -I {} basename {})"
     ]
   },
   "hooks": {
