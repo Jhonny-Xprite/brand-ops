@@ -44,7 +44,9 @@
       "Bash(mv brand:*)",
       "Bash(mv decisions:*)",
       "Bash(mv framework:*)",
-      "Bash(mv guides:*)"
+      "Bash(mv guides:*)",
+      "Bash(md-tree explode:*)",
+      "Bash(ls -1 *.md)"
     ]
   },
   "hooks": {
