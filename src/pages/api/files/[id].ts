@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import fs from 'fs'
 
 import { serializeCreativeFile } from '@/lib/creativeFiles'
+import { validateFileUpload, loadFileValidationConfig, getHttpStatusCode } from '@/lib/fileValidation'
 import prisma from '@/lib/prisma'
 import { versioningService } from '@/lib/versioning'
 
@@ -60,7 +61,28 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   if (req.method === 'PATCH') {
-    const { type, status, tags, notes } = req.body
+    const { type, status, tags, notes, filename, fileSizeBytes, mimeType } = req.body
+
+    // Validate file content if being updated
+    if (filename && fileSizeBytes !== undefined && mimeType) {
+      try {
+        const config = loadFileValidationConfig()
+        const validationResult = validateFileUpload(
+          filename,
+          fileSizeBytes,
+          mimeType,
+          config
+        )
+
+        if (!validationResult.isValid) {
+          const statusCode = getHttpStatusCode(validationResult)
+          return res.status(statusCode).json({ error: validationResult.error })
+        }
+      } catch (err) {
+        console.error('File Validation Error:', err)
+        return res.status(500).json({ error: 'Failed to validate file' })
+      }
+    }
 
     if (type === '') {
       return res.status(400).json({ error: 'Please select a file type.' })

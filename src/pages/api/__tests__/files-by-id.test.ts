@@ -28,6 +28,17 @@ jest.mock('@/lib/versioning', () => ({
   },
 }))
 
+jest.mock('@/lib/fileValidation', () => ({
+  loadFileValidationConfig: jest.fn(() => ({
+    maxSizeMB: 50,
+    allowedTypes: ['jpg', 'jpeg', 'png', 'gif'],
+  })),
+  validateFileUpload: jest.fn((_filename, _size, _mimeType, _config) => ({
+    isValid: true,
+  })),
+  getHttpStatusCode: jest.fn((result) => (result.isValid ? 200 : 400)),
+}))
+
 jest.mock('fs')
 
 describe('GET /api/files/[id]', () => {

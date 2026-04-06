@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import handler from '../files/index'
 import prisma from '@/lib/prisma'
 import { serializeCreativeFile } from '@/lib/creativeFiles'
+import * as fileValidation from '@/lib/fileValidation'
 
 jest.mock('@/lib/prisma', () => ({
   creativeFile: {
@@ -24,6 +25,17 @@ jest.mock('@/lib/projectWorkspace', () => ({
       },
     },
   })),
+}))
+
+jest.mock('@/lib/fileValidation', () => ({
+  loadFileValidationConfig: jest.fn(() => ({
+    maxSizeMB: 50,
+    allowedTypes: ['jpg', 'jpeg', 'png', 'gif'],
+  })),
+  validateFileUpload: jest.fn((_filename, _size, _mimeType, _config) => ({
+    isValid: true,
+  })),
+  getHttpStatusCode: jest.fn((result) => (result.isValid ? 200 : 400)),
 }))
 
 describe('GET /api/files', () => {
@@ -126,26 +138,74 @@ describe('GET /api/files', () => {
     expect(jsonMock).toHaveBeenCalledWith({ error: 'Failed to fetch files' })
   })
 
-  it('should return 405 for non-GET requests', async () => {
+  it('should validate file on POST request', async () => {
     req.method = 'POST'
+    req.body = {
+      filename: 'test.jpg',
+      fileSizeBytes: 1024,
+      mimeType: 'image/jpeg',
+      projectId: 'proj-1',
+    }
 
     await handler(req as NextApiRequest, res as NextApiResponse)
 
-    expect(statusMock).toHaveBeenCalledWith(405)
-    expect(jsonMock).toHaveBeenCalledWith({ error: 'Method not allowed' })
+    expect(fileValidation.validateFileUpload).toHaveBeenCalledWith(
+      'test.jpg',
+      1024,
+      'image/jpeg',
+      expect.any(Object)
+    )
+    expect(statusMock).toHaveBeenCalledWith(200)
+  })
+
+  it('should return 400 for invalid file type on POST', async () => {
+    req.method = 'POST'
+    req.body = {
+      filename: 'test.txt',
+      fileSizeBytes: 1024,
+      mimeType: 'text/plain',
+      projectId: 'proj-1',
+    }
+
+    ;(fileValidation.validateFileUpload as jest.Mock).mockReturnValue({
+      isValid: false,
+      error: 'File type not allowed',
+      code: '400',
+    })
+    ;(fileValidation.getHttpStatusCode as jest.Mock).mockReturnValue(400)
+
+    await handler(req as NextApiRequest, res as NextApiResponse)
+
+    expect(statusMock).toHaveBeenCalledWith(400)
+    expect(jsonMock).toHaveBeenCalledWith({ error: 'File type not allowed' })
+  })
+
+  it('should return 413 for oversized file on POST', async () => {
+    req.method = 'POST'
+    req.body = {
+      filename: 'test.jpg',
+      fileSizeBytes: 100 * 1024 * 1024, // 100MB
+      mimeType: 'image/jpeg',
+      projectId: 'proj-1',
+    }
+
+    ;(fileValidation.validateFileUpload as jest.Mock).mockReturnValue({
+      isValid: false,
+      error: 'File size exceeds maximum allowed size of 50MB',
+      code: '413',
+    })
+    ;(fileValidation.getHttpStatusCode as jest.Mock).mockReturnValue(413)
+
+    await handler(req as NextApiRequest, res as NextApiResponse)
+
+    expect(statusMock).toHaveBeenCalledWith(413)
+    expect(jsonMock).toHaveBeenCalledWith({
+      error: 'File size exceeds maximum allowed size of 50MB',
+    })
   })
 
   it('should return 405 for DELETE requests', async () => {
     req.method = 'DELETE'
-
-    await handler(req as NextApiRequest, res as NextApiResponse)
-
-    expect(statusMock).toHaveBeenCalledWith(405)
-    expect(jsonMock).toHaveBeenCalledWith({ error: 'Method not allowed' })
-  })
-
-  it('should return 405 for PATCH requests', async () => {
-    req.method = 'PATCH'
 
     await handler(req as NextApiRequest, res as NextApiResponse)
 
