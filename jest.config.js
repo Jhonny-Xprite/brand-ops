@@ -1,7 +1,7 @@
 export default {
   preset: 'ts-jest',
   testEnvironment: 'node',
-  roots: ['<rootDir>/src'],
+  roots: ['<rootDir>/src', '<rootDir>/packages'],
   setupFilesAfterEnv: ['<rootDir>/src/test/jest.setup.ts'],
   testMatch: ['**/__tests__/**/*.test.ts', '**/__tests__/**/*.test.tsx'],
   transform: {
@@ -17,6 +17,8 @@ export default {
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
+    '^@brand-ops/ui/(.*)$': '<rootDir>/packages/ui/$1',
+    '^@brand-ops/ui$': '<rootDir>/packages/ui/index.ts',
   },
   collectCoverageFrom: [
     'src/**/*.{ts,tsx}',

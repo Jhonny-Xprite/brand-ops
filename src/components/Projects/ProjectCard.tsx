@@ -2,7 +2,7 @@ import React from 'react'
 import Image from 'next/image'
 
 import { getBusinessModelLabel, type ProjectBusinessModel } from '@/lib/projectDomain'
-import { AppIcon, BrandLogo, DomainIcon } from '@/components/atoms'
+import { AppIcon, BrandLogo, DomainIcon } from '@brand-ops/ui/atoms'
 
 interface ProjectCardProps {
   id: string

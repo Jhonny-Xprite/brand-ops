@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 
-import { AppIcon, BrandSignature, DomainIcon, MotionButton, OfflineIndicator, ThemeToggle } from '@/components/atoms'
+import { AppIcon, BrandSignature, DomainIcon, MotionButton, OfflineIndicator, ThemeToggle } from '@brand-ops/ui/atoms'
 import { useTranslation } from '@/lib/i18n/TranslationContext'
 import { useAppDispatch, useAppSelector } from '@/store'
 import { clearProjectContext } from '@/store/projects/projects.slice'

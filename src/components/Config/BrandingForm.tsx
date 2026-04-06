@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState, type Dispatch, type SetState
 import { useForm, type SubmitHandler } from 'react-hook-form'
 import { Palette, Type, Upload, Wand2 } from 'lucide-react'
 
-import { MotionButton } from '@/components/atoms'
+import { MotionButton } from '@brand-ops/ui/atoms'
 import {
   BRAND_TONES,
   CLIENT_BRAND_MODES,

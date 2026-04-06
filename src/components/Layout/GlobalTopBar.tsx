@@ -5,7 +5,7 @@ import { ArrowLeftRight } from 'lucide-react'
 import { useAppDispatch, useAppSelector } from '@/store'
 import { clearProjectContext } from '@/store/projects/projects.slice'
 import { useTranslation } from '@/lib/i18n/TranslationContext'
-import { BrandSignature, MotionButton } from '@/components/atoms'
+import { BrandSignature, MotionButton } from '@brand-ops/ui/atoms'
 
 export interface GlobalTopBarProps {
   projectName?: string

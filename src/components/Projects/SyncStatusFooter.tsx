@@ -1,6 +1,6 @@
 import React from 'react'
 import { AlertCircle, CheckCircle2, RotateCw } from 'lucide-react'
-import { MotionButton } from '@/components/atoms'
+import { MotionButton } from '@brand-ops/ui/atoms'
 
 interface SyncStatusFooterProps {
   syncStatus: 'synced' | 'syncing' | 'failed'

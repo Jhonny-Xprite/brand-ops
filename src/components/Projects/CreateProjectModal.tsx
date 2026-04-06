@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react'
 import { Upload } from 'lucide-react'
 import { useProjects } from '@/hooks/useProjects'
-import { MotionButton } from '@/components/atoms'
+import { MotionButton } from '@brand-ops/ui/atoms'
 import { DialogShell } from '@/components/organisms'
 import type { ProjectBusinessModel } from '@/lib/projectDomain'
 

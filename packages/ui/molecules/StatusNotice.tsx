@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion'
 import type { ReactNode } from 'react'
 
-import { AppIcon } from '@brand-ops/ui/atoms'
+import { AppIcon } from '@/components/atoms'
 import { getStatusIconName } from '@/lib/icons/iconSystem'
 
 type StatusNoticeTone = 'error' | 'success' | 'warning' | 'info' | 'neutral'

@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import type { ReactNode } from 'react'
-import { MotionButton } from '@/components/atoms'
+import { MotionButton } from '@brand-ops/ui/atoms'
 
 export interface DialogShellProps {
   eyebrow: string

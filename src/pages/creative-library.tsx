@@ -1,6 +1,6 @@
 import Link from 'next/link'
 
-import { BrandLogo, OfflineIndicator, ThemeToggle } from '@/components/atoms'
+import { BrandLogo, OfflineIndicator, ThemeToggle } from '@brand-ops/ui/atoms'
 import CreativeLibraryWorkspace from '@/components/CreativeLibrary/CreativeLibraryWorkspace'
 
 const CreativeLibraryPage = () => {

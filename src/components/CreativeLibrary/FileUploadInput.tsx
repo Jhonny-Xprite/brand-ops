@@ -1,6 +1,6 @@
 import React, { useRef } from 'react'
 import { useTranslation } from '@/lib/i18n/TranslationContext'
-import { MotionButton } from '@/components/atoms'
+import { MotionButton } from '@brand-ops/ui/atoms'
 
 import { useAppDispatch, useAppSelector } from '../../store'
 import { uploadFile, type UploadFileRequest } from '../../store/creativeLibrary/files.slice'

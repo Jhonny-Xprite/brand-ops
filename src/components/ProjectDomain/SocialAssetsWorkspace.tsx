@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
 
-import { MotionButton } from '@/components/atoms'
+import { MotionButton } from '@brand-ops/ui/atoms'
 import ProjectLayout from '@/components/Layout/ProjectLayout'
 import ProjectWorkspaceHero from '@/components/Layout/ProjectWorkspaceHero'
-import { StatusNotice } from '@/components/molecules'
+import { StatusNotice } from '@brand-ops/ui/molecules'
 
 import { useProjectDomainLibrary } from './useProjectDomainLibrary'
 

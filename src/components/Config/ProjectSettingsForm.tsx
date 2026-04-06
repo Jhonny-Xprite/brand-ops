@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useForm, type SubmitHandler } from 'react-hook-form'
 
-import { MotionButton } from '@/components/atoms'
+import { MotionButton } from '@brand-ops/ui/atoms'
 import {
   BUSINESS_MODELS,
   getBusinessModelLabel,

@@ -1,4 +1,4 @@
-import { AppIcon } from '@/components/atoms'
+import { AppIcon } from '@brand-ops/ui/atoms'
 
 interface ActivityFeedProps {
   items: Array<{

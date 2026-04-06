@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from '@/lib/i18n/TranslationContext'
-import { MotionButton } from '@/components/atoms'
+import { MotionButton } from '@brand-ops/ui/atoms'
 import { X, Save } from 'lucide-react'
 
 import {
@@ -15,7 +15,7 @@ import {
   isRefreshRequiredState,
   shouldShowVersioningNotice,
 } from '@/lib/versioning/presentation'
-import { StatusNotice } from '@/components/molecules'
+import { StatusNotice } from '@brand-ops/ui/molecules'
 import VersionHistoryPanel from './VersionHistoryPanel'
 import { useAppDispatch, useAppSelector } from '../../store'
 import { fetchFiles, selectFile, type FilesQuery } from '../../store/creativeLibrary/files.slice'

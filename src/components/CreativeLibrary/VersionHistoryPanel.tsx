@@ -12,7 +12,7 @@ import {
   isRefreshRequiredState,
 } from '@/lib/versioning/presentation'
 import { motion } from 'framer-motion'
-import { MotionButton } from '@/components/atoms'
+import { MotionButton } from '@brand-ops/ui/atoms'
 import { useTranslation } from '@/lib/i18n/TranslationContext'
 import { useAppDispatch } from '@/store'
 import { fetchFiles, type FilesQuery } from '@/store/creativeLibrary/files.slice'

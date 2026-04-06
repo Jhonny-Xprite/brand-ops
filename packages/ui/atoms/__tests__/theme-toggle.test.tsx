@@ -4,7 +4,7 @@ import '@testing-library/jest-dom'
 import { fireEvent, render, screen } from '@testing-library/react'
 
 import { ThemeProvider } from '@/lib/theme/ThemeContext'
-import { ThemeToggle } from '@brand-ops/ui/atoms'
+import { ThemeToggle } from '@/components/atoms'
 
 describe('ThemeToggle', () => {
   beforeEach(() => {

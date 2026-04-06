@@ -1,7 +1,7 @@
 import { getBusinessModelLabel, type ProjectBusinessModel } from '@/lib/projectDomain'
 import React from 'react'
 import Image from 'next/image'
-import { AppIcon, BrandLogo } from '@/components/atoms'
+import { AppIcon, BrandLogo } from '@brand-ops/ui/atoms'
 
 interface ProjectListRowProps {
   id: string

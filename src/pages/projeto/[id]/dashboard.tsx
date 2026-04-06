@@ -5,10 +5,10 @@ import { useEffect, useMemo, useState } from 'react'
 import ActivityFeed from '@/components/Dashboard/ActivityFeed'
 import ProductionChart from '@/components/Dashboard/ProductionChart'
 import StatCard from '@/components/Dashboard/StatCard'
-import { FadeIn, MotionButton } from '@/components/atoms'
+import { FadeIn, MotionButton } from '@brand-ops/ui/atoms'
 import ProjectLayout from '@/components/Layout/ProjectLayout'
 import ProjectWorkspaceHero from '@/components/Layout/ProjectWorkspaceHero'
-import { StatusNotice } from '@/components/molecules'
+import { StatusNotice } from '@brand-ops/ui/molecules'
 
 interface DashboardPageProps {
   projectId: string

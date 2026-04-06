@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import { MotionButton } from '@/components/atoms'
+import { MotionButton } from '@brand-ops/ui/atoms'
 
 interface CopyCardProps {
   title: string

@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/router'
 
-import { AppIcon, DomainIcon, FadeIn, MotionButton } from '@/components/atoms'
+import { AppIcon, DomainIcon, FadeIn, MotionButton } from '@brand-ops/ui/atoms'
 import ProjectLayout from '@/components/Layout/ProjectLayout'
 import ProjectWorkspaceHero from '@/components/Layout/ProjectWorkspaceHero'
-import { StatusNotice } from '@/components/molecules'
+import { StatusNotice } from '@brand-ops/ui/molecules'
 import DialogShell from '@/components/organisms/DialogShell'
 import type { ProjectLibraryDomain } from '@/lib/projectDomain'
 import {

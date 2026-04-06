@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import dynamic from 'next/dynamic'
 
-import { FadeIn, Skeleton } from '@/components/atoms'
-import { StatusNotice } from '@/components/molecules'
+import { FadeIn, Skeleton } from '@brand-ops/ui/atoms'
+import { StatusNotice } from '@brand-ops/ui/molecules'
 import {
   buildProjectTag,
   buildScopeTag,

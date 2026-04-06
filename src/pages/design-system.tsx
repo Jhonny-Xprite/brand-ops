@@ -13,8 +13,8 @@ import {
   BrandHealth, 
   BrandLogo,
   MotionButton
-} from '@/components/atoms'
-import { MotionSandbox } from '@/components/molecules'
+} from '@brand-ops/ui/atoms'
+import { MotionSandbox } from '@brand-ops/ui/molecules'
 
 /**
  * Pattern Lab 2.0 (Design Ops Edition)
